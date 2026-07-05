@@ -1,0 +1,6 @@
+# Python cache
+__pycache__/
+*.pyc
+
+# 学習済み重み（大容量・別途配布）
+training/data/weight/
