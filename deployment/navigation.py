@@ -43,7 +43,7 @@ DT = 1.0 / FPS
 IMG_H, IMG_W = 224, 224
 
 # チェックポイントの場所（tar.gz を展開した先）
-DEFAULT_CKPT = Path(__file__).resolve().parents[1] / "training" / "data" / "weight" / "smolvla_tsudanuma_ckpt"
+DEFAULT_CKPT = Path(__file__).resolve().parents[1] / "training" / "data" / "weight" / "smolvla_nav201_ckpt"
 
 
 # ══════════════════════════════════════════════════════════════════
