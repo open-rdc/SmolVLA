@@ -1,0 +1,18 @@
+# place_prompt_node.py の設定。パスは SmolVLA/deployment ディレクトリ基準。
+topomap_path: config/topomap/topomap.yaml
+topomap_image_dir: config/topomap/images
+placenet_weight_path: weights/placenet.pt
+
+# 自己位置推定ループの周期
+interval_ms: 100
+
+toponav_crop_size: 288
+
+# Bayesianフィルタのパラメータ（NavVLAのnav.yaml準拠のデフォルト）
+toponav_delta: 5.0
+toponav_window_lower: -1
+toponav_window_upper: 1
+# windowed_mass（ピーク±window_radius ノードに集まった確率の割合 0〜1）算出用の半径
+toponav_window_radius: 2
+# windowed_mass のしきい値。これ未満のときは instruction を更新しない。
+toponav_min_score: 0.4
