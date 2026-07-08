@@ -45,7 +45,7 @@ DT = 1.0 / FPS
 IMG_H, IMG_W = 224, 224
 
 # チェックポイントの場所（tar.gz を展開した先）
-DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_nav201_ckpt"
+DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_nav201_ns_scratch_ckpt"
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -157,7 +157,7 @@ class SmolVLANavigationNode(Node):
         self.state = np.zeros(2, dtype=np.float32)        # [v, omega]
 
         # --- パラメータ（速度上限・制御周期）---
-        self.linear_max_vel = 0.8
+        self.linear_max_vel = 1.0
         self.angular_max_vel = 0.8
         self.interval_ms = 200                 # 制御周期 = DT(200ms) と揃える
 
@@ -168,8 +168,8 @@ class SmolVLANavigationNode(Node):
         self.refill_threshold = int(self.g * self.chunk_size)        # = 35
 
         # 重複区間の集約関数（lerobot async_inference の weighted_average と同じ）。
-        # 新旧chunkの同じ時刻の行動を 0.3*旧 + 0.7*新 で混ぜて滑らかに繋ぐ。
-        self.aggregate_fn = lambda old, new: 0.3 * old + 0.7 * new
+        # 新旧chunkの同じ時刻の行動を 0.2*旧 + 0.8*新 で混ぜて滑らかに繋ぐ。
+        self.aggregate_fn = lambda old, new: 0.2 * old + 0.8 * new
 
         # --- 非同期用: 絶対タイムステップ付きの行動辞書 + Lock ---
         # lerobot 同様、各行動を絶対時刻(step)で管理する。推論スレッドは新chunkを
@@ -288,7 +288,7 @@ class SmolVLANavigationNode(Node):
         # 絶対時刻でそろえて集約（lerobot と同じロジック）:
         #  - 既に実行済み(ts < 現在step)は捨てる（推論中に経過したぶん）
         #  - 未来で既存に無い時刻はそのまま追加
-        #  - 既存にある時刻(=重複区間)は aggregate_fn(旧,新)=0.3旧+0.7新 で混ぜて滑らかに繋ぐ
+        #  - 既存にある時刻(=重複区間)は aggregate_fn(旧,新)=0.2旧+0.8新 で混ぜて滑らかに繋ぐ
         with self._queue_lock:
             cur_step = self._step
             for i, a in enumerate(chunk):

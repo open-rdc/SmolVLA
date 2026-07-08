@@ -9,9 +9,12 @@ interval_ms: 100
 toponav_crop_size: 288
 
 # Bayesianフィルタのパラメータ（NavVLAのnav.yaml準拠のデフォルト）
-toponav_delta: 5.0
+# delta: 観測尤度の鋭さ。小さいほど尤度がなだらかになり、通過済みノードに似た
+#        見た目のフレームが1枚来ただけで信念が遠くへ飛ぶ現象（パーセプチュアル
+#        エイリアシングによるホップバック）を抑えられる（=遷移がゆるくなる）。
+toponav_delta: 2.5
 toponav_window_lower: -1
-toponav_window_upper: 1
+toponav_window_upper: 3
 # windowed_mass（ピーク±window_radius ノードに集まった確率の割合 0〜1）算出用の半径
 toponav_window_radius: 2
 # windowed_mass のしきい値。これ未満のときは instruction を更新しない。
