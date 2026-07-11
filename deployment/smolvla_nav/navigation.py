@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""SmolVLA navigation inference node (雛形).
+"""SmolVLA navigation inference node.
 
 NavVLA の deployment/navvla/navigation.py を参考にした SmolVLA 版の推論スクリプト。
 OmniVLA との違い（このチェックポイントの仕様）:
@@ -49,7 +49,7 @@ DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weig
 
 
 # ══════════════════════════════════════════════════════════════════
-#  SmolVLA ラッパー  ―― ここは実装済み。中身を読んで理解するのが目的。
+#  SmolVLA ラッパー
 # ══════════════════════════════════════════════════════════════════
 class SmolVLAModel:
     """学習済み SmolVLA をロードし、1 枚の画像+状態+指示から action を返す。"""

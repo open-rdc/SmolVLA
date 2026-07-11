@@ -1,7 +1,7 @@
 """SmolVLA本体 + トポロジカルマップ自己位置推定(place_prompt_node)をまとめて起動する。
 
   conda activate ros_humble
-  source ~/kasai_ws/env_humble.sh
+  source <ROS2ワークスペース>/env_humble.sh
   env -u PYTHONPATH ros2 launch smolvla_nav smolvla_nav.launch.py
 
 use_toponav:=false で place_prompt_node を止め、navigation.py の固定プロンプトのみで動かせる。
