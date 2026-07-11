@@ -76,7 +76,8 @@ def main() -> None:
         use_videos=True,
     )
 
-    for ep_dir in sorted(args.input.glob("episode*")):
+    ep_dirs = sorted(p for p in args.input.iterdir() if p.is_dir() and (p / "traj_data.pkl").exists())
+    for ep_dir in ep_dirs:
         position, yaw, prompts = load_episode(ep_dir)
         n = len(position)
 
@@ -90,14 +91,9 @@ def main() -> None:
             dyaw     = yaw[t + 1] - yaw[t]          # yaw is unwrapped -> plain diff
             action   = np.array([dxy_body[0], dyaw], dtype=np.float32)
 
-            # --- state: PREVIOUS increment (t-1 -> t) / dt ---  [v, ω]
-            # (copycat note: never use the SAME-step increment here = that is the label)
-            if t == 0:
-                state = np.zeros(2, dtype=np.float32)
-            else:
-                v     = to_body_frame(position[t] - position[t - 1], yaw[t - 1])[0] / DT
-                omega = (yaw[t] - yaw[t - 1]) / DT
-                state = np.array([v, omega], dtype=np.float32)
+            # --- state: 常にゼロ = vision+language だけで予測させる（stateless化）---
+            # 実機側 navigation.py も state=zeros 固定で推論するため、学習も分布を合わせる。
+            state = np.zeros(2, dtype=np.float32)
 
             dataset.add_frame({
                 "observation.images.front": img,
