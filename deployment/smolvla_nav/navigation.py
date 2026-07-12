@@ -16,6 +16,7 @@ OmniVLA との違い（このチェックポイントの仕様）:
 
 from __future__ import annotations
 
+import math
 from pathlib import Path
 from typing import Optional
 
@@ -32,7 +33,8 @@ import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, PoseStamped
+from nav_msgs.msg import Path as NavPath
 from sensor_msgs.msg import Image
 
 from smolvla_nav.image_convert import image_msg_to_bgr
@@ -178,11 +180,16 @@ class SmolVLANavigationNode(Node):
         self._actions: dict[int, np.ndarray] = {}   # {step: action(2,)}
         self._queue_lock = threading.Lock()
 
+        # --- 経路可視化用: 直近に推論したchunk(今後10秒の予測)をそのままPathとして publish ---
+        # 過去は蓄積せず、新しいchunkが来るたびに置き換える。base_link基準（=常に現在位置からの相対軌跡）。
+        self.path_frame_id = "base_link"
+
         # --- 購読と publish ---
         self.image_sub = self.create_subscription(Image, "/image_raw", self.image_callback, 10)
         self.autonomous_sub = self.create_subscription(Bool, "/autonomous", self.autonomous_callback, 10)
         self.prompt_sub = self.create_subscription(String, "/prompt", self.prompt_callback, 10)
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
+        self.pred_path_pub = self.create_publisher(NavPath, "/smolvla_pred_path", 10)
 
         # --- タイマーを別々のコールバックグループに分ける ---
         # MultiThreadedExecutor と併用し、重い推論(~1.2s)が制御ループを止めないようにする。
@@ -258,6 +265,35 @@ class SmolVLANavigationNode(Node):
         cmd_vel.angular.z = omega
         self.cmd_vel_pub.publish(cmd_vel)
 
+    def _publish_pred_path(self, chunk: np.ndarray) -> None:
+        """直近に推論したchunk（今後10秒分の予測）をそのまま base_link 基準の Path として publish。
+
+        過去は蓄積しない。新しいchunkが来るたびに置き換え（毎回 poses を作り直す）。
+        base_link 基準 = 常に「現在のロボット位置」からの相対軌跡として解釈される。
+        """
+        stamp = self.get_clock().now().to_msg()
+        x = y = theta = 0.0
+        poses: list[PoseStamped] = []
+        for dx_body, dyaw in chunk:
+            x += float(dx_body) * math.cos(theta)
+            y += float(dx_body) * math.sin(theta)
+            theta += float(dyaw)
+
+            pose = PoseStamped()
+            pose.header.stamp = stamp
+            pose.header.frame_id = self.path_frame_id
+            pose.pose.position.x = x
+            pose.pose.position.y = y
+            pose.pose.orientation.z = math.sin(theta / 2.0)
+            pose.pose.orientation.w = math.cos(theta / 2.0)
+            poses.append(pose)
+
+        path_msg = NavPath()
+        path_msg.header.stamp = stamp
+        path_msg.header.frame_id = self.path_frame_id
+        path_msg.poses = poses
+        self.pred_path_pub.publish(path_msg)
+
     # ---- 推論ループ（重い・別スレッド）-------------------------------
     def inference_timer_callback(self) -> None:
         """残量が g*n(=refill_threshold) を下回ったら最新観測で chunk を計算し、
@@ -284,6 +320,9 @@ class SmolVLANavigationNode(Node):
         # ここが重い（~1.2s）。制御ループとは別スレッドなので停止しない。
         # chunk[i] は絶対時刻 base_step + i の行動に対応する。
         chunk = self.model.infer_chunk(image, state, prompt)  # (chunk_size, 2)
+
+        # 今回のchunk(=今後10秒の予測、クリップ前の生値)をそのままRViz可視化用に publish。
+        self._publish_pred_path(chunk)
 
         # 絶対時刻でそろえて集約（lerobot と同じロジック）:
         #  - 既に実行済み(ts < 現在step)は捨てる（推論中に経過したぶん）
