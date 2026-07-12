@@ -158,7 +158,7 @@ class SmolVLANavigationNode(Node):
 
         # --- パラメータ（速度上限・制御周期）---
         self.linear_max_vel = 1.0
-        self.angular_max_vel = 0.8
+        self.angular_max_vel = 1.0
         self.interval_ms = 200                 # 制御周期 = DT(200ms) と揃える
 
         # --- 非同期パラメータ g（SmolVLA論文 3.3節）---
