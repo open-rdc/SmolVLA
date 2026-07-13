@@ -41,17 +41,10 @@ def build_features() -> dict:
         },
         "action": {
             "dtype": "float32",
-            "shape": (2,),
-            "names": ["dx_body", "dyaw"],
+            "shape": (4,),
+            "names": ["x", "y", "cos_yaw", "sin_yaw"],
         },
     }
-
-
-def to_body_frame(delta_xy_global: np.ndarray, yaw: float) -> np.ndarray:
-    c = np.cos(yaw)
-    s = np.sin(yaw)
-    rotmat = np.array([[c, -s], [s, c]])
-    return delta_xy_global.dot(rotmat)
 
 
 def load_episode(ep_dir: Path) -> tuple[np.ndarray, np.ndarray, list[str]]:
@@ -81,15 +74,18 @@ def main() -> None:
         position, yaw, prompts = load_episode(ep_dir)
         n = len(position)
 
-        for t in range(n - 1):  # drop last frame: no t+1 -> no action
+        for t in range(n):
             # --- image: NavVLA saved BGR via cv2 -> convert to RGB ---
             img = cv2.imread(str(ep_dir / f"{t}.jpg"))           # HWC, BGR
             img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)           # HWC, RGB, uint8
 
-            # --- action: body-frame increment t -> t+1 ---  [Δx_body, Δyaw]
-            dxy_body = to_body_frame(position[t + 1] - position[t], yaw[t])
-            dyaw     = yaw[t + 1] - yaw[t]          # yaw is unwrapped -> plain diff
-            action   = np.array([dxy_body[0], dyaw], dtype=np.float32)
+            # --- action: frame t's own absolute pose [x, y, cos(yaw), sin(yaw)] ---
+            # 各waypointを共通原点(chunkの先頭)基準に変換する処理は
+            # WaypointRebaseProcessorStep(学習時)が担う。ここでは絶対姿勢を保存するだけ。
+            action = np.array(
+                [position[t, 0], position[t, 1], np.cos(yaw[t]), np.sin(yaw[t])],
+                dtype=np.float32,
+            )
 
             # --- state: 常にゼロ = vision+language だけで予測させる（stateless化）---
             # 実機側 navigation.py も state=zeros 固定で推論するため、学習も分布を合わせる。
@@ -103,7 +99,7 @@ def main() -> None:
             })
 
         dataset.save_episode()
-        print(f"[convert] saved {ep_dir.name}: {n - 1} frames")
+        print(f"[convert] saved {ep_dir.name}: {n} frames")
 
 
 if __name__ == "__main__":
