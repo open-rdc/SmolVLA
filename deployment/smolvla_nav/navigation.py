@@ -163,12 +163,6 @@ class SmolVLANavigationNode(Node):
         self.angular_max_vel = 1.0
         self.interval_ms = 200                 # 制御周期 = DT(200ms) と揃える
 
-        # --- 非同期パラメータ g（SmolVLA論文 3.3節）---
-        # 残量が g*n を下回ったら次chunkを推論する（g=0.7 = 30%消費で再推論、論文推奨）。
-        self.g = 0.7
-        self.chunk_size = int(self.model.policy.config.chunk_size)   # = 50
-        self.refill_threshold = int(self.g * self.chunk_size)        # = 35
-
         # 重複区間の集約関数（lerobot async_inference の weighted_average と同じ）。
         # 新旧chunkの同じ時刻の行動を 0.2*旧 + 0.8*新 で混ぜて滑らかに繋ぐ。
         self.aggregate_fn = lambda old, new: 0.2 * old + 0.8 * new
@@ -296,20 +290,19 @@ class SmolVLANavigationNode(Node):
 
     # ---- 推論ループ（重い・別スレッド）-------------------------------
     def inference_timer_callback(self) -> None:
-        """残量が g*n(=refill_threshold) を下回ったら最新観測で chunk を計算し、
+        """残量に関係なく、最新観測で毎回 chunk を計算し、
         絶対時刻でそろえて既存キューに集約する（lerobot _aggregate_action_queues 相当）。
 
-        SmolVLA論文 3.3節の g=0.7（30%消費で再推論）。MutuallyExclusiveCallbackGroup
-        なので ~1.2s ブロックしても制御タイマーは別スレッドで回り続け、二重起動もしない。
+        以前は g=0.7（30%消費で再推論、SmolVLA論文 3.3節）の閾値で間引いていたが、
+        常に推論し続けて行動を更新し続けるようにするため閾値を撤廃した。
+        MutuallyExclusiveCallbackGroup なので ~1.2s ブロックしても制御タイマーは
+        別スレッドで回り続け、推論の二重起動もしない（前回の推論が終わり次第、即座に次の推論が始まる）。
         """
         if not self.autonomous_flag or self.latest_image is None:
             return
 
         with self._queue_lock:
-            remaining = sum(1 for ts in self._actions if ts >= self._step)
             base_step = self._step   # この観測が予測する行動列の起点となる絶対時刻
-        if remaining >= self.refill_threshold:
-            return  # 残量 >= g*n なのでまだ再推論しない
 
         # 参照代入は GIL 下で原子的なので、最新値をスナップショットして使う。
         image = self.latest_image
