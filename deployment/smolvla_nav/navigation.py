@@ -149,6 +149,38 @@ class SmolVLAModel:
 # ══════════════════════════════════════════════════════════════════
 #  Pure Pursuit 幾何計算（ROS非依存、単体テスト可能）
 # ══════════════════════════════════════════════════════════════════
+def smooth_chunk(chunk: np.ndarray, window: int = 5) -> np.ndarray:
+    """waypoint列 [[dx,dy,hx,hy],...] を軽く移動平均で平滑化する。
+
+    モデルの生出力は点ごとに細かいジグザグを含みやすく、Pure Pursuitの
+    curvature計算(2y/d^2、近い点ほど鋭敏)がそれを増幅して経路・動きの
+    「かくかく」につながる。dx,dyは単純移動平均、hx,hyも移動平均した後
+    再正規化する(平均しても大きさ1のcos/sinのペアになるとは限らないため)。
+
+    始点(t=0、現在姿勢の原点)はそのまま残す。窓が大きいほど滑らかになるが
+    実際の曲がりも鈍るので、window=5(dt=0.2sで1秒分)程度が目安。
+    """
+    n = len(chunk)
+    if window <= 1 or n <= window:
+        return chunk
+    half = window // 2
+    smoothed = np.empty_like(chunk)
+    for i in range(n):
+        lo = max(0, i - half)
+        hi = min(n, i + half + 1)
+        smoothed[i, 0] = chunk[lo:hi, 0].mean()  # dx
+        smoothed[i, 1] = chunk[lo:hi, 1].mean()  # dy
+        hx = chunk[lo:hi, 2].mean()
+        hy = chunk[lo:hi, 3].mean()
+        norm = math.hypot(hx, hy)
+        if norm < 1e-6:
+            smoothed[i, 2], smoothed[i, 3] = chunk[i, 2], chunk[i, 3]
+        else:
+            smoothed[i, 2], smoothed[i, 3] = hx / norm, hy / norm
+    smoothed[0] = chunk[0]  # 原点(t=0)は平滑化で動かさない
+    return smoothed
+
+
 def _interpolate_pose(chunk: np.ndarray, k: float) -> tuple[float, float, float]:
     """chunk内の実数index kにおける姿勢(x, y, theta)を線形補間して返す。
 
@@ -253,6 +285,12 @@ class SmolVLANavigationNode(Node):
         self.interval_ms = 200                 # 制御周期 = DT(200ms) と揃える
         self.lookahead_distance = 0.5          # Pure Pursuitのルックアヘッド距離 [m]
 
+        # --- 平滑化パラメータ（経路・動きの「かくかく」対策）---
+        self.chunk_smooth_window = 5           # waypoint列の移動平均窓（dt=0.2sで1秒分）
+        self.cmd_ema_alpha = 0.3               # v/omegaコマンドのEMA係数（小さいほど滑らか・遅れる）
+        self._v_filt = 0.0
+        self._omega_filt = 0.0
+
         # --- 非同期再推論パラメータ g（SmolVLA論文 3.3節）---
         # chunk生成からの経過時間が (1-g)*chunk_size*DT を超えたら次chunkを推論する
         # （g=0.7 = 30%消費相当で再推論、論文推奨）。カデンスは旧実装（残量ベース）と数値的に同じ。
@@ -300,6 +338,8 @@ class SmolVLANavigationNode(Node):
             with self._chunk_lock:
                 self._chunk = None
                 self._chunk_time = None
+            self._v_filt = 0.0
+            self._omega_filt = 0.0
         self.autonomous_flag = msg.data
 
     def prompt_callback(self, msg: String) -> None:
@@ -348,11 +388,18 @@ class SmolVLANavigationNode(Node):
         elapsed = time.monotonic() - chunk_time
         v_raw, omega_raw = pure_pursuit_command(chunk, elapsed, DT, self.lookahead_distance)
 
-        v = float(np.clip(v_raw, -self.linear_max_vel, self.linear_max_vel))
-        omega = float(np.clip(omega_raw, -self.angular_max_vel, self.angular_max_vel))
+        v_clip = float(np.clip(v_raw, -self.linear_max_vel, self.linear_max_vel))
+        omega_clip = float(np.clip(omega_raw, -self.angular_max_vel, self.angular_max_vel))
+
+        # EMAで平滑化（waypoint列自体のノイズ・chunk切り替わり時の飛びを吸収する）。
+        # alpha=1なら平滑化なし(生値そのまま)、小さいほど滑らかだが追従が遅れる。
+        a = self.cmd_ema_alpha
+        self._v_filt = a * v_clip + (1 - a) * self._v_filt
+        self._omega_filt = a * omega_clip + (1 - a) * self._omega_filt
+
         cmd_vel = Twist()
-        cmd_vel.linear.x = v
-        cmd_vel.angular.z = omega
+        cmd_vel.linear.x = self._v_filt
+        cmd_vel.angular.z = self._omega_filt
         self.cmd_vel_pub.publish(cmd_vel)
 
     def _publish_pred_path(self, chunk: np.ndarray) -> None:
@@ -407,8 +454,9 @@ class SmolVLANavigationNode(Node):
 
         # ここが重い（~1.2s）。制御ループとは別スレッドなので停止しない。
         chunk = self.model.infer_chunk(image, state, prompt)  # (chunk_size, 4)
+        chunk = smooth_chunk(chunk, self.chunk_smooth_window)
 
-        # 今回のchunk(=今後10秒の予測、クリップ前の生値)をそのままRViz可視化用に publish。
+        # 今回のchunk(=今後10秒の予測、平滑化後)をそのままRViz可視化用に publish。
         self._publish_pred_path(chunk)
 
         with self._chunk_lock:
