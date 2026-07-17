@@ -95,7 +95,9 @@ def main() -> None:
                 "observation.images.front": img,
                 "observation.state": state,
                 "action": action,
-                "task": prompts[t].strip(),
+                # Cosmos天候拡張エピソードは traj_prompt.txt が jpg より1行少ない
+                # (オフバイワン)ことがあるため、最終フレームは直前の指示を使い回す。
+                "task": prompts[min(t, len(prompts) - 1)].strip(),
             })
 
         dataset.save_episode()
