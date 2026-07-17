@@ -253,13 +253,6 @@ class SmolVLANavigationNode(Node):
         self.interval_ms = 200                 # 制御周期 = DT(200ms) と揃える
         self.lookahead_distance = 0.5          # Pure Pursuitのルックアヘッド距離 [m]
 
-        # --- 非同期再推論パラメータ g（SmolVLA論文 3.3節）---
-        # chunk生成からの経過時間が (1-g)*chunk_size*DT を超えたら次chunkを推論する
-        # （g=0.7 = 30%消費相当で再推論、論文推奨）。カデンスは旧実装（残量ベース）と数値的に同じ。
-        self.g = 0.7
-        self.chunk_size = int(self.model.policy.config.chunk_size)   # = 50
-        self.refill_after_sec = (1.0 - self.g) * self.chunk_size * DT  # 約3秒
-
         # --- 最新chunkの単一スロット + Lock ---
         # 各waypointは推論時点の現在姿勢を共通原点とした絶対オフセットなので、
         # 旧実装のような絶対時刻indexキュー(dict)は不要。最新chunkを丸ごと保持し、
@@ -383,19 +376,16 @@ class SmolVLANavigationNode(Node):
 
     # ---- 推論ループ（重い・別スレッド）-------------------------------
     def inference_timer_callback(self) -> None:
-        """chunk生成からの経過時間が refill_after_sec を超えたら最新観測でchunkを再計算する。
+        """残量に関係なく、最新観測で毎回chunkを再計算する。
 
-        SmolVLA論文 3.3節のg=0.7相当（カデンスは旧実装の残量ベース判定と数値的に同じ、
-        約3秒ごと）。MutuallyExclusiveCallbackGroupなので ~1.2s ブロックしても
-        制御タイマーは別スレッドで回り続け、二重起動もしない。
+        以前は chunk生成からの経過時間が refill_after_sec(g=0.7相当、約3秒)を
+        超えるまで再推論を間引いていたが、常に推論し続けて chunk を更新し続ける
+        ようにするため閾値を撤廃した。MutuallyExclusiveCallbackGroupなので
+        ~1.2s ブロックしても制御タイマーは別スレッドで回り続け、推論の二重起動も
+        しない（前回の推論が終わり次第、即座に次の推論が始まる）。
         """
         if not self.autonomous_flag or self.latest_image is None:
             return
-
-        with self._chunk_lock:
-            chunk_time = self._chunk_time
-        if chunk_time is not None and (time.monotonic() - chunk_time) < self.refill_after_sec:
-            return  # まだ再推論しない
 
         # 参照代入は GIL 下で原子的なので、最新値をスナップショットして使う。
         # t_capture はこの画像に対応する時刻（新chunkのt=0に対応、推論の~1.2sを含めない）。
