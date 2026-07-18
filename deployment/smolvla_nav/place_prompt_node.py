@@ -98,7 +98,7 @@ class PlacePromptNode(Node):
         self.current_node_pub.publish(Int32(data=int(current_node.node_id)))
 
         below = score < self.toponav_min_score
-        self.get_logger().info(
+        self.get_logger().debug(
             f"[toponav] current_id={current_node.node_id} instruction=\"{current_node.instruction}\" "
             f"wmass={score:.3f} thr={self.toponav_min_score:.3f}{' BELOW' if below else ''}",
             throttle_duration_sec=1.0,
