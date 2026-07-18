@@ -1,10 +1,13 @@
-"""SmolVLA本体 + トポロジカルマップ自己位置推定(place_prompt_node)をまとめて起動する。
+"""SmolVLA本体 + トポロジカルマップ自己位置推定(place_prompt_node)を起動する。
 
-  conda activate ros_humble
-  source <ROS2ワークスペース>/env_humble.sh
-  env -u PYTHONPATH ros2 launch smolvla_nav smolvla_nav.launch.py
+  source <ROS2ワークスペース>/env_humble.sh   # conda ros_humble (Python3.12) に切り替え
+  ros2 launch smolvla_nav smolvla_nav.launch.py
 
 use_toponav:=false で place_prompt_node を止め、navigation.py の固定プロンプトのみで動かせる。
+
+カメラはこのlaunchでは起動しない。/image_raw は icart_driver 側の usb_cam_node が配信する
+(smolvla_navとicart_driverで別々にカメラを持つと同じデバイスを取り合って衝突するため)。
+navigation単体でテストしたい場合は、別途 v4l2_camera_node 等を手動起動すること。
 """
 
 from launch import LaunchDescription

@@ -4,7 +4,7 @@ topomap_image_dir: config/topomap/images
 placenet_weight_path: weights/placenet.pt
 
 # 自己位置推定ループの周期
-interval_ms: 100
+interval_ms: 200
 
 toponav_crop_size: 288
 
@@ -12,10 +12,10 @@ toponav_crop_size: 288
 # delta: 観測尤度の鋭さ。小さいほど尤度がなだらかになり、通過済みノードに似た
 #        見た目のフレームが1枚来ただけで信念が遠くへ飛ぶ現象（パーセプチュアル
 #        エイリアシングによるホップバック）を抑えられる（=遷移がゆるくなる）。
-toponav_delta: 2.5
+toponav_delta: 4
 toponav_window_lower: -1
 toponav_window_upper: 3
 # windowed_mass（ピーク±window_radius ノードに集まった確率の割合 0〜1）算出用の半径
 toponav_window_radius: 2
 # windowed_mass のしきい値。これ未満のときは instruction を更新しない。
-toponav_min_score: 0.4
+toponav_min_score: 0.45

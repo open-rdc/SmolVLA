@@ -47,7 +47,7 @@ DT = 1.0 / FPS
 IMG_H, IMG_W = 224, 224
 
 # チェックポイントの場所（tar.gz を展開した先）
-DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_nav201_ns_scratch_ckpt"
+DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_all_30ep_ckpt" / "pretrained_model"
 
 
 # ══════════════════════════════════════════════════════════════════
