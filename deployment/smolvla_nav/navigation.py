@@ -30,6 +30,7 @@ from typing import Optional
 import cv2
 import numpy as np
 import torch
+from scipy.interpolate import splev, splprep
 
 from lerobot.policies.factory import make_pre_post_processors
 from lerobot.policies.smolvla.modeling_smolvla import SmolVLAPolicy
@@ -54,7 +55,7 @@ DT = 1.0 / FPS
 IMG_H, IMG_W = 224, 224
 
 # チェックポイントの場所（tar.gz を展開した先）
-DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_nav201_ns_scratch_ckpt"
+DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_orne_ckpt" / "pretrained_model"
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -149,6 +150,37 @@ class SmolVLAModel:
 # ══════════════════════════════════════════════════════════════════
 #  Pure Pursuit 幾何計算（ROS非依存、単体テスト可能）
 # ══════════════════════════════════════════════════════════════════
+def smooth_chunk_spline(chunk: np.ndarray, smoothing: float = 0.01) -> np.ndarray:
+    """モデル出力の生waypoint列(x,y)をスプラインで平滑化し、headingを引き直す。
+
+    chunk: shape (N, 4) = [[dx, dy, hx, hy], ...]（共通原点の絶対waypoint）。
+    smoothing: splprepのs（許容する二乗残差の総和。0だと全点を通る補間になり
+        平滑化されない。大きいほど滑らかになるが経路の形が崩れる）。
+
+    元と同じ点数・同じ時間インデックスで返す（Pure Pursuitはchunk[i]がt=i*dtに
+    対応する前提でインデックスアクセスするため、点数を変えてはいけない）。
+    heading(hx,hy)は平滑化後の(x,y)の接線方向から再計算する（生chunkのheadingは
+    使わない。位置と向きの平滑化がズレると不整合になるため）。
+    """
+    n = len(chunk)
+    k = min(3, n - 1)
+    if k < 1:
+        return chunk
+    x = chunk[:, 0].astype(np.float64)
+    y = chunk[:, 1].astype(np.float64)
+    try:
+        tck, u = splprep([x, y], s=smoothing, k=k)
+        x_s, y_s = splev(u, tck)
+        dx_dt, dy_dt = splev(u, tck, der=1)
+    except Exception:
+        # 全点が同一（停止中の出力など）等でフィットに失敗したら、生のchunkを
+        # そのまま返す（安全側フォールバック。制御を止めないことを優先）。
+        return chunk
+    theta = np.arctan2(dy_dt, dx_dt)
+    smoothed = np.stack([x_s, y_s, np.cos(theta), np.sin(theta)], axis=1)
+    return smoothed.astype(np.float32)
+
+
 def _interpolate_pose(chunk: np.ndarray, k: float) -> tuple[float, float, float]:
     """chunk内の実数index kにおける姿勢(x, y, theta)を線形補間して返す。
 
@@ -252,6 +284,7 @@ class SmolVLANavigationNode(Node):
         self.angular_max_vel = 1.0
         self.interval_ms = 200                 # 制御周期 = DT(200ms) と揃える
         self.lookahead_distance = 0.5          # Pure Pursuitのルックアヘッド距離 [m]
+        self.spline_smoothing = 0.01           # スプライン平滑化の強さ（smooth_chunk_splineのs）
 
         # --- 最新chunkの単一スロット + Lock ---
         # 各waypointは推論時点の現在姿勢を共通原点とした絶対オフセットなので、
@@ -397,8 +430,10 @@ class SmolVLANavigationNode(Node):
 
         # ここが重い（~1.2s）。制御ループとは別スレッドなので停止しない。
         chunk = self.model.infer_chunk(image, state, prompt)  # (chunk_size, 4)
+        # モデルの生waypointをスプラインで平滑化してからPure Pursuit/可視化に渡す。
+        chunk = smooth_chunk_spline(chunk, smoothing=self.spline_smoothing)
 
-        # 今回のchunk(=今後10秒の予測、クリップ前の生値)をそのままRViz可視化用に publish。
+        # 平滑化後のchunk(=今後10秒の予測)をそのままRViz可視化用に publish。
         self._publish_pred_path(chunk)
 
         with self._chunk_lock:
