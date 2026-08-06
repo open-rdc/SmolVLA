@@ -46,7 +46,6 @@ sys.modules["rclpy.qos"].qos_profile_system_default = None
 sys.modules["nav_msgs.msg"].Odometry = object
 sys.modules["sensor_msgs.msg"].Image = object
 sys.modules["std_msgs.msg"].Empty = object
-sys.modules["std_msgs.msg"].String = object
 
 sys.path.insert(0, str(REPO / "deployment"))
 from smolvla_nav import create_data as cd  # noqa: E402
@@ -106,7 +105,6 @@ try:
         node.image_callback(fake_image(seed=i))
         # ±pi をまたぐ yaw にして unwrap が効いているか見る
         node.odom_callback(fake_odom(x=0.2 * i, y=0.0, yaw=3.10 + 0.05 * i))
-        node.prompt_callback(types.SimpleNamespace(data=f"turn left at the corner {i}"))
         node.timer_callback()
     check(f"{N} フレーム記録", node.current_sample_index == N, f"{node.current_sample_index}")
 
@@ -118,19 +116,29 @@ try:
     check(f"jpg が {N} 枚", len(jpgs) == N, f"{len(jpgs)}")
     check("連番 0..N-1", [int(p.stem) for p in jpgs] == list(range(N)))
     check("traj_data.pkl がある", (ep / "traj_data.pkl").exists())
-    check("traj_prompt.txt がある", (ep / "traj_prompt.txt").exists())
+    check("traj_prompt.txt は書かない（後からアノテーション）", not (ep / "traj_prompt.txt").exists())
 
     print("=== 4. 画像は 224x224 BGR ===")
     import cv2
     im = cv2.imread(str(jpgs[0]))
     check("224x224x3", im.shape == (224, 224, 3), str(im.shape))
 
-    print("=== 5. 変換器の load_episode で読み直せる ===")
+    print("=== 5. アノテーション前は変換器が落ちる（付け忘れに気づける）===")
     sys.path.insert(0, str(REPO / "training" / "data"))
     import importlib.util
     spec = importlib.util.spec_from_file_location("ldset", REPO / "training/data/lerobot_dataset.py")
     ldset = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(ldset)
+    try:
+        ldset.load_episode(ep)
+        check("traj_prompt.txt 無しで落ちる", False, "落ちなかった")
+    except FileNotFoundError:
+        check("traj_prompt.txt 無しで落ちる", True)
+
+    print("=== 5b. アノテーション後は変換器の load_episode で読み直せる ===")
+    # lang_anotation_tool.py と同じ書式（1行1フレーム、trailing newline 無し）
+    (ep / "traj_prompt.txt").write_text(
+        "\n".join(f"turn left at the corner {i}" for i in range(N)), encoding="utf-8")
     pos, yaw, prompts = ldset.load_episode(ep)
     check("position shape", pos.shape == (N, 2), str(pos.shape))
     check("yaw shape", yaw.shape == (N,), str(yaw.shape))
@@ -142,6 +150,12 @@ try:
     check("yaw に 2pi の飛びが無い", np.all(np.abs(np.diff(yaw)) < np.pi),
           f"max|diff|={np.abs(np.diff(yaw)).max():.3f}")
     check("yaw は単調増加", np.all(np.diff(yaw) > 0))
+
+    print("=== 6b. アノテーションツールのパディング挙動（traj_prompt.txt 無し）===")
+    ep2_frames = len(list(ep.glob("*.jpg")))
+    lines = []                                    # ツールは file 無し -> lines=[]
+    pad = max(0, ep2_frames - len(lines))
+    check("jpg 枚数ぶんダミーで埋まる", pad == N, f"pad={pad}")
 
     print("=== 7. エピソード検出（変換器と同じ条件）===")
     ds = tmp / node.dataset_dir.name

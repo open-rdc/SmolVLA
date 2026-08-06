@@ -8,17 +8,26 @@
     ros2 topic pub --once /flag std_msgs/msg/Empty {}   # 開始
     ros2 topic pub --once /flag std_msgs/msg/Empty {}   # 停止（ここで1エピソード保存）
 
-出力（`training/data/lerobot_dataset.py --input <dataset_dir>` にそのまま渡せる形）:
+出力:
 
     <dataset_dir>/episode01/0.jpg 1.jpg ... N-1.jpg   224x224 BGR
                            /traj_data.pkl             {"position": (N,2) float32,
                                                        "yaw": (N,) float32 unwrap済}
-                           /traj_prompt.txt           1行1フレームの言語指示（N行）
+
+**traj_prompt.txt は書かない**（NavVLA と同じ方針）。言語指示は収録後に
+NavVLA の tools/lang_anotation_tool.py で付ける。同ツールは traj_prompt.txt が
+無ければ jpg の枚数ぶんダミーで埋めてから編集させるので、そのまま使える。
+
+    python ~/ros2_ws/src/NavVLA/tools/lang_anotation_tool.py <dataset_dir>
+
+アノテーション後に変換器へ渡す:
+
+    python training/data/lerobot_dataset.py --input <dataset_dir> --repo-id ... --root ...
+
+（traj_prompt.txt が無いまま変換すると load_episode が落ちるので、
+  アノテーション忘れはそこで気づける。）
 
 NavVLA 版との違い:
-  - **traj_prompt.txt を収録時に書く**。NavVLA は後から lang_anotation_tool.py で
-    付けるが、SmolVLA は指示がフレーム単位で切り替わる前提なので、走行中の
-    `/prompt` をそのまま各フレームのラベルとして記録する。
   - 画像のデコードは cv_bridge ではなく navigation.py と同じ image_msg_to_bgr を使う。
     中央クロップも navigation.py と同一処理にして、収録時と推論時で前処理を揃える。
 """
@@ -39,7 +48,7 @@ from rclpy.node import Node
 from rclpy.qos import qos_profile_system_default
 from nav_msgs.msg import Odometry
 from sensor_msgs.msg import Image
-from std_msgs.msg import Empty, String
+from std_msgs.msg import Empty
 
 from smolvla_nav.image_convert import image_msg_to_bgr
 
@@ -49,9 +58,6 @@ FPS = 5
 SAMPLE_INTERVAL = 1.0 / FPS          # 0.2s
 IMG_H, IMG_W = 224, 224
 JPEG_QUALITY = 95                    # NavVLA create_data.py と同じ
-
-# /prompt が一度も来ていない場合に使う指示（navigation.py の既定と揃える）
-DEFAULT_PROMPT = "go straight along the road"
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
@@ -84,16 +90,11 @@ class DataCreator(Node):
         # --- パラメータ ---
         self.declare_parameter("odom_topic", "/Odometry")
         self.declare_parameter("image_topic", "/image_raw")
-        self.declare_parameter("prompt_topic", "/prompt")
         # 既定の保存先は変換器がそのまま読める training/data/raw/ 配下。
         self.declare_parameter("output_dir", str(REPO_ROOT / "training" / "data" / "raw"))
-        self.declare_parameter("default_prompt", DEFAULT_PROMPT)
 
         odom_topic = self.get_parameter("odom_topic").value
         image_topic = self.get_parameter("image_topic").value
-        prompt_topic = self.get_parameter("prompt_topic").value
-        self.latest_prompt: str = self.get_parameter("default_prompt").value
-        self._prompt_received = False
 
         # --- 収録状態 ---
         self.collect_flag = False
@@ -110,18 +111,17 @@ class DataCreator(Node):
         self.current_episode_dir: Optional[Path] = None
         self.current_positions: list[list[float]] = []
         self.current_yaws: list[float] = []
-        self.current_prompts: list[str] = []
 
         # --- 購読 ---
         self.create_subscription(Empty, "/flag", self.flag_callback, qos_profile_system_default)
         self.create_subscription(Odometry, odom_topic, self.odom_callback, qos_profile_system_default)
         self.create_subscription(Image, image_topic, self.image_callback, qos_profile_system_default)
-        self.create_subscription(String, prompt_topic, self.prompt_callback, qos_profile_system_default)
         self.create_timer(SAMPLE_INTERVAL, self.timer_callback)
 
         self.get_logger().info(f"保存先: {self.dataset_dir}")
-        self.get_logger().info(f"購読: {image_topic} / {odom_topic} / {prompt_topic}")
+        self.get_logger().info(f"購読: {image_topic} / {odom_topic}")
         self.get_logger().info("/flag に Empty を publish すると収録の開始・停止がトグルします")
+        self.get_logger().info("言語指示は収録後に lang_anotation_tool.py で付けてください")
 
     # ---- callbacks ----------------------------------------------------
     def flag_callback(self, _msg: Empty) -> None:
@@ -134,10 +134,6 @@ class DataCreator(Node):
 
     def odom_callback(self, msg: Odometry) -> None:
         self.latest_odom = msg
-
-    def prompt_callback(self, msg: String) -> None:
-        self.latest_prompt = msg.data
-        self._prompt_received = True
 
     def image_callback(self, msg: Image) -> None:
         bgr = image_msg_to_bgr(msg)
@@ -155,18 +151,13 @@ class DataCreator(Node):
         self.current_sample_index = 0
         self.current_positions = []
         self.current_yaws = []
-        self.current_prompts = []
 
         self.current_episode_dir = self.dataset_dir / f"episode{self.current_episode_index:02d}"
         self.current_episode_dir.mkdir(parents=True, exist_ok=True)
         self.get_logger().info(f"⚪収録開始: {self.current_episode_dir.name}")
-        if not self._prompt_received:
-            self.get_logger().warn(
-                f"/prompt をまだ受信していません。既定の指示 '{self.latest_prompt}' で記録します"
-            )
 
     def _finalize_current_episode(self) -> None:
-        """1エピソードを確定して traj_data.pkl / traj_prompt.txt を書く。"""
+        """1エピソードを確定して traj_data.pkl を書く（言語指示は後からアノテーション）。"""
         if self.current_episode_dir is None:
             return
 
@@ -183,12 +174,8 @@ class DataCreator(Node):
         with (self.current_episode_dir / "traj_data.pkl").open("wb") as f:
             pickle.dump({"position": positions, "yaw": yaws}, f)
 
-        # 1行1フレーム。jpg の枚数と必ず同じ行数にする（変換器が行数で対応付けるため）。
-        (self.current_episode_dir / "traj_prompt.txt").write_text(
-            "\n".join(self.current_prompts) + "\n", encoding="utf-8"
-        )
-
-        assert len(self.current_prompts) == self.current_sample_index == len(positions)
+        # traj_prompt.txt はここでは書かない（収録後に lang_anotation_tool.py で付ける）。
+        assert self.current_sample_index == len(positions) == len(yaws)
         self.get_logger().info(
             f"🔵保存: {self.current_episode_dir.name} ({self.current_sample_index} フレーム)"
         )
@@ -205,10 +192,9 @@ class DataCreator(Node):
             )
             return
 
-        # 画像・姿勢・指示を同じタイミングでスナップショットする（参照代入はGIL下で原子的）。
+        # 画像と姿勢を同じタイミングでスナップショットする（参照代入はGIL下で原子的）。
         bgr = self.latest_image
         odom = self.latest_odom
-        prompt = self.latest_prompt
 
         image_path = self.current_episode_dir / f"{self.current_sample_index}.jpg"
         cv2.imwrite(str(image_path), center_crop_resize(bgr), [int(cv2.IMWRITE_JPEG_QUALITY), JPEG_QUALITY])
@@ -217,13 +203,12 @@ class DataCreator(Node):
         q = pose.orientation
         self.current_positions.append([pose.position.x, pose.position.y])
         self.current_yaws.append(yaw_from_quaternion(q.x, q.y, q.z, q.w))
-        self.current_prompts.append(prompt.replace("\n", " ").strip())
 
         self.current_sample_index += 1
         self.total_collected_samples += 1
         if self.current_sample_index % FPS == 0:      # 1秒に1回だけログを出す
             self.get_logger().info(
-                f"🟢{self.current_episode_dir.name} #{self.current_sample_index} '{prompt}'"
+                f"🟢{self.current_episode_dir.name} #{self.current_sample_index}"
             )
 
     # ---- 終了処理 ------------------------------------------------------
