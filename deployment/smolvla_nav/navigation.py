@@ -4,7 +4,8 @@
 NavVLA の deployment/navvla/navigation.py を参考にした SmolVLA 版の推論スクリプト。
 OmniVLA との違い（このチェックポイントの仕様）:
 
-  - 入力画像は front カメラ 1 枚だけ（preprocessor が front -> camera1 に rename する）
+  - 入力画像は同一カメラの時系列 3 枚（camera1=現在 / camera2=1秒前 / camera3=2秒前）。
+    SmolVLA の 3 視点スロットを時間軸に転用しているので front キーは使わない。
   - observation.state = [v, omega]   (2 次元, body frame の並進速度と角速度)
   - task = 言語指示の文字列（内部で tokenize される）
   - 出力 action = [dx_body, dyaw]    (chunk_size=50 の行動列を内部キューで管理)
@@ -16,6 +17,7 @@ OmniVLA との違い（このチェックポイントの仕様）:
 
 from __future__ import annotations
 
+import collections
 import math
 from pathlib import Path
 from typing import Optional
@@ -45,6 +47,12 @@ from std_msgs.msg import Bool, String
 FPS = 5
 DT = 1.0 / FPS
 IMG_H, IMG_W = 224, 224
+
+# 時系列画像コンテキストのラグ。5 フレーム @ FPS=5 = 1 秒。
+# 学習側 training/data/lerobot_dataset.py の HISTORY_STRIDE_FRAMES と必ず一致させる。
+# 設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定3
+HISTORY_STRIDE_FRAMES = 5
+HISTORY_LEN = 2 * HISTORY_STRIDE_FRAMES + 1   # 2秒分 = 11 枚
 
 # チェックポイントの場所（tar.gz を展開した先）
 DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_all_30ep_ckpt" / "pretrained_model"
@@ -79,28 +87,39 @@ class SmolVLAModel:
         """自律走行を開始/再開するたびに呼ぶ（内部の action chunk キューを空にする）。"""
         self.policy.reset()
 
+    def _build_batch(self, images_rgb: list[np.ndarray], state: np.ndarray, task: str) -> dict:
+        """時系列3枚+状態+指示から観測 dict を組み立てる（正規化前の「生の」batch）。
+
+        camera1=現在(t) / camera2=1秒前 / camera3=2秒前 の順に入れる。学習時の
+        build_features() と同じ割り当てにすること。
+        VISUAL は IDENTITY 正規化なので [0,1] で渡す（内部の prepare_images が [-1,1] に変換する）。
+        """
+        if len(images_rgb) != 3:
+            raise ValueError(f"images_rgb must have 3 frames (t, t-1s, t-2s), got {len(images_rgb)}")
+
+        batch: dict = {
+            # HWC uint8 [0,255] -> CHW float [0,1]
+            f"observation.images.camera{i + 1}": torch.from_numpy(im).permute(2, 0, 1).float() / 255.0
+            for i, im in enumerate(images_rgb)
+        }
+        batch["observation.state"] = torch.from_numpy(np.asarray(state, np.float32))  # (2,)
+        batch["task"] = task
+        return batch
+
     @torch.no_grad()
-    def infer(self, image_rgb: np.ndarray, state: np.ndarray, task: str) -> np.ndarray:
+    def infer(self, images_rgb: list[np.ndarray], state: np.ndarray, task: str) -> np.ndarray:
         """1 ステップ推論して action [dx_body, dyaw] を返す。
 
         Args:
-            image_rgb: front カメラ画像。HWC, uint8, RGB。(IMG_H, IMG_W にリサイズ済み想定)
+            images_rgb: [現在(t), 1つ前(t-1), 2つ前(t-2)] の3枚。各 HWC, uint8, RGB。
+                        (IMG_H, IMG_W にリサイズ済み想定)
             state:     [v, omega] の float 配列 (shape (2,))。
             task:      言語指示（例: "go straight along the road"）。
 
         Returns:
             action: np.ndarray shape (2,) = [dx_body, dyaw]（逆正規化済みの実スケール）。
         """
-        # HWC uint8 [0,255] -> CHW float [0,1]。VISUAL は IDENTITY 正規化なので
-        # [0,1] で渡す（内部の prepare_images が [-1,1] に変換する）。
-        img = torch.from_numpy(image_rgb).permute(2, 0, 1).float() / 255.0
-
-        batch = {
-            "observation.images.front": img,                                  # (C,H,W)
-            "observation.state": torch.from_numpy(np.asarray(state, np.float32)),  # (2,)
-            "task": task,
-        }
-
+        batch = self._build_batch(images_rgb, state, task)
         batch = self.preprocessor(batch)          # 正規化・tokenize・device 転送
         # GPU では fp16 autocast で推論（Turing のテンソルコアで約3倍速、精度低下は実質なし）。
         # 誤差の出やすい演算は autocast が自動で fp32 に保つ。CPU 時は従来どおり fp32。
@@ -114,21 +133,19 @@ class SmolVLAModel:
         return action.squeeze(0).float().cpu().numpy()  # (2,) = [dx_body, dyaw]
 
     @torch.no_grad()
-    def infer_chunk(self, image_rgb: np.ndarray, state: np.ndarray, task: str) -> np.ndarray:
-        """1 枚の観測から 50 ステップ分の行動列をまとめて返す（非同期先読み用）。
+    def infer_chunk(self, images_rgb: list[np.ndarray], state: np.ndarray, task: str) -> np.ndarray:
+        """3枚の時系列観測から 50 ステップ分の行動列をまとめて返す（非同期先読み用）。
 
         select_action は内部キューから1手ずつ返すが、こちらは chunk 全体を返すので
         呼び出し側で自前キューを管理できる。
 
+        Args:
+            images_rgb: [現在(t), 1つ前(t-1), 2つ前(t-2)] の3枚。infer() と同じ形式。
+
         Returns:
             actions: np.ndarray shape (chunk_size, 2) = [[dx_body, dyaw], ...]
         """
-        img = torch.from_numpy(image_rgb).permute(2, 0, 1).float() / 255.0
-        batch = {
-            "observation.images.front": img,
-            "observation.state": torch.from_numpy(np.asarray(state, np.float32)),
-            "task": task,
-        }
+        batch = self._build_batch(images_rgb, state, task)
         batch = self.preprocessor(batch)
         if self.device.type == "cuda":
             with torch.autocast("cuda", dtype=torch.float16):
@@ -157,6 +174,15 @@ class SmolVLANavigationNode(Node):
         self.latest_image: Optional[np.ndarray] = None   # RGB, (IMG_H, IMG_W, 3)
         self.latest_prompt = "go straight along the road"
         self.state = np.zeros(2, dtype=np.float32)        # [v, omega]
+
+        # --- 画像履歴バッファ（2秒分=11枚、最新が右端）---
+        # 制御周期(DT=200ms)ごとに最新フレームを push する。推論の呼び出し頻度
+        # （レイテンシ依存で変動する）ではなく、学習データの生フレーム間隔 dt=0.2s と
+        # 揃えるためにこの周期でサンプリングする。
+        # 取り出し時: 現在=history[-1], 1秒前=history[-1-5], 2秒前=history[-1-10]
+        # 設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定3
+        self.image_history: collections.deque[np.ndarray] = collections.deque(maxlen=HISTORY_LEN)
+        self._history_lock = threading.Lock()
 
         # --- パラメータ（速度上限・制御周期）---
         self.linear_max_vel = 1.0
@@ -206,6 +232,9 @@ class SmolVLANavigationNode(Node):
             with self._queue_lock:
                 self._actions.clear()
                 self._step = 0
+            # 前回走行の画像履歴を持ち越さない（行動キューのクリアと同じ理由）。
+            with self._history_lock:
+                self.image_history.clear()
         self.autonomous_flag = msg.data
 
     def prompt_callback(self, msg: String) -> None:
@@ -240,6 +269,13 @@ class SmolVLANavigationNode(Node):
         if not self.autonomous_flag:
             return  # 非自律時は publish しない（他コントローラに任せる）
 
+        # 学習データのフレーム間隔(dt=0.2s)と揃えるため、推論の呼び出し頻度ではなく
+        # この制御ループの周期で画像履歴をサンプリングする（決定3参照）。
+        image = self.latest_image     # 参照代入は GIL 下で原子的
+        if image is not None:
+            with self._history_lock:
+                self.image_history.append(image)
+
         # 現在 step の行動を取り出し、時刻を1つ進める（行動が無くても step は進める）。
         with self._queue_lock:
             action = self._actions.pop(self._step, None)
@@ -258,6 +294,24 @@ class SmolVLANavigationNode(Node):
         cmd_vel.linear.x = v
         cmd_vel.angular.z = omega
         self.cmd_vel_pub.publish(cmd_vel)
+
+    def _history_frames(self) -> Optional[list[np.ndarray]]:
+        """履歴バッファから [現在, 1秒前, 2秒前] の3枚を取り出す。
+
+        まだ 11 枚溜まっていない（起動直後・自律ON直後）場合はインデックスを 0 に
+        クランプする＝バッファ内で最も古いフレームを複製して padding する。学習側の
+        「エピソード先頭は frame 0 を複製」と同じ意味になる（決定4）。
+        履歴が空なら None を返す（呼び出し側で推論をスキップ）。
+        """
+        with self._history_lock:
+            hist = list(self.image_history)
+        if not hist:
+            return None
+
+        def pick(lag: int) -> np.ndarray:
+            return hist[max(len(hist) - 1 - lag, 0)]
+
+        return [pick(0), pick(HISTORY_STRIDE_FRAMES), pick(2 * HISTORY_STRIDE_FRAMES)]
 
     def _publish_pred_path(self, chunk: np.ndarray) -> None:
         """直近に推論したchunk（今後10秒分の予測）をそのまま base_link 基準の Path として publish。
@@ -304,15 +358,19 @@ class SmolVLANavigationNode(Node):
         with self._queue_lock:
             base_step = self._step   # この観測が予測する行動列の起点となる絶対時刻
 
+        # 履歴バッファから時系列3枚を取り出す（揃っていなければ最古フレームで複製）。
+        images = self._history_frames()
+        if images is None:
+            return   # 制御ループがまだ1枚も push していない（自律ON直後）
+
         # 参照代入は GIL 下で原子的なので、最新値をスナップショットして使う。
-        image = self.latest_image
         prompt = self.latest_prompt
         # state = [v, omega]。暫定ゼロ固定（copycat 対策で現在指令は入れない）。
         state = np.zeros(2, dtype=np.float32)
 
         # ここが重い（~1.2s）。制御ループとは別スレッドなので停止しない。
         # chunk[i] は絶対時刻 base_step + i の行動に対応する。
-        chunk = self.model.infer_chunk(image, state, prompt)  # (chunk_size, 2)
+        chunk = self.model.infer_chunk(images, state, prompt)  # (chunk_size, 2)
 
         # 今回のchunk(=今後10秒の予測、クリップ前の生値)をそのままRViz可視化用に publish。
         self._publish_pred_path(chunk)

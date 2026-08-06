@@ -14,6 +14,11 @@ FPS = 5
 DT = 1.0 / FPS
 IMG_H, IMG_W = 224, 224
 
+# 時系列画像コンテキスト（camera1=現在 / camera2=1秒前 / camera3=2秒前）のラグ。
+# 5 フレーム @ FPS=5 = 1 秒。後で調整できるよう定数化してある。
+# 設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定3
+HISTORY_STRIDE_FRAMES = 5
+
 
 def parse_args() -> argparse.Namespace:
     p = argparse.ArgumentParser(description=__doc__)
@@ -27,13 +32,23 @@ def parse_args() -> argparse.Namespace:
 
 
 def build_features() -> dict:
-    """Feature schema for the LeRobotDataset."""
+    """Feature schema for the LeRobotDataset.
+
+    SmolVLA が元々持つ 3 カメラ視点スロットを「複数視点」ではなく「時間軸」に転用する:
+    camera1=現在(t) / camera2=1秒前(t-5) / camera3=2秒前(t-10)。
+    こうするとモデル本体（SmolVLM2 の visual encoder）の改造が不要になる。
+    front キーは使わないので、学習コマンドの --rename_map も不要。
+    詳細設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定2,3。
+    """
+    image_feature = {
+        "dtype": "video",
+        "shape": (IMG_H, IMG_W, 3),
+        "names": ["height", "width", "channel"],
+    }
     return {
-        "observation.images.front": {
-            "dtype": "video",
-            "shape": (IMG_H, IMG_W, 3),
-            "names": ["height", "width", "channel"],
-        },
+        "observation.images.camera1": dict(image_feature),  # 現在 (t)
+        "observation.images.camera2": dict(image_feature),  # 1秒前 (t - HISTORY_STRIDE_FRAMES)
+        "observation.images.camera3": dict(image_feature),  # 2秒前 (t - 2*HISTORY_STRIDE_FRAMES)
         "observation.state": {
             "dtype": "float32",
             "shape": (2,),
@@ -81,10 +96,30 @@ def main() -> None:
         position, yaw, prompts = load_episode(ep_dir)
         n = len(position)
 
+        # エピソード内の画像キャッシュ。参照するのは t / t-5 / t-10 の3枚だけなので、
+        # 直近 2*HISTORY_STRIDE_FRAMES+1 枚だけ保持して古いものから捨てる。
+        # 各フレームの jpg 読み込みは1回で済む（I/Oを3倍にしない）。
+        cache: dict[int, np.ndarray] = {}
+
+        def load_img(i: int, ep_dir: Path = ep_dir, cache: dict = cache) -> np.ndarray:
+            """i 番目のフレームを RGB uint8 で返す（キャッシュ経由）。"""
+            img = cache.get(i)
+            if img is None:
+                bgr = cv2.imread(str(ep_dir / f"{i}.jpg"))       # HWC, BGR
+                if bgr is None:
+                    raise FileNotFoundError(f"cannot read {ep_dir / f'{i}.jpg'}")
+                img = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)       # HWC, RGB, uint8
+                cache[i] = img
+            return img
+
         for t in range(n - 1):  # drop last frame: no t+1 -> no action
-            # --- image: NavVLA saved BGR via cv2 -> convert to RGB ---
-            img = cv2.imread(str(ep_dir / f"{t}.jpg"))           # HWC, BGR
-            img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)           # HWC, RGB, uint8
+            # --- images: 現在(t) / 1秒前(t-5) / 2秒前(t-10) ---
+            # 負のインデックスになるエピソード先頭は 0 にクランプ = 先頭フレームを複製して padding。
+            # 設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定3,4
+            img    = load_img(t)                                     # 現在 (t)
+            img_t1 = load_img(max(t - HISTORY_STRIDE_FRAMES, 0))     # 1秒前
+            img_t2 = load_img(max(t - 2 * HISTORY_STRIDE_FRAMES, 0)) # 2秒前
+            cache.pop(t - 2 * HISTORY_STRIDE_FRAMES - 1, None)       # もう参照しない分を解放
 
             # --- action: body-frame increment t -> t+1 ---  [Δx_body, Δyaw]
             dxy_body = to_body_frame(position[t + 1] - position[t], yaw[t])
@@ -96,10 +131,14 @@ def main() -> None:
             state = np.zeros(2, dtype=np.float32)
 
             dataset.add_frame({
-                "observation.images.front": img,
+                "observation.images.camera1": img,      # 現在 (t)
+                "observation.images.camera2": img_t1,   # 1秒前
+                "observation.images.camera3": img_t2,   # 2秒前
                 "observation.state": state,
                 "action": action,
-                "task": prompts[t].strip(),
+                # Cosmos天候拡張エピソードは traj_prompt.txt が jpg より1行少ないことがあるので
+                # 末尾でクランプして直前の指示を使い回す（IndexError 防止）。
+                "task": prompts[min(t, len(prompts) - 1)].strip(),
             })
 
         dataset.save_episode()
