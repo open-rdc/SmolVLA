@@ -35,11 +35,12 @@ import rclpy
 from rclpy.node import Node
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from rclpy.executors import MultiThreadedExecutor
-from geometry_msgs.msg import Twist, PoseStamped
+from geometry_msgs.msg import Twist, PoseStamped, PointStamped
 from nav_msgs.msg import Path as NavPath
 from sensor_msgs.msg import Image
 
 from smolvla_nav.image_convert import image_msg_to_bgr
+from smolvla_nav.pure_pursuit import find_lookahead_point, integrate_path, pure_pursuit_omega
 from std_msgs.msg import Bool, String
 
 
@@ -53,6 +54,16 @@ IMG_H, IMG_W = 224, 224
 # 設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定3
 HISTORY_STRIDE_FRAMES = 5
 HISTORY_LEN = 2 * HISTORY_STRIDE_FRAMES + 1   # 2秒分 = 11 枚
+
+# --- 経路追従モードの既定値（既定は両方 OFF = 従来どおり生の速度をそのまま流す）---
+# 実機で「コース端に寄ると中央に戻れない」問題の切り分け/対策用。モデルの計画は
+# 「1〜2秒まっすぐ → その後ゆるやかに戻る」形をしているが、推論が ~1.2s かかるため
+# chunk の先頭6ステップ程度しか実行されず、曲がり始める部分に到達しない。
+# 実験中に ros2 param set で切り替えたいので ROS2 パラメータにしてある。
+DEFAULT_STEP_LOOKAHEAD = 0          # chunk の何ステップ先の行動を使うか（不感帯の実測用）
+DEFAULT_USE_PURE_PURSUIT = False    # True で操舵だけ Pure Pursuit に置き換える
+DEFAULT_LOOKAHEAD_DISTANCE = 2.5    # 前方注視距離 [m]。不感帯(約1〜2m)より長く取ること
+PP_MAX_PATH_STEPS = 50              # Pure Pursuit 用に積分する最大ステップ数（=chunk長）
 
 # チェックポイントの場所（tar.gz を展開した先）
 DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_all_30ep_ckpt" / "pretrained_model"
@@ -189,6 +200,18 @@ class SmolVLANavigationNode(Node):
         self.angular_max_vel = 1.0
         self.interval_ms = 200                 # 制御周期 = DT(200ms) と揃える
 
+        # --- 経路追従モード（復帰動作の実験用。既定は両方 OFF = 従来の挙動）---
+        # step_lookahead: chunk の K ステップ先の行動を使う。計画の先頭にある
+        #   「まっすぐな前置き（不感帯）」を飛ばせるので、K を 0→5→10→15 と振ると
+        #   不感帯の長さがステップ数で実測できる。0 = 従来どおり現在stepの行動。
+        # use_pure_pursuit: True で ω を Pure Pursuit で計算する。v は従来どおり
+        #   モデルの予測を使い、操舵だけを置き換える（カーブの挙動を壊さないため）。
+        # lookahead_distance: 前方注視距離[m]。不感帯より短いと不感帯の中を見てしまい
+        #   生の dyaw を使うのと変わらなくなるので 2〜3m から始める。
+        self.declare_parameter("step_lookahead", DEFAULT_STEP_LOOKAHEAD)
+        self.declare_parameter("use_pure_pursuit", DEFAULT_USE_PURE_PURSUIT)
+        self.declare_parameter("lookahead_distance", DEFAULT_LOOKAHEAD_DISTANCE)
+
         # 重複区間の集約関数（lerobot async_inference の weighted_average と同じ）。
         # 新旧chunkの同じ時刻の行動を 0.2*旧 + 0.8*新 で混ぜて滑らかに繋ぐ。
         self.aggregate_fn = lambda old, new: 0.2 * old + 0.8 * new
@@ -210,6 +233,9 @@ class SmolVLANavigationNode(Node):
         self.prompt_sub = self.create_subscription(String, "/prompt", self.prompt_callback, 10)
         self.cmd_vel_pub = self.create_publisher(Twist, "/cmd_vel", 10)
         self.pred_path_pub = self.create_publisher(NavPath, "/smolvla_pred_path", 10)
+        # 注視点も出す。/smolvla_pred_path と重ねて見ると、注視点が計画の
+        # 「まっすぐな前置き」の中に入っていないか（=注視距離が短すぎないか）を目視できる。
+        self.lookahead_pub = self.create_publisher(PointStamped, "/smolvla_lookahead", 10)
 
         # --- タイマーを別々のコールバックグループに分ける ---
         # MultiThreadedExecutor と併用し、重い推論(~1.2s)が制御ループを止めないようにする。
@@ -276,24 +302,75 @@ class SmolVLANavigationNode(Node):
             with self._history_lock:
                 self.image_history.append(image)
 
+        # 走行中に ros2 param set で切り替えられるよう毎tick読み直す（5Hzなので負荷は無視できる）。
+        step_lookahead = max(int(self.get_parameter("step_lookahead").value), 0)
+        use_pure_pursuit = bool(self.get_parameter("use_pure_pursuit").value)
+        lookahead_distance = float(self.get_parameter("lookahead_distance").value)
+
         # 現在 step の行動を取り出し、時刻を1つ進める（行動が無くても step は進める）。
         with self._queue_lock:
-            action = self._actions.pop(self._step, None)
+            step = self._step
+            current = self._actions.get(step)      # 「今」の行動（並進速度はこれを使う）
+            selected = current                     # 実際に操舵に使う行動
+            if step_lookahead:
+                # K ステップ先の行動を使う。まだ届いていなければ現在stepにフォールバック。
+                ahead = self._actions.get(step + step_lookahead)
+                if ahead is not None:
+                    selected = ahead
+            # Pure Pursuit 用に、現在stepから連続して存在する行動を集める（キューは変えない）。
+            path_actions: list[np.ndarray] = []
+            if use_pure_pursuit:
+                s = step
+                while len(path_actions) < PP_MAX_PATH_STEPS and s in self._actions:
+                    path_actions.append(self._actions[s])
+                    s += 1
+            self._actions.pop(step, None)          # 消化（辞書が無限に伸びないように）
             self._step += 1
 
-        if action is None:
+        if current is None and selected is None:
             # まだ chunk が用意できていない（起動直後など）→ 安全のため停止指令。
             self.cmd_vel_pub.publish(Twist())
             return
 
-        # action[dx_body, dyaw] を dt で割って速度にし、上限でクリップして発行。
-        dx_body, dyaw = float(action[0]), float(action[1])
-        v = float(np.clip(dx_body / DT, -self.linear_max_vel, self.linear_max_vel))
-        omega = float(np.clip(dyaw / DT, -self.angular_max_vel, self.angular_max_vel))
+        # 並進速度は常にモデルの「今」の予測から取る。Pure Pursuit でも v は置き換えない
+        # （速度側は既に期待どおり動いているので、操舵だけを差し替える）。
+        speed_src = current if current is not None else selected
+        v = float(np.clip(float(speed_src[0]) / DT, -self.linear_max_vel, self.linear_max_vel))
+
+        omega: Optional[float] = None
+        if use_pure_pursuit and len(path_actions) >= 2:
+            # 計画を積分して経路にし、前方注視点に向かう円弧の角速度を求める。
+            # 「計画の初速(dyaw[0])」ではなく「計画の行き先」を見るので、計画先頭の
+            # 不感帯（まっすぐな前置き）を飛び越せる。
+            poses = integrate_path(np.asarray(path_actions, dtype=np.float64))
+            goal = find_lookahead_point(poses, lookahead_distance)
+            if goal is not None:
+                omega = pure_pursuit_omega(v, float(goal[0]), float(goal[1]))
+                self._publish_lookahead(goal)
+
+        if omega is None:
+            if use_pure_pursuit:
+                self.get_logger().warn(
+                    "Pure Pursuit 用の経路が足りないので生の dyaw にフォールバックします",
+                    throttle_duration_sec=5.0,
+                )
+            # 従来方式: 選んだ行動の dyaw をそのまま角速度にする。
+            omega = float(selected[1]) / DT if selected is not None else 0.0
+
+        omega = float(np.clip(omega, -self.angular_max_vel, self.angular_max_vel))
         cmd_vel = Twist()
         cmd_vel.linear.x = v
         cmd_vel.angular.z = omega
         self.cmd_vel_pub.publish(cmd_vel)
+
+    def _publish_lookahead(self, goal: np.ndarray) -> None:
+        """Pure Pursuit の前方注視点を publish する（注視距離の調整用）。"""
+        msg = PointStamped()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.header.frame_id = self.path_frame_id
+        msg.point.x = float(goal[0])
+        msg.point.y = float(goal[1])
+        self.lookahead_pub.publish(msg)
 
     def _history_frames(self) -> Optional[list[np.ndarray]]:
         """履歴バッファから [現在, 1秒前, 2秒前] の3枚を取り出す。
