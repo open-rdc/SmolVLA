@@ -66,7 +66,7 @@ DEFAULT_LOOKAHEAD_DISTANCE = 2.5    # 前方注視距離 [m]。不感帯(約1〜
 PP_MAX_PATH_STEPS = 50              # Pure Pursuit 用に積分する最大ステップ数（=chunk長）
 
 # チェックポイントの場所（tar.gz を展開した先）
-DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_all_30ep_ckpt" / "pretrained_model"
+DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_orne_tc_ms_ckpt" / "pretrained_model"
 
 
 # ══════════════════════════════════════════════════════════════════
