@@ -35,6 +35,7 @@ NavVLA 版との違い:
 from __future__ import annotations
 
 import math
+import os
 import pickle
 import time
 from pathlib import Path
@@ -59,7 +60,12 @@ SAMPLE_INTERVAL = 1.0 / FPS          # 0.2s
 IMG_H, IMG_W = 224, 224
 JPEG_QUALITY = 95                    # NavVLA create_data.py と同じ
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
+
+# colcon install 後は __file__ が site-packages 配下になり parents[2] ではリポジトリルートに
+# 届かないため、env_humble.sh が設定する SMOLVLA_REPO_ROOT を優先する。未設定時（ソースツリーから
+# 直接実行する場合）だけ従来通り __file__ から逆算する。
+_env_repo_root = os.environ.get("SMOLVLA_REPO_ROOT")
+REPO_ROOT = Path(_env_repo_root) if _env_repo_root else Path(__file__).resolve().parents[2]
 
 
 def yaw_from_quaternion(x: float, y: float, z: float, w: float) -> float:

@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import collections
 import math
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -65,8 +66,14 @@ DEFAULT_USE_PURE_PURSUIT = False    # True で操舵だけ Pure Pursuit に置�
 DEFAULT_LOOKAHEAD_DISTANCE = 2.5    # 前方注視距離 [m]。不感帯(約1〜2m)より長く取ること
 PP_MAX_PATH_STEPS = 50              # Pure Pursuit 用に積分する最大ステップ数（=chunk長）
 
+# colcon install 後は __file__ が site-packages 配下になり parents[2] ではリポジトリルートに
+# 届かないため、env_humble.sh が設定する SMOLVLA_REPO_ROOT を優先する。未設定時（ソースツリーから
+# 直接実行する場合）だけ従来通り __file__ から逆算する。
+_env_repo_root = os.environ.get("SMOLVLA_REPO_ROOT")
+_REPO_ROOT = Path(_env_repo_root) if _env_repo_root else Path(__file__).resolve().parents[2]
+
 # チェックポイントの場所（tar.gz を展開した先）
-DEFAULT_CKPT = Path(__file__).resolve().parents[2] / "training" / "data" / "weight" / "smolvla_orne_tc_ms_ckpt" / "pretrained_model"
+DEFAULT_CKPT = _REPO_ROOT / "training" / "data" / "weight" / "smolvla_orne_tc_ms_ckpt" / "pretrained_model"
 
 
 # ══════════════════════════════════════════════════════════════════
