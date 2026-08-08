@@ -61,8 +61,10 @@ def find_lookahead_point(poses: np.ndarray, lookahead: float) -> Optional[np.nda
     xy = poses[:, :2]
     dist = np.hypot(xy[:, 0], xy[:, 1])
     idx = np.flatnonzero(dist >= lookahead)
-    # 条件を満たす点が無い = 経路が注視距離より短い -> 終端を使う。
-    return xy[idx[0]] if len(idx) else xy[-1]
+    if len(idx) == 0:
+        # 条件を満たす点が無い = 経路が注視距離より短い -> 終端を使う。
+        return xy[-1]
+    return xy[idx[0]]
 
 
 def pure_pursuit_omega(v: float, goal_x: float, goal_y: float) -> float:

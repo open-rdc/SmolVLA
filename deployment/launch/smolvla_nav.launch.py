@@ -1,4 +1,4 @@
-"""SmolVLA本体 + トポロジカルマップ自己位置推定(place_prompt_node)を起動する。
+"""SmolVLA本体 + トポロジカルマップ自己位置推定(place_prompt_node) + 経路追従(path_follower_node)を起動する。
 
   source <ROS2ワークスペース>/env_humble.sh   # conda ros_humble (Python3.12) に切り替え
   ros2 launch smolvla_nav smolvla_nav.launch.py
@@ -8,6 +8,11 @@ use_toponav:=false で place_prompt_node を止め、navigation.py の固定プ�
 カメラはこのlaunchでは起動しない。/image_raw は icart_driver 側の usb_cam_node が配信する
 (smolvla_navとicart_driverで別々にカメラを持つと同じデバイスを取り合って衝突するため)。
 navigation単体でテストしたい場合は、別途 v4l2_camera_node 等を手動起動すること。
+
+navigation_node は /cmd_vel を直接 publish しない。v とフォールバック用の生 dyaw を
+/smolvla_cmd_vel_raw に出し、path_follower_node が /smolvla_pred_path を Pure Pursuit で
+追従して最終的な /cmd_vel を publish する（決定: pred_path が正しく cmd_vel に反映され
+ていなかったバグ修正で、操舵の決定を別ノードに分離した）。
 """
 
 from launch import LaunchDescription
@@ -26,22 +31,30 @@ def generate_launch_description() -> LaunchDescription:
     )
     use_toponav = LaunchConfiguration("use_toponav")
 
-    # --- 経路追従モード（既定は両方 OFF = 従来どおり生の速度をそのまま流す）---
-    # 走行中に `ros2 param set /navigation <名前> <値>` でも切り替えられる。
+    # --- navigation_node 側（速度計算・不感帯の実測用）---
     step_lookahead_arg = DeclareLaunchArgument(
         "step_lookahead",
         default_value="0",
-        description="chunk の何ステップ先の行動を使うか。0=従来。不感帯の実測用に 5/10/15 と振る",
+        description="chunk の何ステップ先の行動をフォールバック操舵に使うか。0=従来",
     )
+
+    # --- path_follower_node 側（経路追従）---
     use_pure_pursuit_arg = DeclareLaunchArgument(
         "use_pure_pursuit",
-        default_value="false",
-        description="true: 操舵を Pure Pursuit に置き換える（並進速度はモデルの予測のまま）",
+        default_value="true",
+        description="true: /smolvla_pred_path を Pure Pursuit で追従して操舵する。"
+        "false: navigation_node の生dyawをそのまま使う",
     )
     lookahead_distance_arg = DeclareLaunchArgument(
         "lookahead_distance",
         default_value="2.5",
         description="前方注視距離[m]。不感帯(約1〜2m)より長く取ること",
+    )
+    path_timeout_sec_arg = DeclareLaunchArgument(
+        "path_timeout_sec",
+        default_value="5.0",
+        description="/smolvla_pred_path がこれより古ければ生dyawにフォールバックする[s]。"
+        "navigation_node の [latency] ログの infer_chunk 時間より大きくすること",
     )
 
     place_prompt_node = Node(
@@ -65,11 +78,26 @@ def generate_launch_description() -> LaunchDescription:
                 "step_lookahead": ParameterValue(
                     LaunchConfiguration("step_lookahead"), value_type=int
                 ),
+            }
+        ],
+    )
+
+    path_follower_node = Node(
+        package="smolvla_nav",
+        executable="path_follower_node",
+        name="path_follower",
+        output="screen",
+        emulate_tty=True,
+        parameters=[
+            {
                 "use_pure_pursuit": ParameterValue(
                     LaunchConfiguration("use_pure_pursuit"), value_type=bool
                 ),
                 "lookahead_distance": ParameterValue(
                     LaunchConfiguration("lookahead_distance"), value_type=float
+                ),
+                "path_timeout_sec": ParameterValue(
+                    LaunchConfiguration("path_timeout_sec"), value_type=float
                 ),
             }
         ],
@@ -81,7 +109,9 @@ def generate_launch_description() -> LaunchDescription:
             step_lookahead_arg,
             use_pure_pursuit_arg,
             lookahead_distance_arg,
+            path_timeout_sec_arg,
             place_prompt_node,
             navigation_node,
+            path_follower_node,
         ]
     )

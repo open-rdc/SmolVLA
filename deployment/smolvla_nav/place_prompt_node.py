@@ -10,6 +10,7 @@ NavVLA の navvla/navigation.py の init_toponav / update_toponav_goal のパタ
 from __future__ import annotations
 
 import argparse
+import os
 import sys
 from pathlib import Path
 from typing import Optional
@@ -26,8 +27,14 @@ from std_msgs.msg import Int32, String
 from smolvla_nav.image_convert import image_msg_to_bgr
 from smolvla_nav.toponav import TopologicalNavigator
 
-# THIS_DIR = deployment/ (config/, weights/ の基準)。ファイルは deployment/smolvla_nav/ にあるので1階層上がる。
-THIS_DIR = Path(__file__).resolve().parents[1]
+# THIS_DIR = smolvla_nav パッケージルート (config/, weights/ の基準)。
+# colcon install 後は __file__ が site-packages 配下になり parents[1] では
+# config/, weights/ を含むソースツリーのパッケージルートに届かないため、
+# env_humble.sh が設定する SMOLVLA_NAV_PKG_ROOT を優先する。未設定時
+# （ソースツリーから直接実行する場合）だけ従来通り __file__ から逆算する。
+# navigation.py の SMOLVLA_REPO_ROOT と同じパターン。
+_env_pkg_root = os.environ.get("SMOLVLA_NAV_PKG_ROOT")
+THIS_DIR = Path(_env_pkg_root) if _env_pkg_root else Path(__file__).resolve().parents[1]
 
 
 def load_yaml(path: Path) -> dict:

@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """navigation.py の control_timer_callback を、ROS/torch をスタブして実際に動かすテスト。
 
-実物のメソッドを呼ぶので、分岐ロジック（+K のフォールバック、Pure Pursuit、
-停止指令、辞書のGC、クリップ）がそのまま検証される。
+実物のメソッドを呼ぶので、分岐ロジック（+K のフォールバック、停止指令、辞書のGC、
+クリップ）がそのまま検証される。Pure Pursuit による操舵の決定は path_follower.py に
+分離したので、そちらのテストは test_path_follower.py を参照。
 """
 import sys
 from pathlib import Path
@@ -30,18 +31,6 @@ class Twist:
         self.angular = Vec()
 
 
-class _Hdr:
-    def __init__(self):
-        self.stamp = None
-        self.frame_id = ""
-
-
-class PointStamped:
-    def __init__(self):
-        self.header = _Hdr()
-        self.point = Vec()
-
-
 for name in ["cv2", "torch", "lerobot", "lerobot.policies", "lerobot.policies.factory",
              "lerobot.policies.smolvla", "lerobot.policies.smolvla.modeling_smolvla",
              "rclpy", "rclpy.node", "rclpy.callback_groups", "rclpy.executors",
@@ -56,7 +45,6 @@ sys.modules["rclpy.callback_groups"].MutuallyExclusiveCallbackGroup = object
 sys.modules["rclpy.executors"].MultiThreadedExecutor = object
 sys.modules["geometry_msgs.msg"].Twist = Twist
 sys.modules["geometry_msgs.msg"].PoseStamped = _Msg
-sys.modules["geometry_msgs.msg"].PointStamped = PointStamped
 sys.modules["nav_msgs.msg"].Path = _Msg
 sys.modules["sensor_msgs.msg"].Image = _Msg
 sys.modules["std_msgs.msg"].Bool = _Msg
@@ -78,7 +66,7 @@ def check(name, cond, detail=""):
         fails.append(name)
 
 
-def make_node(actions, step=0, k=0, pp=False, L=2.5):
+def make_node(actions, step=0, k=0):
     """control_timer_callback を呼べる最小のスタブ node を作る。"""
     n = object.__new__(nav.SmolVLANavigationNode)
     n.autonomous_flag = True
@@ -91,10 +79,9 @@ def make_node(actions, step=0, k=0, pp=False, L=2.5):
     n.linear_max_vel = 1.0
     n.angular_max_vel = 1.0
     n.path_frame_id = "base_link"
-    params = {"step_lookahead": k, "use_pure_pursuit": pp, "lookahead_distance": L}
+    params = {"step_lookahead": k}
     n.get_parameter = lambda name: types.SimpleNamespace(value=params[name])
     n.cmd_vel_pub = mock.Mock()
-    n.lookahead_pub = mock.Mock()
     n.get_logger = lambda: mock.Mock()
     n.get_clock = lambda: types.SimpleNamespace(now=lambda: types.SimpleNamespace(to_msg=lambda: None))
     return n
@@ -114,7 +101,7 @@ t = run(make_node({}))
 check("v=0", t.linear.x == 0.0)
 check("omega=0", t.angular.z == 0.0)
 
-print("=== 2. K=0, PP off -> 従来どおり生の dyaw ===")
+print("=== 2. K=0 -> 従来どおり生の dyaw ===")
 acts = {i: np.array([DX, 0.02], np.float32) for i in range(20)}
 t = run(make_node(acts))
 check("v = dx/DT", abs(t.linear.x - V) < 1e-6, f"v={t.linear.x:.4f}")
@@ -132,47 +119,20 @@ acts = {0: np.array([DX, 0.03], np.float32)}        # 1件だけ
 t = run(make_node(acts, k=10))
 check("現在stepの dyaw を使う", abs(t.angular.z - 0.03 / DT) < 1e-6, f"omega={t.angular.z:.4f}")
 
-print("=== 5. Pure Pursuit が不感帯を飛び越える（本題）===")
-# 実機で観測された形: 1.4秒(7step)まっすぐ -> その後ゆるやかに左へ戻る
-plan = [np.array([DX, 0.0], np.float32)] * 7 + [np.array([DX, 0.012], np.float32)] * 43
-acts = {i: a for i, a in enumerate(plan)}
-t_raw = run(make_node(acts))                                    # 従来方式
-t_short = run(make_node(acts, pp=True, L=1.0))                  # 注視距離が不感帯の中
-t_long = run(make_node(acts, pp=True, L=2.5))                   # 注視距離が不感帯の先
-print(f"     従来(生dyaw)      omega={t_raw.angular.z:.4f}")
-print(f"     PP L=1.0m(不感帯内) omega={t_short.angular.z:.4f}")
-print(f"     PP L=2.5m(不感帯外) omega={t_long.angular.z:.4f}")
-check("従来方式は omega≈0", abs(t_raw.angular.z) < 1e-9)
-check("L=1.0m でも omega≈0（注視距離が短すぎると効かない）", abs(t_short.angular.z) < 1e-6)
-check("L=2.5m で omega>0（不感帯を飛び越える）", t_long.angular.z > 0.005)
-check("v は PP でも変わらない", abs(t_long.linear.x - V) < 1e-6, f"v={t_long.linear.x:.4f}")
-
-print("=== 6. PP ON で注視点が publish される ===")
-n = make_node(acts, pp=True, L=2.5)
-run(n)
-check("lookahead が publish される", n.lookahead_pub.publish.called)
-pt = n.lookahead_pub.publish.call_args[0][0]
-check("注視点は 2.5m 以上先", np.hypot(pt.point.x, pt.point.y) >= 2.5,
-      f"({pt.point.x:.2f}, {pt.point.y:.2f})")
-
-print("=== 7. PP ON だが経路が足りない -> 生の dyaw にフォールバック ===")
-t = run(make_node({0: np.array([DX, 0.04], np.float32)}, pp=True))
-check("生の dyaw を使う", abs(t.angular.z - 0.04 / DT) < 1e-6, f"omega={t.angular.z:.4f}")
-
-print("=== 8. 消化されて辞書が伸びない ===")
+print("=== 5. 消化されて辞書が伸びない ===")
 n = make_node({i: np.array([DX, 0.0], np.float32) for i in range(20)}, k=10)
 before = len(n._actions)
 n.control_timer_callback()
 check("現在stepが辞書から消える", len(n._actions) == before - 1, f"{before} -> {len(n._actions)}")
 check("step が進む", n._step == 1)
 
-print("=== 9. クリップ ===")
+print("=== 6. クリップ ===")
 n = make_node({i: np.array([5.0, 5.0], np.float32) for i in range(20)})
 t = run(n)
 check("v が上限でクリップ", t.linear.x == 1.0, f"v={t.linear.x}")
 check("omega が上限でクリップ", t.angular.z == 1.0, f"omega={t.angular.z}")
 
-print("=== 10. 非自律なら何も publish しない ===")
+print("=== 7. 非自律なら何も publish しない ===")
 n = make_node({i: np.array([DX, 0.0], np.float32) for i in range(20)})
 n.autonomous_flag = False
 n.control_timer_callback()
