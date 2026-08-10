@@ -82,13 +82,12 @@ class SmolVLAModel:
         self.policy = SmolVLAPolicy.from_pretrained(str(ckpt_dir))
         self.policy.to(self.device).eval()
 
-        # vision encoder(SigLIP)を torch.compile でカーネル融合。計測でここが推論全体の
-        # 大半(~75%)を占めていたため。画像埋め込みキャッシュ導入によりバッチサイズが
-        # 呼び出しごとに 1〜3 枚と変動するので dynamic=True にして再コンパイルを抑える。
-        # 初回・シェイプが変わった直後の数回だけコンパイルで遅くなる点に注意。
-        if self.device.type == "cuda":
-            vlm_model = self.policy.model.vlm_with_expert.get_vlm_model()
-            vlm_model.vision_model = torch.compile(vlm_model.vision_model, dynamic=True)
+        # vision encoder(SigLIP)を torch.compile でカーネル融合させる案は無効化。
+        # RTX 2070 Max-Q だと "Not enough SMs to use max_autotune_gemm mode" /
+        # "does not support bfloat16 compilation natively" という警告が出るほど
+        # 相性が悪く、コンパイルが非常に長時間かかる(またはハングする)ため
+        # /smolvla_pred_path が全く出ない状態になった。効果も575ms→450ms程度と
+        # 大きくなかったため、いったん無効化して切り分ける。
 
         # 2) 保存済みの前処理/後処理パイプラインをロード。
         #    preprocessor : rename(front->camera1) -> batch化 -> tokenize -> device転送 -> 正規化
