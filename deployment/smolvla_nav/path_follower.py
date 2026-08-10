@@ -46,7 +46,7 @@ from smolvla_nav.pure_pursuit import find_lookahead_point, pure_pursuit_omega
 CONTROL_INTERVAL_MS = 100   # /smolvla_cmd_vel_raw(200ms周期)より少し細かく回して追従を滑らかにする
 
 DEFAULT_USE_PURE_PURSUIT = True
-DEFAULT_LOOKAHEAD_DISTANCE = 2.5   # 前方注視距離[m]。不感帯(約1〜2m)より長く取ること
+DEFAULT_LOOKAHEAD_DISTANCE = 1.0   # 前方注視距離[m]。不感帯(約1〜2m)より長く取ること
 DEFAULT_ANGULAR_MAX_VEL = 1.0
 # /smolvla_pred_path がこれより古ければ経路なし扱い。
 # 実測(RTX 2070 Max-Q + SmolVLM2-500M): infer_chunk は定常状態で約2.6〜3.5秒/回、
