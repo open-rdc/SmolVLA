@@ -418,8 +418,19 @@ class SmolVLANavigationNode(Node):
         infer_start = self.get_clock().now()
         chunk = self.model.infer_chunk(images, state, prompt)  # (chunk_size, 2)
         latency_sec = (self.get_clock().now() - infer_start).nanoseconds / 1e9
+        # VRAM も併せて出す。allocated=実際に使用中 / reserved=PyTorchがOSから確保済み。
+        # 両方増える            -> リーク
+        # allocated は平坦で reserved だけ増える -> アロケータの断片化
+        # どちらも平坦なのに latency だけ伸びる   -> GPU外（電力制限・熱・CPU競合）
+        if self.model.device.type == "cuda":
+            vram = (
+                f" | VRAM alloc {torch.cuda.memory_allocated() / 2**20:.0f} MiB"
+                f" / reserved {torch.cuda.memory_reserved() / 2**20:.0f} MiB"
+            )
+        else:
+            vram = ""
         self.get_logger().info(
-            f"[latency] infer_chunk: {latency_sec * 1000:.0f} ms", throttle_duration_sec=1.0
+            f"[latency] infer_chunk: {latency_sec * 1000:.0f} ms{vram}", throttle_duration_sec=1.0
         )
 
         # 今回のchunk(=今後10秒の予測、クリップ前の生値)をそのままRViz可視化用に publish。
