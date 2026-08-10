@@ -9,7 +9,6 @@ import sys
 from pathlib import Path
 import threading
 import types
-from collections import deque
 from unittest import mock
 
 import numpy as np
@@ -70,9 +69,6 @@ def make_node(actions, step=0, k=0):
     """control_timer_callback を呼べる最小のスタブ node を作る。"""
     n = object.__new__(nav.SmolVLANavigationNode)
     n.autonomous_flag = True
-    n.latest_image = None
-    n.image_history = deque(maxlen=nav.HISTORY_LEN)
-    n._history_lock = threading.Lock()
     n._queue_lock = threading.Lock()
     n._step = step
     n._actions = dict(actions)

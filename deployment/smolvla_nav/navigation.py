@@ -49,12 +49,6 @@ FPS = 5
 DT = 1.0 / FPS
 IMG_H, IMG_W = 224, 224
 
-# 時系列画像コンテキストのラグ。5 フレーム @ FPS=5 = 1 秒。
-# 学習側 training/data/lerobot_dataset.py の HISTORY_STRIDE_FRAMES と必ず一致させる。
-# 設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定3
-HISTORY_STRIDE_FRAMES = 5
-HISTORY_LEN = 2 * HISTORY_STRIDE_FRAMES + 1   # 2秒分 = 11 枚
-
 # --- 経路追従モードの既定値（既定は OFF = 従来どおり生の dyaw をそのまま流す）---
 # 実機で「コース端に寄ると中央に戻れない」問題の切り分け/対策用。モデルの計画は
 # 「1〜2秒まっすぐ → その後ゆるやかに戻る」形をしているが、推論が ~1.2s かかるため
@@ -88,6 +82,14 @@ class SmolVLAModel:
         self.policy = SmolVLAPolicy.from_pretrained(str(ckpt_dir))
         self.policy.to(self.device).eval()
 
+        # vision encoder(SigLIP)を torch.compile でカーネル融合。計測でここが推論全体の
+        # 大半(~75%)を占めていたため。画像埋め込みキャッシュ導入によりバッチサイズが
+        # 呼び出しごとに 1〜3 枚と変動するので dynamic=True にして再コンパイルを抑える。
+        # 初回・シェイプが変わった直後の数回だけコンパイルで遅くなる点に注意。
+        if self.device.type == "cuda":
+            vlm_model = self.policy.model.vlm_with_expert.get_vlm_model()
+            vlm_model.vision_model = torch.compile(vlm_model.vision_model, dynamic=True)
+
         # 2) 保存済みの前処理/後処理パイプラインをロード。
         #    preprocessor : rename(front->camera1) -> batch化 -> tokenize -> device転送 -> 正規化
         #    postprocessor: action の逆正規化（mean/std を戻す）
@@ -100,9 +102,22 @@ class SmolVLAModel:
         # 行動キューを空に。エピソード（自律走行）を開始するたびに reset() を呼ぶ。
         self.policy.reset()
 
+        # フレームid -> 画像埋め込みtensor のキャッシュ。時系列3枚(camera1/2/3)は履歴バッファの
+        # スライドにより後続の呼び出しで同じ物理フレームを指すことが多いため、vision encoderの
+        # 再計算を避けられる。呼び出し側(SmolVLANavigationNode)がフレームごとに安定したidを
+        # 割り当てて infer_chunk() に渡す。
+        self._image_embed_cache: dict[int, torch.Tensor] = {}
+
     def reset(self) -> None:
         """自律走行を開始/再開するたびに呼ぶ（内部の action chunk キューを空にする）。"""
         self.policy.reset()
+        self._image_embed_cache.clear()
+
+    def prune_image_embed_cache(self, valid_ids: set[int]) -> None:
+        """もう履歴バッファに残っていないフレームのキャッシュを捨てる（無限に増えないように）。"""
+        stale = [k for k in self._image_embed_cache if k not in valid_ids]
+        for k in stale:
+            del self._image_embed_cache[k]
 
     def _build_batch(self, images_rgb: list[np.ndarray], state: np.ndarray, task: str) -> dict:
         """時系列3枚+状態+指示から観測 dict を組み立てる（正規化前の「生の」batch）。
@@ -150,7 +165,13 @@ class SmolVLAModel:
         return action.squeeze(0).float().cpu().numpy()  # (2,) = [dx_body, dyaw]
 
     @torch.no_grad()
-    def infer_chunk(self, images_rgb: list[np.ndarray], state: np.ndarray, task: str) -> np.ndarray:
+    def infer_chunk(
+        self,
+        images_rgb: list[np.ndarray],
+        state: np.ndarray,
+        task: str,
+        image_ids: Optional[list[int]] = None,
+    ) -> np.ndarray:
         """3枚の時系列観測から 50 ステップ分の行動列をまとめて返す（非同期先読み用）。
 
         select_action は内部キューから1手ずつ返すが、こちらは chunk 全体を返すので
@@ -158,17 +179,20 @@ class SmolVLAModel:
 
         Args:
             images_rgb: [現在(t), 1つ前(t-1), 2つ前(t-2)] の3枚。infer() と同じ形式。
+            image_ids: images_rgb の各フレームに対応する安定したid（省略時はキャッシュ無効）。
+                       同じidが渡された画像は前回計算した埋め込みを再利用する。
 
         Returns:
             actions: np.ndarray shape (chunk_size, 2) = [[dx_body, dyaw], ...]
         """
         batch = self._build_batch(images_rgb, state, task)
         batch = self.preprocessor(batch)
+        kwargs = {"image_ids": image_ids, "image_embed_cache": self._image_embed_cache}
         if self.device.type == "cuda":
             with torch.autocast("cuda", dtype=torch.float16):
-                chunk = self.policy.predict_action_chunk(batch)  # (1, chunk_size, action_dim)
+                chunk = self.policy.predict_action_chunk(batch, **kwargs)  # (1, chunk_size, action_dim)
         else:
-            chunk = self.policy.predict_action_chunk(batch)
+            chunk = self.policy.predict_action_chunk(batch, **kwargs)
         chunk = self.postprocessor(chunk)
         return chunk.squeeze(0).float().cpu().numpy()  # (chunk_size, 2)
 
@@ -192,14 +216,19 @@ class SmolVLANavigationNode(Node):
         self.latest_prompt = "go straight along the road"
         self.state = np.zeros(2, dtype=np.float32)        # [v, omega]
 
-        # --- 画像履歴バッファ（2秒分=11枚、最新が右端）---
-        # 制御周期(DT=200ms)ごとに最新フレームを push する。推論の呼び出し頻度
-        # （レイテンシ依存で変動する）ではなく、学習データの生フレーム間隔 dt=0.2s と
-        # 揃えるためにこの周期でサンプリングする。
-        # 取り出し時: 現在=history[-1], 1秒前=history[-1-5], 2秒前=history[-1-10]
-        # 設計: ~/.company/engineering/docs/smolvla-temporal-context-architecture.md 決定3
-        self.image_history: collections.deque[np.ndarray] = collections.deque(maxlen=HISTORY_LEN)
-        self._history_lock = threading.Lock()
+        # --- 時系列コンテキストフレーム ---
+        # 元は学習データのフレーム間隔(dt=0.2s)に厳密に揃えて「1秒前」「2秒前」を
+        # tick単位で取り出していた（決定3、smolvla-temporal-context-architecture.md）。
+        # だが推論レイテンシ(650〜950ms)が1秒未満になったことで、tick基準の1秒前/2秒前
+        # フレームは呼び出しのたびに新規フレームとなり、画像埋め込みキャッシュが
+        # 実質ヒットしなかった（詳細はコミット時のやり取り参照）。
+        # ここでは「1秒前/2秒前」を実時間ではなく「前回/前々回の推論で"今"として使った
+        # フレーム」と定義し直す。こうすると camera2/camera3 は必ず既に埋め込み済みに
+        # なりキャッシュが確実にヒットする代わりに、実際の時間間隔は推論レイテンシに
+        # 依存して変動する(厳密に1秒/2秒ではない)。レイテンシ計測用途では許容できる
+        # 近似だが、実走行の精度に使う場合は実データで要検証。
+        self._context_frames: collections.deque[tuple[int, np.ndarray]] = collections.deque(maxlen=2)
+        self._frame_counter = 0
 
         # --- パラメータ（速度上限・制御周期）---
         self.linear_max_vel = 1.0
@@ -258,9 +287,8 @@ class SmolVLANavigationNode(Node):
             with self._queue_lock:
                 self._actions.clear()
                 self._step = 0
-            # 前回走行の画像履歴を持ち越さない（行動キューのクリアと同じ理由）。
-            with self._history_lock:
-                self.image_history.clear()
+            # 前回走行のコンテキストフレームを持ち越さない（行動キューのクリアと同じ理由）。
+            self._context_frames.clear()
         self.autonomous_flag = msg.data
 
     def prompt_callback(self, msg: String) -> None:
@@ -300,13 +328,6 @@ class SmolVLANavigationNode(Node):
         if not self.autonomous_flag:
             return  # 非自律時は publish しない（他コントローラに任せる）
 
-        # 学習データのフレーム間隔(dt=0.2s)と揃えるため、推論の呼び出し頻度ではなく
-        # この制御ループの周期で画像履歴をサンプリングする（決定3参照）。
-        image = self.latest_image     # 参照代入は GIL 下で原子的
-        if image is not None:
-            with self._history_lock:
-                self.image_history.append(image)
-
         # 走行中に ros2 param set で切り替えられるよう毎tick読み直す（5Hzなので負荷は無視できる）。
         step_lookahead = max(int(self.get_parameter("step_lookahead").value), 0)
 
@@ -337,24 +358,6 @@ class SmolVLANavigationNode(Node):
         cmd_vel.linear.x = v
         cmd_vel.angular.z = omega
         self.cmd_vel_pub.publish(cmd_vel)
-
-    def _history_frames(self) -> Optional[list[np.ndarray]]:
-        """履歴バッファから [現在, 1秒前, 2秒前] の3枚を取り出す。
-
-        まだ 11 枚溜まっていない（起動直後・自律ON直後）場合はインデックスを 0 に
-        クランプする＝バッファ内で最も古いフレームを複製して padding する。学習側の
-        「エピソード先頭は frame 0 を複製」と同じ意味になる（決定4）。
-        履歴が空なら None を返す（呼び出し側で推論をスキップ）。
-        """
-        with self._history_lock:
-            hist = list(self.image_history)
-        if not hist:
-            return None
-
-        def pick(lag: int) -> np.ndarray:
-            return hist[max(len(hist) - 1 - lag, 0)]
-
-        return [pick(0), pick(HISTORY_STRIDE_FRAMES), pick(2 * HISTORY_STRIDE_FRAMES)]
 
     def _publish_pred_path(self, chunk: np.ndarray) -> None:
         """直近に推論したchunk（今後10秒分の予測）をそのまま base_link 基準の Path として publish。
@@ -401,10 +404,25 @@ class SmolVLANavigationNode(Node):
         with self._queue_lock:
             base_step = self._step   # この観測が予測する行動列の起点となる絶対時刻
 
-        # 履歴バッファから時系列3枚を取り出す（揃っていなければ最古フレームで複製）。
-        images = self._history_frames()
-        if images is None:
-            return   # 制御ループがまだ1枚も push していない（自律ON直後）
+        # 「今」は常に最新フレームを新規エンコードする。「1秒前」「2秒前」は実時間ではなく
+        # 前回・前々回の推論で"今"として使ったフレームを流用する（キャッシュ確実ヒット）。
+        # まだ2回に満たない起動直後は、無い分を現在フレームで埋める。
+        current_image = self.latest_image     # 参照代入は GIL 下で原子的
+        self._frame_counter += 1
+        current_id = self._frame_counter
+
+        context = list(self._context_frames)   # [1回前, 2回前]（無ければ短い）
+        cam2_id, cam2_img = context[-1] if len(context) >= 1 else (current_id, current_image)
+        cam3_id, cam3_img = context[-2] if len(context) >= 2 else (cam2_id, cam2_img)
+
+        image_ids = [current_id, cam2_id, cam3_id]
+        images = [current_image, cam2_img, cam3_img]
+
+        self._context_frames.append((current_id, current_image))
+
+        # もうcamera2/camera3として参照されえないフレームの画像埋め込みキャッシュを捨てる。
+        valid_ids = {current_id, cam2_id, cam3_id} | {fid for fid, _ in self._context_frames}
+        self.model.prune_image_embed_cache(valid_ids)
 
         # 参照代入は GIL 下で原子的なので、最新値をスナップショットして使う。
         prompt = self.latest_prompt
@@ -416,7 +434,7 @@ class SmolVLANavigationNode(Node):
         # レイテンシを計測して毎回ログに出す（path_follower の path_timeout_sec を
         # 実測値に合わせて調整するための材料。5Hzで回るのでスパム防止に1秒間隔で間引く）。
         infer_start = self.get_clock().now()
-        chunk = self.model.infer_chunk(images, state, prompt)  # (chunk_size, 2)
+        chunk = self.model.infer_chunk(images, state, prompt, image_ids=image_ids)  # (chunk_size, 2)
         latency_sec = (self.get_clock().now() - infer_start).nanoseconds / 1e9
         # VRAM も併せて出す。allocated=実際に使用中 / reserved=PyTorchがOSから確保済み。
         # 両方増える            -> リーク
