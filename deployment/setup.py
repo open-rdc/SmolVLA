@@ -24,8 +24,10 @@ setup(
     entry_points={
         "console_scripts": [
             "navigation_node = smolvla_nav.navigation:main",
+            "path_follower_node = smolvla_nav.path_follower:main",
             "place_prompt_node = smolvla_nav.place_prompt_node:main",
             "create_topomap = smolvla_nav.create_topomap:main",
+            "create_data = smolvla_nav.create_data:main",
         ],
     },
 )

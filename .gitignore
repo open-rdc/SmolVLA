@@ -4,3 +4,14 @@ __pycache__/
 
 # 学習済み重み（大容量・別途配布）
 training/data/weight/
+
+# データセット本体（LeRobotDataset・生データ・ログ）。
+# training/data 直下のスクリプト(.py/.sh/.sbatch)は追跡したいので、
+# ディレクトリだけを除外する。
+training/data/*/
+
+# 学習の出力・ログ（大容量／クラスタから再取得できる）
+outputs/
+*.out
+*.log
+tb_*/
