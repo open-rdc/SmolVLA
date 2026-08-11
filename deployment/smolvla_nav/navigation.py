@@ -59,16 +59,16 @@ IMG_H, IMG_W = 224, 224
 # 正しく cmd_vel に反映されていなかったバグ修正で分離した）。
 DEFAULT_STEP_LOOKAHEAD = 0          # chunk の何ステップ先の行動を使うか（不感帯の実測用）
 
-# フローマッチングのODEの解き方とステップ数。空文字/0 ならポリシー側の既定に従う。
-# lerobot 側の既定は **heun / num_steps=4（速度場の評価8回）** で、
-# 旧構成の euler / num_steps=10（評価10回）より速く、かつ誤差が約半分になる。
+# デノイズのステップ数。0 ならポリシー側の既定（num_steps=4）に従う。
 #
-# 推論時間は「ステップ数」ではなく「評価回数」に比例する（評価回数 = N × heunなら2）。
-# ⚠ 片方だけ変えると評価回数が意図せず倍増するので、必ず対で指定すること。
+# 積分は Heun法（2段2次）で固定されており、1ステップにつき速度場を2回評価する。
+# 推論時間は「ステップ数」ではなく「評価回数 = 2 × num_steps」に比例するので、
+# 既定の 4 は評価8回。以前の陽的オイラー法 num_steps=10（評価10回）より速く、
+# 実測では誤差も約半分になる。
 #
-#   従来の挙動に戻す : ode_solver:=euler num_steps:=10   （評価10回）
-#   精度を最優先     : ode_solver:=heun  num_steps:=5    （評価10回・旧構成と同コスト）
-DEFAULT_ODE_SOLVER = ""             # "" / "euler" / "heun"
+# ⚠ 2 以下に下げると、ステップ幅が大きすぎて修正子が割に合わない領域に入る
+#   （実測では評価4回で互角、2回では1次のオイラー法のほうが正確）。
+#   オイラー法に戻したい場合は feat/heun-solver 以前のブランチを使うこと。
 DEFAULT_NUM_STEPS = 0               # 0 なら上書きしない
 
 # colcon install 後は __file__ が site-packages 配下になり parents[2] ではリポジトリルートに
@@ -91,7 +91,6 @@ class SmolVLAModel:
         self,
         ckpt_dir: Path = DEFAULT_CKPT,
         device: Optional[str] = None,
-        ode_solver: str = DEFAULT_ODE_SOLVER,
         num_steps: int = DEFAULT_NUM_STEPS,
     ) -> None:
         self.device = torch.device(device or ("cuda:0" if torch.cuda.is_available() else "cpu"))
@@ -99,18 +98,14 @@ class SmolVLAModel:
         # 1) ポリシー本体（重み込み）をロード。config.json / model.safetensors を読む。
         self.policy = SmolVLAPolicy.from_pretrained(str(ckpt_dir))
 
-        # 2) ODEの解き方とステップ数の上書き。学習時の設定とは独立に選べる
-        #    （どちらも推論時にしか効かないため、重みを取り直す必要はない）。
-        #    既存チェックポイントの config.json には ode_solver が無いので、
-        #    lerobot 側は getattr のフォールバックで "euler" として扱う。
-        if ode_solver:
-            self.policy.config.ode_solver = ode_solver
+        # 2) デノイズのステップ数の上書き。推論時にしか効かないので重みは取り直さない。
+        #    チェックポイントの config.json に num_steps=10 が保存されていても、
+        #    ここで上書きすれば新しい既定を使える。
         if num_steps > 0:
             self.policy.config.num_steps = num_steps
-        self.solver = getattr(self.policy.config, "ode_solver", "euler")
         self.num_steps = self.policy.config.num_steps
         # 推論時間はステップ数ではなく速度場の評価回数に比例する。Heun は1ステップ2評価。
-        self.nfe = self.num_steps * (2 if self.solver == "heun" else 1)
+        self.nfe = self.num_steps * 2
 
         self.policy.to(self.device).eval()
 
@@ -238,17 +233,13 @@ class SmolVLANavigationNode(Node):
         super().__init__("smolvla_navigation")
 
         # --- モデル（実装済み）---
-        # ODEの解法とステップ数は起動時にだけ効く（推論スレッドが走り出す前にモデルを
-        # 作るため）。走行中に切り替えたい場合はノードを立て直すこと。
-        self.declare_parameter("ode_solver", DEFAULT_ODE_SOLVER)
+        # ステップ数は起動時にだけ効く（推論スレッドが走り出す前にモデルを作るため）。
+        # 変えたい場合はノードを立て直すこと。
         self.declare_parameter("num_steps", DEFAULT_NUM_STEPS)
-        self.model = SmolVLAModel(
-            ode_solver=str(self.get_parameter("ode_solver").value),
-            num_steps=int(self.get_parameter("num_steps").value),
-        )
+        self.model = SmolVLAModel(num_steps=int(self.get_parameter("num_steps").value))
         self.get_logger().info(
-            f"SmolVLA loaded. ODE solver={self.model.solver} "
-            f"num_steps={self.model.num_steps} (速度場の評価 {self.model.nfe} 回/推論)"
+            f"SmolVLA loaded. ODE=Heun法(2段2次) num_steps={self.model.num_steps} "
+            f"(速度場の評価 {self.model.nfe} 回/推論)"
         )
 
         # --- 状態変数 ---
