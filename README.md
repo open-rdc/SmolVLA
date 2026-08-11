@@ -119,11 +119,22 @@ SmolVLA既定は3カメラ・state/action 6次元を期待しますが、1カメ
 
 ### 概要
 
-ROS 2 ノード `navigation_node` は、画像と言語指示を購読し、`SmolVLAPolicy` で推定した行動チャンクの先頭数stepを
-`geometry_msgs/Twist` として出力します(receding horizon、次tickで撮り直し)。`place_prompt_node` は走行データから
-作ったトポロジカルマップ上で自己位置推定を行い、現在位置に対応する言語指示を `/prompt` に自動配信します。
+3つのノードで構成されます。**推論と操舵は別ノードに分かれています**(予測経路が `/cmd_vel` に
+正しく反映されていなかった不具合の修正で分離しました)。
+
+| ノード | 役割 |
+|---|---|
+| `navigation_node` | 画像と言語指示を購読し、`SmolVLAPolicy` で行動チャンクを推論。予測経路 `/smolvla_pred_path` とフォールバック用の生の速度指令 `/smolvla_cmd_vel_raw` を publish する。**`/cmd_vel` は出さない** |
+| `path_follower_node` | `/smolvla_pred_path` を Pure Pursuit で追従し、最終的な `/cmd_vel` を publish する |
+| `place_prompt_node` | 走行データから作ったトポロジカルマップ上で自己位置推定を行い、現在位置に対応する言語指示を `/prompt` に自動配信する |
+
+推論は receding horizon で、行動チャンクの先頭数stepだけを実行して次tickで撮り直します。
 
 ROS 2(Humble, Python 3.10)と `lerobot`(Python 3.12)はプロセスを分けず、同一プロセス内で直接importする構成です。
+
+行動生成はフローマッチングで、ODE `dx/dt = v(x, t, obs)` を **Heun法(2段2次)** で t=1→0 へ積分します。
+1ステップにつき速度場を2回評価するため、**推論時間は `2 × num_steps` に比例**します
+(既定 `num_steps=4` で評価8回)。詳しくは [Findings](#findings) を参照。
 
 起動ファイル:
 
@@ -136,6 +147,17 @@ ros2 launch smolvla_nav smolvla_nav.launch.py                    # トポロジ�
 ros2 launch smolvla_nav smolvla_nav.launch.py use_toponav:=false # 固定プロンプトのみ(place_prompt_nodeを止める)
 ```
 
+主な launch 引数:
+
+| 引数 | 既定 | 説明 |
+|---|---|---|
+| `use_toponav` | `true` | `false` で `place_prompt_node` を止め、固定プロンプトのみで動かす |
+| `num_steps` | `0` | デノイズのステップ数。`0` はポリシー側の既定(`4`)。**推論時間は `2 × num_steps` に比例**。`2` 以下に下げるとステップ幅が大きすぎて精度が落ちる |
+| `use_pure_pursuit` | `true` | `false` で `navigation_node` の生 dyaw をそのまま操舵に使う |
+| `lookahead_distance` | `2.5` | Pure Pursuit の前方注視距離[m]。計画の不感帯(約1〜2m)より長く取ること |
+| `path_timeout_sec` | `5.0` | `/smolvla_pred_path` がこれより古ければ生 dyaw にフォールバックする[s]。推論レイテンシより大きくすること |
+| `step_lookahead` | `0` | chunk の何ステップ先の行動をフォールバック操舵に使うか(不感帯の実測用) |
+
 トポロジカルマップの作成:
 
 ```bash
@@ -147,13 +169,36 @@ ros2 run smolvla_nav create_topomap --ros-args -p data_dir:=<走行データ> -p
 | Topic | 型 | 方向 | Node | 内容 |
 |---|---|---|---|---|
 | `/image_raw` | `sensor_msgs/msg/Image` | Subscribe | navigation_node, place_prompt_node | 現在観測画像 |
-| `/autonomous` | `std_msgs/msg/Bool` | Subscribe | navigation_node | 自律動作の有効/無効 |
+| `/autonomous` | `std_msgs/msg/Bool` | Subscribe | navigation_node, path_follower_node | 自律動作の有効/無効 |
 | `/prompt` | `std_msgs/msg/String` | Subscribe / Publish | navigation_node(sub) / place_prompt_node(pub) | 言語指示 |
-| `/cmd_vel` | `geometry_msgs/msg/Twist` | Publish | navigation_node | 速度指令 |
+| `/smolvla_pred_path` | `nav_msgs/msg/Path` | Publish / Subscribe | navigation_node(pub) / path_follower_node(sub) | 予測した行動チャンクを base_link 基準の経路に積分したもの |
+| `/smolvla_cmd_vel_raw` | `geometry_msgs/msg/Twist` | Publish / Subscribe | navigation_node(pub) / path_follower_node(sub) | モデルの生の速度指令。Pure Pursuit 無効時・経路が古いときのフォールバック |
+| `/cmd_vel` | `geometry_msgs/msg/Twist` | Publish | **path_follower_node** | 最終的な速度指令 |
+| `/smolvla_lookahead` | `geometry_msgs/msg/PointStamped` | Publish | path_follower_node | Pure Pursuit の注視点(調整用。`/smolvla_pred_path` と重ねて見る) |
 | `/toponav/current_node` | `std_msgs/msg/Int32` | Publish | place_prompt_node | 自己位置推定した現在ノードID |
 
 ## Findings
 
+- **フローマッチングの積分を Heun法(2次)にすると、速度と精度が同時に改善する(2026-08-11)**:
+  推論は ODE `dx/dt = v(x, t, obs)` を t=1→0 へ積分する処理で、上流実装は陽的オイラー法
+  (1段1次、`num_steps=10` で速度場の評価10回)だった。**推論時間はステップ数ではなく
+  「速度場の評価回数」に比例する**ので、比較は評価回数を揃えて行う必要がある。
+  実データ32フレーム×3ノイズでノイズを固定し、参照解 Heun N=100 との dyaw 誤差を測ると:
+
+  | 評価回数 | Euler | Heun | 誤差比 |
+  |---:|---|---|---|
+  | 6 | N=6 0.1144 | N=3 0.0809 | Heun が 1.4分の1 |
+  | 8 | N=8 0.0876 | **N=4 0.0469** | Heun が 1.9分の1 |
+  | 10 | N=10 0.0733 | N=5 0.0331 | Heun が 2.2分の1 |
+
+  収束次数の実測は Euler 0.86〜0.93 / Heun 1.73〜1.83 で、理論値(1 / 2)の85〜93%。
+  **旧構成の Euler N=10(評価10回)に対し Heun N=4 は評価8回で誤差が約0.6倍**になり、
+  速度と精度の両方で勝つため既定にした。ただし**評価回数を減らせば誤差自体は増える**点に注意
+  (Heun N=3 は評価6回まで減るが誤差は旧構成の1.1倍)。評価4回以下ではステップ幅が大きすぎて
+  修正子が割に合わず、1次のオイラー法のほうが正確になる。
+  なお ω のバイアスの向きも逆で、Euler は ω を小さく外す(縮み 0.92/0.89)のに対し Heun は
+  大きく外す(1.27/1.07)。Euler の向きは実機で対処済みの「カーブで膨らむ」問題と同じ向き。
+  fp16 の丸め誤差は離散化誤差の1〜6%で無視できる。
 - **Action Expertはランダム初期化の方が良い(実機検証済み, 2026-07-09)**: SmolVLA公式重みの
   action expertはマニピュレータの物体把持タスクで事前学習されており、車輪ロボットのナビゲーションに
   finetuneすると負の転移が起きる。train lossだけでは差が出ないが、実機で比較するとランダム初期化した方が
