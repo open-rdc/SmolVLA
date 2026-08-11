@@ -64,15 +64,30 @@ source install/setup.bash
 
 ```bash
 ~/.venvs/smolvla/bin/lerobot-train \
-  --policy.path=lerobot/smolvla_base --policy.push_to_hub=false \
-  --dataset.repo_id=open-rdc/tsudanuma_nav6 --dataset.root=<abs path> \
-  --rename_map='{"observation.images.front":"observation.images.camera1"}' \
+  --policy.type=smolvla \
+  --policy.load_vlm_weights=true \
+  --policy.push_to_hub=false \
+  --policy.device=cuda \
+  --policy.normalization_mapping='{"VISUAL":"IDENTITY","STATE":"MEAN_STD","ACTION":"MEAN_STD"}' \
+  --policy.scheduler_warmup_steps=1000 \
+  --policy.scheduler_decay_steps=1150000 \
+  --dataset.repo_id=open-rdc/orne_box_all_tc --dataset.root=<abs path> \
+  --dataset.video_backend=pyav \
+  --batch_size=8 --steps=1150000 --num_workers=4 \
   --wandb.enable=false
 ```
 
-**確定した学習レシピ**: VLM(SmolVLM2)は事前学習を維持したまま凍結し、action expertのみランダム初期化して学習する
-(`--policy.type=smolvla --policy.load_vlm_weights=true`、`--policy.path` は指定しない)。
+実際に使った完全な形は [`training/gpgpu_train_orne_tc_ms.sbatch`](https://github.com/open-rdc/SmolVLA/blob/main/training/gpgpu_train_orne_tc_ms.sbatch)
+(ベース、1,150,000step)と [`training/gpgpu_train_orne_tc_ms_rec5.sbatch`](https://github.com/open-rdc/SmolVLA/blob/main/training/gpgpu_train_orne_tc_ms_rec5.sbatch)
+(復帰データを混ぜたファインチューン、180,000step)にあります。
+
+**確定した学習レシピ**: VLM(SmolVLM2)は事前学習を維持したまま、action expertのみランダム初期化して学習する
+(`--policy.type=smolvla --policy.load_vlm_weights=true`、**`--policy.path` は指定しない**)。
 理由は [Findings](#findings) を参照してください。
+
+⚠ **`--policy.normalization_mapping` の明示指定は必須です。** `ACTION` を `MEAN_STD` にしないと、
+`dyaw`(mean≈0 / std≈0.028 で情報がばらつき側にしかない)が正規化されず旋回量が学習されにくく、
+実機で「カーブが膨らむ」形で現れます。
 
 既存チェックポイントからの継続ファインチューンを行う場合は `--policy.path=<ckptのpretrained_modelディレクトリ>` を指定し、
 元のcosineスケジュールへ完全restart(peak lrへ戻す)するのではなく、**peakを元の1/5程度に抑えた短いwarmup+cosine decay**
@@ -107,13 +122,25 @@ resumeで学習が複数の `.out` に分かれた場合は `--segment FILE:OFFS
 
 | 項目 | 内容 |
 |---|---|
-| `observation.images.front` | 224×224 RGB(学習時は `camera1` にrename) |
-| `observation.state` | `[v, ω]`(前フレームの増分÷dt、学習時ノイズ付加でcopycat対策) |
+| `observation.images.camera1` | 224×224 RGB。**現在** (t) |
+| `observation.images.camera2` | 224×224 RGB。**1秒前** (t − 5フレーム) |
+| `observation.images.camera3` | 224×224 RGB。**2秒前** (t − 10フレーム) |
+| `observation.state` | `[v, ω]` の形は持つが、**値は全フレーム 0 固定(stateless)** |
 | `action` | `[Δx_body, Δyaw]`(差動2輪のため `Δy_body` は非ホロノミックで冗長、使わない) |
 | `task` | per-frameの言語指示文字列 |
 | fps | 5 (`dt = 0.2s`) |
 
-SmolVLA既定は3カメラ・state/action 6次元を期待しますが、1カメラ・2次元のまま32次元パディングで吸収して使っています。
+**SmolVLA の3カメラスロットを時間軸に転用**しています(同一カメラの時系列3枚)。ラグは
+`training/data/lerobot_dataset.py` の `HISTORY_STRIDE_FRAMES = 5` で決まり、**学習側と推論側で
+必ず一致させる必要があります**。`front` キーは使わないので `--rename_map` も不要です。
+
+`observation.state` は**使っていません**。過去の速度を入れると、モデルが画像や言語ではなく
+「直前の指令の続き」を出力するだけの近道(copycat)を学習してしまうため、
+**学習・推論ともに全フレーム 0 に固定**して vision + language だけで予測させています
+(学習済みチェックポイントの正規化統計も `mean=[0,0] std=[0,0]`)。
+形だけ残しているのは SmolVLA 側のインタフェースに合わせるためです。
+
+state/action は SmolVLA 既定の6次元ではなく2次元ですが、32次元パディングで吸収しています。
 
 ## Navigation
 
