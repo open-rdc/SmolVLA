@@ -59,16 +59,15 @@ IMG_H, IMG_W = 224, 224
 # 正しく cmd_vel に反映されていなかったバグ修正で分離した）。
 DEFAULT_STEP_LOOKAHEAD = 0          # chunk の何ステップ先の行動を使うか（不感帯の実測用）
 
-# フローマッチングのODEの解き方。空文字ならチェックポイントの設定をそのまま使う（＝従来どおり）。
-# "heun" にすると2段2次のルンゲクッタになり、1ステップの評価回数が2回になる代わりに
-# 大域誤差が O(h) から O(h^2) に落ちる。推論時間は評価回数に比例する。
+# フローマッチングのODEの解き方とステップ数。空文字/0 ならポリシー側の既定に従う。
+# lerobot 側の既定は **heun / num_steps=4（速度場の評価8回）** で、
+# 旧構成の euler / num_steps=10（評価10回）より速く、かつ誤差が約半分になる。
 #
-# GPGPU(A4500)での実測では、同じ評価回数なら 6回以上で heun が有利。現行の euler N=10
-# (評価10回)に対し heun N=4 は評価8回で誤差が約半分になり、速度・精度の両方で勝つ。
-# 切り替えるときは num_steps も併せて下げること（heun のまま N=10 にすると評価20回で倍遅くなる）。
+# 推論時間は「ステップ数」ではなく「評価回数」に比例する（評価回数 = N × heunなら2）。
+# ⚠ 片方だけ変えると評価回数が意図せず倍増するので、必ず対で指定すること。
 #
-#   例: ros2 param set /navigation ode_solver heun
-#       ros2 param set /navigation num_steps 4
+#   従来の挙動に戻す : ode_solver:=euler num_steps:=10   （評価10回）
+#   精度を最優先     : ode_solver:=heun  num_steps:=5    （評価10回・旧構成と同コスト）
 DEFAULT_ODE_SOLVER = ""             # "" / "euler" / "heun"
 DEFAULT_NUM_STEPS = 0               # 0 なら上書きしない
 

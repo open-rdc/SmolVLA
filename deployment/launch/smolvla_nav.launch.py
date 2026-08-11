@@ -41,15 +41,15 @@ def generate_launch_description() -> LaunchDescription:
     ode_solver_arg = DeclareLaunchArgument(
         "ode_solver",
         default_value="",
-        description="フローマッチングのODEの解法。空=チェックポイントの設定のまま(既定は euler)。"
-        "heun は2段2次で1ステップ2評価。同じ評価回数なら6回以上で heun が有利で、"
-        "euler N=10 に対し heun N=4 は評価8回で誤差が約半分。切り替え時は num_steps も下げること",
+        description="フローマッチングのODEの解法。空=ポリシー側の既定(heun)。"
+        "heun は2段2次で1ステップ2評価、euler は1段1次で1評価。"
+        "従来の挙動に戻すなら ode_solver:=euler num_steps:=10 を対で指定すること",
     )
     num_steps_arg = DeclareLaunchArgument(
         "num_steps",
         default_value="0",
-        description="デノイズのステップ数。0=チェックポイントの設定のまま(既定は10)。"
-        "推論時間は評価回数(euler:N / heun:2N)に比例する",
+        description="デノイズのステップ数。0=ポリシー側の既定(4)。"
+        "推論時間は評価回数(euler:N / heun:2N)に比例するので ode_solver と対で指定すること",
     )
 
     # --- path_follower_node 側（経路追従）---
