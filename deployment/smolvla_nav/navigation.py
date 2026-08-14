@@ -69,7 +69,7 @@ DEFAULT_STEP_LOOKAHEAD = 0          # chunk の何ステップ先の行動を使
 # ⚠ 2 以下に下げると、ステップ幅が大きすぎて修正子が割に合わない領域に入る
 #   （実測では評価4回で互角、2回では1次のオイラー法のほうが正確）。
 #   オイラー法に戻したい場合は feat/heun-solver 以前のブランチを使うこと。
-DEFAULT_NUM_STEPS = 0               # 0 なら上書きしない
+DEFAULT_NUM_STEPS = 4               # 0 なら上書きしない。チェックポイントのconfig.jsonの値(10)より優先
 
 # colcon install 後は __file__ が site-packages 配下になり parents[2] ではリポジトリルートに
 # 届かないため、env_humble.sh が設定する SMOLVLA_REPO_ROOT を優先する。未設定時（ソースツリーから
@@ -513,7 +513,8 @@ def main() -> int:
     finally:
         executor.shutdown()
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
     return 0
 
 

@@ -40,7 +40,7 @@ def generate_launch_description() -> LaunchDescription:
 
     num_steps_arg = DeclareLaunchArgument(
         "num_steps",
-        default_value="0",
+        default_value="4",
         description="デノイズのステップ数。0=ポリシー側の既定(4)。"
         "積分は Heun法(2段2次)固定で1ステップ2評価なので、推論時間は 2*num_steps に比例する",
     )
