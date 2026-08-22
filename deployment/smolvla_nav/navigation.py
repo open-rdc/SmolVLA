@@ -59,6 +59,18 @@ IMG_H, IMG_W = 224, 224
 # 正しく cmd_vel に反映されていなかったバグ修正で分離した）。
 DEFAULT_STEP_LOOKAHEAD = 0          # chunk の何ステップ先の行動を使うか（不感帯の実測用）
 
+# デノイズのステップ数。0 ならポリシー側の既定（num_steps=4）に従う。
+#
+# 積分は Heun法（2段2次）で固定されており、1ステップにつき速度場を2回評価する。
+# 推論時間は「ステップ数」ではなく「評価回数 = 2 × num_steps」に比例するので、
+# 既定の 4 は評価8回。以前の陽的オイラー法 num_steps=10（評価10回）より速く、
+# 実測では誤差も約半分になる。
+#
+# ⚠ 2 以下に下げると、ステップ幅が大きすぎて修正子が割に合わない領域に入る
+#   （実測では評価4回で互角、2回では1次のオイラー法のほうが正確）。
+#   オイラー法に戻したい場合は feat/heun-solver 以前のブランチを使うこと。
+DEFAULT_NUM_STEPS = 4               # 0 なら上書きしない。チェックポイントのconfig.jsonの値(10)より優先
+
 # colcon install 後は __file__ が site-packages 配下になり parents[2] ではリポジトリルートに
 # 届かないため、env_humble.sh が設定する SMOLVLA_REPO_ROOT を優先する。未設定時（ソースツリーから
 # 直接実行する場合）だけ従来通り __file__ から逆算する。
@@ -75,11 +87,26 @@ DEFAULT_CKPT = _REPO_ROOT / "training" / "data" / "weight" / "smolvla_orne_tc_ms
 class SmolVLAModel:
     """学習済み SmolVLA をロードし、1 枚の画像+状態+指示から action を返す。"""
 
-    def __init__(self, ckpt_dir: Path = DEFAULT_CKPT, device: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        ckpt_dir: Path = DEFAULT_CKPT,
+        device: Optional[str] = None,
+        num_steps: int = DEFAULT_NUM_STEPS,
+    ) -> None:
         self.device = torch.device(device or ("cuda:0" if torch.cuda.is_available() else "cpu"))
 
         # 1) ポリシー本体（重み込み）をロード。config.json / model.safetensors を読む。
         self.policy = SmolVLAPolicy.from_pretrained(str(ckpt_dir))
+
+        # 2) デノイズのステップ数の上書き。推論時にしか効かないので重みは取り直さない。
+        #    チェックポイントの config.json に num_steps=10 が保存されていても、
+        #    ここで上書きすれば新しい既定を使える。
+        if num_steps > 0:
+            self.policy.config.num_steps = num_steps
+        self.num_steps = self.policy.config.num_steps
+        # 推論時間はステップ数ではなく速度場の評価回数に比例する。Heun は1ステップ2評価。
+        self.nfe = self.num_steps * 2
+
         self.policy.to(self.device).eval()
 
         # vision encoder(SigLIP)を torch.compile でカーネル融合させる案は無効化。
@@ -206,8 +233,14 @@ class SmolVLANavigationNode(Node):
         super().__init__("smolvla_navigation")
 
         # --- モデル（実装済み）---
-        self.model = SmolVLAModel()
-        self.get_logger().info("SmolVLA loaded.")
+        # ステップ数は起動時にだけ効く（推論スレッドが走り出す前にモデルを作るため）。
+        # 変えたい場合はノードを立て直すこと。
+        self.declare_parameter("num_steps", DEFAULT_NUM_STEPS)
+        self.model = SmolVLAModel(num_steps=int(self.get_parameter("num_steps").value))
+        self.get_logger().info(
+            f"SmolVLA loaded. ODE=Heun法(2段2次) num_steps={self.model.num_steps} "
+            f"(速度場の評価 {self.model.nfe} 回/推論)"
+        )
 
         # --- 状態変数 ---
         self.autonomous_flag = False
@@ -480,7 +513,8 @@ def main() -> int:
     finally:
         executor.shutdown()
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
     return 0
 
 

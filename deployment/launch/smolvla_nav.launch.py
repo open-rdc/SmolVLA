@@ -38,6 +38,13 @@ def generate_launch_description() -> LaunchDescription:
         description="chunk の何ステップ先の行動をフォールバック操舵に使うか。0=従来",
     )
 
+    num_steps_arg = DeclareLaunchArgument(
+        "num_steps",
+        default_value="4",
+        description="デノイズのステップ数。0=ポリシー側の既定(4)。"
+        "積分は Heun法(2段2次)固定で1ステップ2評価なので、推論時間は 2*num_steps に比例する",
+    )
+
     # --- path_follower_node 側（経路追従）---
     use_pure_pursuit_arg = DeclareLaunchArgument(
         "use_pure_pursuit",
@@ -78,6 +85,9 @@ def generate_launch_description() -> LaunchDescription:
                 "step_lookahead": ParameterValue(
                     LaunchConfiguration("step_lookahead"), value_type=int
                 ),
+                "num_steps": ParameterValue(
+                    LaunchConfiguration("num_steps"), value_type=int
+                ),
             }
         ],
     )
@@ -107,6 +117,7 @@ def generate_launch_description() -> LaunchDescription:
         [
             use_toponav_arg,
             step_lookahead_arg,
+            num_steps_arg,
             use_pure_pursuit_arg,
             lookahead_distance_arg,
             path_timeout_sec_arg,
