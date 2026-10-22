@@ -236,7 +236,11 @@ class SmolVLANavigationNode(Node):
         # ステップ数は起動時にだけ効く（推論スレッドが走り出す前にモデルを作るため）。
         # 変えたい場合はノードを立て直すこと。
         self.declare_parameter("num_steps", DEFAULT_NUM_STEPS)
-        self.model = SmolVLAModel(num_steps=int(self.get_parameter("num_steps").value))
+        # 重み(pretrained_model ディレクトリ)。空なら DEFAULT_CKPT(旧カメラ)。
+        self.declare_parameter("ckpt_dir", "")
+        ckpt_dir = str(self.get_parameter("ckpt_dir").value) or str(DEFAULT_CKPT)
+        self.model = SmolVLAModel(ckpt_dir=Path(ckpt_dir), num_steps=int(self.get_parameter("num_steps").value))
+        self.get_logger().info(f"weights: {ckpt_dir}")
         self.get_logger().info(
             f"SmolVLA loaded. ODE=Heun法(2段2次) num_steps={self.model.num_steps} "
             f"(速度場の評価 {self.model.nfe} 回/推論)"
@@ -273,6 +277,11 @@ class SmolVLANavigationNode(Node):
         #   不感帯の長さがステップ数で実測できる。0 = 従来どおり現在stepの行動。
         # Pure Pursuit による操舵の置き換えは path_follower.py が担当する。
         self.declare_parameter("step_lookahead", DEFAULT_STEP_LOOKAHEAD)
+
+        # 画像の前処理。旧カメラの学習データ(create_data.py)は中央を正方形に切り出してから縮めている。
+        # 魚眼(640x480)の学習データ(lerobot_dataset.py)は切り出さずに縮めているので false にする。
+        self.declare_parameter("center_crop", True)
+        self.center_crop = bool(self.get_parameter("center_crop").value)
 
         # 重複区間の集約関数（lerobot async_inference の weighted_average と同じ）。
         # 新旧chunkの同じ時刻の行動を 0.2*旧 + 0.8*新 で混ぜて滑らかに繋ぐ。
@@ -327,7 +336,7 @@ class SmolVLANavigationNode(Node):
         self.latest_prompt = msg.data
 
     def image_callback(self, msg: Image) -> None:
-        # ROS Image -> numpy(HWC) -> RGB -> 中央正方形クロップ -> 224x224 -> self.latest_image
+        # ROS Image -> numpy(HWC) -> RGB -> (center_crop なら中央正方形クロップ) -> 224x224 -> self.latest_image
         bgr = image_msg_to_bgr(msg)
         if bgr is None:
             self.get_logger().warn(
@@ -337,13 +346,14 @@ class SmolVLANavigationNode(Node):
             return
         rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
 
-        # 3) 中央を正方形にクロップしてから 224x224 に縮小（学習時と同じ形にする）。
-        h, w = rgb.shape[:2]
-        side = min(h, w)
-        top = (h - side) // 2
-        left = (w - side) // 2
-        square = rgb[top : top + side, left : left + side]
-        resized = cv2.resize(square, (IMG_W, IMG_H), interpolation=cv2.INTER_AREA)
+        # 3) 学習時と同じ形にして 224x224 に縮小する。center_crop なら先に中央を正方形にクロップ。
+        if self.center_crop:
+            h, w = rgb.shape[:2]
+            side = min(h, w)
+            top = (h - side) // 2
+            left = (w - side) // 2
+            rgb = rgb[top : top + side, left : left + side]
+        resized = cv2.resize(rgb, (IMG_W, IMG_H), interpolation=cv2.INTER_AREA)
 
         # infer() が期待する HWC・uint8・RGB・(224,224,3) の形で保存。
         self.latest_image = np.ascontiguousarray(resized)
