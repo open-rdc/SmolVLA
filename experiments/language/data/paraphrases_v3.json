@@ -1,0 +1,4720 @@
+{
+ "bear left along the path": {
+  "class": "L",
+  "purity": 0.8333333333333334,
+  "n_frames": 24,
+  "L1": [
+   "along the path bear left"
+  ],
+  "L2": [
+   "keep left beside the walkway",
+   "keep left beside the trail"
+  ],
+  "L3": [
+   "swing left down the aisle",
+   "swing left down the lane",
+   "pivot left down the aisle"
+  ]
+ },
+ "bear left, following the path through the trees": {
+  "class": "L",
+  "purity": 0.9354838709677419,
+  "n_frames": 31,
+  "L1": [
+   "following the path through the trees, bear left",
+   "through the trees bear left, following the path"
+  ],
+  "L2": [
+   "keep left, tracing the trail over the trees",
+   "keep left, tracing the walkway over the trees"
+  ],
+  "L3": [
+   "swing left, tracing the lane athwart the greenery",
+   "hook left, tracing the aisle athwart the foliage",
+   "hook left, tracing the aisle athwart the greenery",
+   "hook left, hugging the aisle athwart the greenery",
+   "veer left, hugging the lane athwart the foliage"
+  ]
+ },
+ "follow the path as it curves left along the lawn": {
+  "class": "L",
+  "purity": 0.8518518518518519,
+  "n_frames": 27,
+  "L1": [
+   "along the lawn follow the path as it curves left"
+  ],
+  "L2": [
+   "trace the trail as it bends left beside the grass",
+   "trace the walkway as it bends left beside the grass"
+  ],
+  "L3": [
+   "trace the lane as it bends left down the turf",
+   "hug the lane as it bends left down the turf",
+   "trace the lane as it bends left down the meadow",
+   "trace the aisle as it bends left down the meadow",
+   "hug the lane as it bends left down the meadow"
+  ]
+ },
+ "turn left across the paved square": {
+  "class": "L",
+  "purity": 0.8,
+  "n_frames": 40,
+  "L1": [
+   "across the paved square turn left"
+  ],
+  "L2": [
+   "turn left over the surfaced square",
+   "turn left over the surfaced unenclosed zone"
+  ],
+  "L3": [
+   "hook left over the cobbled quad",
+   "hook left over the flagstone quad",
+   "hook left over the cobbled flagstone court",
+   "cut left over the cobbled quad",
+   "swing left over the cobbled quad"
+  ]
+ },
+ "turn left along the glass building": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 34,
+  "L1": [
+   "along the glass building turn left"
+  ],
+  "L2": [
+   "turn left beside the glass-walled structure"
+  ],
+  "L3": [
+   "veer left down the glazed block",
+   "pivot left down the glazed block",
+   "cut left down the glazed block",
+   "pivot left down the glazed edifice",
+   "veer left down the glazed edifice"
+  ]
+ },
+ "turn left onto the brick path": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 44,
+  "L1": [
+   "onto the brick path turn left"
+  ],
+  "L2": [
+   "turn left onto the brickwork walkway",
+   "turn left onto the brickwork trail"
+  ],
+  "L3": [
+   "swing left onto the cobbled aisle",
+   "hook left onto the cobbled aisle",
+   "veer left onto the cobbled aisle",
+   "pivot left onto the cobbled lane",
+   "pivot left onto the cobbled aisle"
+  ]
+ },
+ "turn left onto the tree-lined avenue": {
+  "class": "L",
+  "purity": 0.9447004608294931,
+  "n_frames": 217,
+  "L1": [
+   "onto the tree-lined avenue turn left"
+  ],
+  "L2": [
+   "turn left onto the tree-bordered street",
+   "turn left onto the tree-bordered avenue",
+   "turn left onto the tree-bordered roadway"
+  ],
+  "L3": [
+   "swing left onto the foliage-flanked boulevard",
+   "hook left onto the foliage-flanked esplanade",
+   "pivot left onto the foliage-flanked boulevard",
+   "hook left onto the foliage-rimmed esplanade",
+   "swing left onto the foliage-rimmed esplanade"
+  ]
+ },
+ "turn left toward the apartment building": {
+  "class": "L",
+  "purity": 0.8484848484848485,
+  "n_frames": 33,
+  "L1": [
+   "toward the apartment building turn left"
+  ],
+  "L2": [
+   "turn left towards the residential structure"
+  ],
+  "L3": [
+   "swing left for the tenement block",
+   "cut left for the tenement edifice",
+   "cut left for the tenement block",
+   "hook left for the tenement edifice",
+   "hook left for the tenement block"
+  ]
+ },
+ "turn left toward the colonnade": {
+  "class": "L",
+  "purity": 0.9557522123893806,
+  "n_frames": 113,
+  "L1": [
+   "toward the colonnade turn left"
+  ],
+  "L2": [
+   "turn left towards the columns"
+  ],
+  "L3": [
+   "swing left for the arcade",
+   "pivot left for the portico",
+   "veer left for the portico",
+   "swing left for the portico",
+   "cut left for the arcade"
+  ]
+ },
+ "turn left, following the path": {
+  "class": "L",
+  "purity": 0.9523809523809523,
+  "n_frames": 42,
+  "L1": [
+   "following the path, turn left"
+  ],
+  "L2": [
+   "turn left, tracing the trail",
+   "turn left, tracing the walkway"
+  ],
+  "L3": [
+   "pivot left, hugging the lane",
+   "veer left, hugging the aisle",
+   "pivot left, tracing the lane",
+   "hook left, hugging the lane",
+   "hook left, hugging the aisle"
+  ]
+ },
+ "Move toward the sidewalk on the left": {
+  "class": "L",
+  "purity": 0.9158878504672897,
+  "n_frames": 107,
+  "L1": [
+   "Toward the sidewalk on the left Move",
+   "On the left toward the sidewalk Move"
+  ],
+  "L2": [
+   "travel towards the sidewalk on the left"
+  ],
+  "L3": [
+   "proceed onward for the sidewalk on the left"
+  ]
+ },
+ "Move toward the building entrance on the left": {
+  "class": "L",
+  "purity": 0.8936170212765957,
+  "n_frames": 47,
+  "L1": [
+   "Toward the building entrance on the left Move",
+   "On the left toward the building entrance Move"
+  ],
+  "L2": [
+   "travel towards the structure doorway on the left"
+  ],
+  "L3": [
+   "proceed onward for the edifice doorway on the left",
+   "proceed onward for the block doorway on the left",
+   "proceed onward for the edifice portal on the left",
+   "proceed onward for the block portal on the left"
+  ]
+ },
+ "Move toward the bicycle parking area on the left": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 41,
+  "L1": [
+   "Toward the bicycle parking area on the left Move",
+   "On the left toward the bicycle parking area Move"
+  ],
+  "L2": [
+   "travel towards the bike parking zone area on the left"
+  ],
+  "L3": [
+   "proceed onward for the cycle stalls precinct on the left"
+  ]
+ },
+ "go straight alongside the hedge": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 22,
+  "L1": [],
+  "L2": [
+   "go straight in front alongside the hedgerow",
+   "go straight in front alongside the bushes"
+  ],
+  "L3": []
+ },
+ "Go to the red road on the left": {
+  "class": "L",
+  "purity": 0.9375,
+  "n_frames": 32,
+  "L1": [
+   "On the left Go to the red road"
+  ],
+  "L2": [
+   "Go to the reddish roadway on the left",
+   "Go to the reddish street on the left"
+  ],
+  "L3": [
+   "Go to the ochre thoroughfare on the left",
+   "Go to the ochre lane on the left"
+  ]
+ },
+ "turn left onto the tree-lined path": {
+  "class": "L",
+  "purity": 0.9117647058823529,
+  "n_frames": 102,
+  "L1": [
+   "onto the tree-lined path turn left"
+  ],
+  "L2": [
+   "turn left onto the tree-bordered trail",
+   "turn left onto the tree-bordered walkway"
+  ],
+  "L3": [
+   "swing left onto the foliage-rimmed lane",
+   "veer left onto the foliage-rimmed aisle",
+   "veer left onto the foliage-flanked aisle",
+   "swing left onto the foliage-flanked lane",
+   "swing left onto the foliage-rimmed aisle"
+  ]
+ },
+ "turn left into the building entrance": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 13,
+  "L1": [
+   "into the building entrance turn left"
+  ],
+  "L2": [
+   "turn left into the structure doorway"
+  ],
+  "L3": [
+   "pivot left into the block doorway",
+   "swing left into the block doorway",
+   "swing left into the block portal",
+   "hook left into the edifice portal",
+   "cut left into the block portal"
+  ]
+ },
+ "Move toward the left the open brick plaza": {
+  "class": "L",
+  "purity": 0.816068515497553,
+  "n_frames": 2452,
+  "L1": [
+   "Toward the left the open brick plaza Move"
+  ],
+  "L2": [
+   "travel towards the left the unenclosed brickwork square",
+   "travel towards the left the unenclosed brickwork open zone"
+  ],
+  "L3": [
+   "proceed onward for the left the unwalled cobbled esplanade",
+   "proceed onward for the left the unwalled cobbled quad"
+  ]
+ },
+ "Turn left at the bicycle parking": {
+  "class": "L",
+  "purity": 0.9032258064516129,
+  "n_frames": 31,
+  "L1": [
+   "At the bicycle parking Turn left"
+  ],
+  "L2": [
+   "Turn left at the bike parking zone"
+  ],
+  "L3": [
+   "cut left at the cycle stalls",
+   "pivot left at the cycle stalls",
+   "veer left at the cycle stalls",
+   "swing left at the cycle stalls",
+   "hook left at the cycle stalls"
+  ]
+ },
+ "turn left past the planters": {
+  "class": "L",
+  "purity": 0.8620689655172413,
+  "n_frames": 29,
+  "L1": [
+   "past the planters turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "hook left beyond the planters",
+   "cut left beyond the planters",
+   "pivot left beyond the planters",
+   "swing left beyond the planters",
+   "veer left beyond the planters"
+  ]
+ },
+ "turn left toward the lawn and the glass building": {
+  "class": "L",
+  "purity": 0.9444444444444444,
+  "n_frames": 36,
+  "L1": [
+   "toward the lawn and the glass building turn left"
+  ],
+  "L2": [
+   "turn left towards the grass and the glass-walled structure"
+  ],
+  "L3": [
+   "pivot left for the meadow and the glazed edifice",
+   "veer left for the meadow and the glazed block",
+   "veer left for the turf and the glazed block",
+   "swing left for the turf and the glazed block",
+   "pivot left for the turf and the glazed edifice"
+  ]
+ },
+ "Move around turn left": {
+  "class": "L",
+  "purity": 0.8840579710144928,
+  "n_frames": 69,
+  "L1": [
+   "Around turn left Move"
+  ],
+  "L2": [
+   "travel about turn left"
+  ],
+  "L3": [
+   "proceed onward round swing left",
+   "proceed onward round veer left",
+   "proceed onward round pivot left",
+   "proceed onward round cut left",
+   "proceed onward round hook left"
+  ]
+ },
+ "turn left along the building": {
+  "class": "L",
+  "purity": 0.9713375796178344,
+  "n_frames": 314,
+  "L1": [
+   "along the building turn left"
+  ],
+  "L2": [
+   "turn left beside the structure"
+  ],
+  "L3": [
+   "hook left down the edifice",
+   "swing left down the edifice",
+   "cut left down the edifice",
+   "veer left down the block",
+   "hook left down the block"
+  ]
+ },
+ "Move toward the gate before turn left": {
+  "class": "L",
+  "purity": 0.9479166666666666,
+  "n_frames": 96,
+  "L1": [
+   "Toward the gate before turn left Move"
+  ],
+  "L2": [
+   "travel towards the gateway before turn left"
+  ],
+  "L3": [
+   "proceed onward for the doorway before cut left",
+   "proceed onward for the doorway before hook left",
+   "proceed onward for the portal before swing left",
+   "proceed onward for the doorway before veer left",
+   "proceed onward for the doorway before swing left"
+  ]
+ },
+ "follow the edge of the paved square as it curves left, trees on both sides": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 45,
+  "L1": [
+   "trees on both sides, follow the edge of the paved square as it curves left",
+   "on both sides follow the edge of the paved square as it curves left, trees"
+  ],
+  "L2": [
+   "trace the side of the surfaced square as it bends left, trees on either side",
+   "trace the side of the surfaced unenclosed zone as it bends left, trees on either side"
+  ],
+  "L3": [
+   "trace the rim of the cobbled quad as it bends left, foliage on each flank",
+   "trace the rim of the cobbled quad as it bends left, greenery on either hand",
+   "trace the verge of the flagstone flagstone court as it bends left, greenery on each flank",
+   "hug the rim of the flagstone flagstone court as it bends left, greenery on either hand",
+   "hug the verge of the cobbled flagstone court as it bends left, foliage on each flank"
+  ]
+ },
+ "Head to the building behind the left wall": {
+  "class": "L",
+  "purity": 0.9090909090909091,
+  "n_frames": 44,
+  "L1": [],
+  "L2": [
+   "go to the structure behind the left wall"
+  ],
+  "L3": [
+   "keep on to the block behind the left wall",
+   "press to the edifice behind the left wall",
+   "press to the block behind the left wall",
+   "keep on to the edifice behind the left wall"
+  ]
+ },
+ "follow the path as it curves left through the trees": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 74,
+  "L1": [
+   "through the trees follow the path as it curves left"
+  ],
+  "L2": [
+   "trace the walkway as it bends left over the trees",
+   "trace the trail as it bends left over the trees"
+  ],
+  "L3": [
+   "trace the aisle as it bends left athwart the foliage",
+   "trace the lane as it bends left athwart the greenery",
+   "hug the aisle as it bends left athwart the foliage",
+   "hug the lane as it bends left athwart the foliage",
+   "hug the aisle as it bends left athwart the greenery"
+  ]
+ },
+ "turn left onto the park path": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 52,
+  "L1": [
+   "onto the park path turn left"
+  ],
+  "L2": [
+   "turn left onto the park grounds walkway",
+   "turn left onto the park grounds trail"
+  ],
+  "L3": [
+   "pivot left onto the commons lane",
+   "hook left onto the commons aisle",
+   "pivot left onto the commons aisle",
+   "swing left onto the commons aisle",
+   "cut left onto the commons lane"
+  ]
+ },
+ "bear left along the bicycle racks on your right": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 32,
+  "L1": [
+   "along the bicycle racks on your right bear left",
+   "on your right along the bicycle racks bear left"
+  ],
+  "L2": [
+   "keep left beside the bike stands on your right"
+  ],
+  "L3": [
+   "cut left down the cycle stalls on your right",
+   "pivot left down the cycle stalls on your right",
+   "veer left down the cycle rails on your right",
+   "hook left down the cycle rails on your right",
+   "swing left down the cycle stalls on your right"
+  ]
+ },
+ "Turn left the signboard": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 23,
+  "L1": [],
+  "L2": [],
+  "L3": []
+ },
+ "Go to the fence on the left": {
+  "class": "L",
+  "purity": 0.9090909090909091,
+  "n_frames": 77,
+  "L1": [
+   "On the left Go to the fence"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "turn left around the building": {
+  "class": "L",
+  "purity": 0.8888888888888888,
+  "n_frames": 90,
+  "L1": [
+   "around the building turn left"
+  ],
+  "L2": [
+   "turn left about the structure"
+  ],
+  "L3": [
+   "pivot left round the edifice",
+   "swing left round the edifice",
+   "cut left round the block",
+   "hook left round the block",
+   "veer left round the edifice"
+  ]
+ },
+ "Turn left along the flowerbed": {
+  "class": "L",
+  "purity": 0.9032258064516129,
+  "n_frames": 31,
+  "L1": [
+   "Along the flowerbed Turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "hook left down the flowerbed",
+   "cut left down the flowerbed",
+   "swing left down the flowerbed",
+   "veer left down the flowerbed",
+   "pivot left down the flowerbed"
+  ]
+ },
+ "turn left towards the open lawn": {
+  "class": "L",
+  "purity": 0.8387096774193549,
+  "n_frames": 31,
+  "L1": [
+   "towards the open lawn turn left"
+  ],
+  "L2": [
+   "turn left towards the unenclosed grass"
+  ],
+  "L3": [
+   "cut left towards the unwalled meadow",
+   "pivot left towards the unwalled turf",
+   "swing left towards the unwalled meadow",
+   "veer left towards the unwalled turf",
+   "cut left towards the unwalled turf"
+  ]
+ },
+ "Proceed along the path to the bicycle parking area": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 20,
+  "L1": [
+   "Along the path to the bicycle parking area Proceed"
+  ],
+  "L2": [
+   "continue on beside the walkway to the bike parking zone area",
+   "continue on beside the trail to the bike parking zone area"
+  ],
+  "L3": [
+   "carry on down the lane to the cycle stalls precinct",
+   "carry on down the aisle to the cycle stalls precinct"
+  ]
+ },
+ "turn left along the path": {
+  "class": "L",
+  "purity": 0.9298245614035088,
+  "n_frames": 114,
+  "L1": [
+   "along the path turn left"
+  ],
+  "L2": [
+   "turn left beside the trail",
+   "turn left beside the walkway"
+  ],
+  "L3": [
+   "pivot left down the lane",
+   "veer left down the aisle",
+   "hook left down the aisle"
+  ]
+ },
+ "turn left at the traffic cones": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 33,
+  "L1": [
+   "at the traffic cones turn left"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "turn left into the plaza": {
+  "class": "L",
+  "purity": 0.9344262295081968,
+  "n_frames": 61,
+  "L1": [
+   "into the plaza turn left"
+  ],
+  "L2": [
+   "turn left into the unenclosed zone"
+  ],
+  "L3": [
+   "pivot left into the esplanade",
+   "hook left into the esplanade",
+   "veer left into the esplanade",
+   "cut left into the quad",
+   "swing left into the esplanade"
+  ]
+ },
+ "turn left toward the white building": {
+  "class": "L",
+  "purity": 0.9293478260869565,
+  "n_frames": 184,
+  "L1": [
+   "toward the white building turn left"
+  ],
+  "L2": [
+   "turn left towards the pale structure"
+  ],
+  "L3": [
+   "veer left for the chalky edifice",
+   "veer left for the chalky block",
+   "hook left for the chalky edifice",
+   "hook left for the chalky block",
+   "cut left for the chalky block"
+  ]
+ },
+ "follow the path curving left through the trees": {
+  "class": "L",
+  "purity": 0.8156028368794326,
+  "n_frames": 141,
+  "L1": [
+   "through the trees follow the path curving left"
+  ],
+  "L2": [
+   "trace the walkway bending left over the trees",
+   "trace the trail bending left over the trees"
+  ],
+  "L3": [
+   "trace the lane bending left athwart the greenery",
+   "hug the aisle bending left athwart the foliage",
+   "trace the aisle bending left athwart the greenery",
+   "hug the aisle bending left athwart the greenery",
+   "hug the lane bending left athwart the foliage"
+  ]
+ },
+ "turn left along the hedge": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 38,
+  "L1": [
+   "along the hedge turn left"
+  ],
+  "L2": [
+   "turn left beside the bushes",
+   "turn left beside the hedgerow"
+  ],
+  "L3": [
+   "veer left down the shrubs",
+   "swing left down the thicket",
+   "cut left down the shrubs",
+   "hook left down the shrubs",
+   "cut left down the thicket"
+  ]
+ },
+ "Move to the road on the left": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 22,
+  "L1": [
+   "On the left Move to the road"
+  ],
+  "L2": [
+   "travel to the roadway on the left",
+   "travel to the street on the left"
+  ],
+  "L3": [
+   "proceed onward to the thoroughfare on the left",
+   "proceed onward to the lane on the left"
+  ]
+ },
+ "Move toward the corridor on the left": {
+  "class": "L",
+  "purity": 0.8947368421052632,
+  "n_frames": 38,
+  "L1": [
+   "Toward the corridor on the left Move",
+   "On the left toward the corridor Move"
+  ],
+  "L2": [
+   "travel towards the passage on the left"
+  ],
+  "L3": [
+   "proceed onward for the arcade on the left",
+   "proceed onward for the aisle on the left"
+  ]
+ },
+ "Turn left at the green pylon": {
+  "class": "L",
+  "purity": 0.8918918918918919,
+  "n_frames": 37,
+  "L1": [
+   "At the green pylon Turn left"
+  ],
+  "L2": [
+   "Turn left at the grass cone"
+  ],
+  "L3": [
+   "pivot left at the turf bollard",
+   "cut left at the turf bollard",
+   "hook left at the turf bollard",
+   "veer left at the turf bollard",
+   "swing left at the turf bollard"
+  ]
+ },
+ "Go straight toward the fountain": {
+  "class": "L",
+  "purity": 0.9565217391304348,
+  "n_frames": 23,
+  "L1": [
+   "Toward the fountain Go straight"
+  ],
+  "L2": [
+   "Go straight in front towards the fountain"
+  ],
+  "L3": []
+ },
+ "Turn left towards the red paved road.": {
+  "class": "L",
+  "purity": 0.9111111111111111,
+  "n_frames": 45,
+  "L1": [
+   "Towards the red paved road Turn left"
+  ],
+  "L2": [
+   "Turn left towards the reddish surfaced roadway.",
+   "Turn left towards the reddish surfaced street."
+  ],
+  "L3": [
+   "veer left towards the ochre flagstone thoroughfare.",
+   "cut left towards the ochre cobbled thoroughfare.",
+   "cut left towards the ochre flagstone thoroughfare.",
+   "hook left towards the ochre cobbled thoroughfare.",
+   "hook left towards the ochre flagstone thoroughfare."
+  ]
+ },
+ "turn left onto the road": {
+  "class": "L",
+  "purity": 0.911504424778761,
+  "n_frames": 113,
+  "L1": [
+   "onto the road turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "hook left onto the lane",
+   "pivot left onto the lane",
+   "hook left onto the thoroughfare",
+   "veer left onto the thoroughfare",
+   "pivot left onto the thoroughfare"
+  ]
+ },
+ "Move toward the green hedge on the left": {
+  "class": "L",
+  "purity": 0.8888888888888888,
+  "n_frames": 27,
+  "L1": [
+   "Toward the green hedge on the left Move",
+   "On the left toward the green hedge Move"
+  ],
+  "L2": [
+   "travel towards the grass bushes on the left",
+   "travel towards the grass hedgerow on the left"
+  ],
+  "L3": [
+   "proceed onward for the turf shrubs on the left",
+   "proceed onward for the turf thicket on the left"
+  ]
+ },
+ "turn left into the colonnade": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 39,
+  "L1": [
+   "into the colonnade turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "cut left into the arcade",
+   "hook left into the portico",
+   "cut left into the portico",
+   "veer left into the portico",
+   "pivot left into the portico"
+  ]
+ },
+ "Turn left at the blue object": {
+  "class": "L",
+  "purity": 0.9444444444444444,
+  "n_frames": 36,
+  "L1": [
+   "At the blue object Turn left"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "turn left at the building entrance": {
+  "class": "L",
+  "purity": 0.8214285714285714,
+  "n_frames": 28,
+  "L1": [
+   "at the building entrance turn left"
+  ],
+  "L2": [
+   "turn left at the structure doorway"
+  ],
+  "L3": [
+   "hook left at the edifice portal",
+   "hook left at the block doorway",
+   "pivot left at the edifice portal",
+   "veer left at the edifice portal",
+   "cut left at the block doorway"
+  ]
+ },
+ "Move toward the green path on the left": {
+  "class": "L",
+  "purity": 0.8508064516129032,
+  "n_frames": 248,
+  "L1": [
+   "Toward the green path on the left Move",
+   "On the left toward the green path Move"
+  ],
+  "L2": [
+   "travel towards the grass trail on the left",
+   "travel towards the grass walkway on the left"
+  ],
+  "L3": [
+   "proceed onward for the turf aisle on the left",
+   "proceed onward for the turf lane on the left"
+  ]
+ },
+ "turn left across the plaza": {
+  "class": "L",
+  "purity": 0.9384615384615385,
+  "n_frames": 390,
+  "L1": [
+   "across the plaza turn left"
+  ],
+  "L2": [
+   "turn left over the square",
+   "turn left over the unenclosed zone"
+  ],
+  "L3": [
+   "cut left over the quad",
+   "hook left over the esplanade",
+   "veer left over the quad",
+   "veer left over the esplanade",
+   "pivot left over the esplanade"
+  ]
+ },
+ "Go through the cornfield and turn left": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 36,
+  "L1": [
+   "Through the cornfield and turn left Go"
+  ],
+  "L2": [
+   "Go over the cornfield and turn left"
+  ],
+  "L3": [
+   "Go athwart the cornfield and hook left",
+   "Go athwart the cornfield and cut left",
+   "Go athwart the cornfield and swing left",
+   "Go athwart the cornfield and veer left",
+   "Go athwart the cornfield and pivot left"
+  ]
+ },
+ "Go along the road edge on the left": {
+  "class": "L",
+  "purity": 0.8923076923076924,
+  "n_frames": 65,
+  "L1": [
+   "Along the road edge on the left Go",
+   "On the left along the road edge Go"
+  ],
+  "L2": [
+   "Go beside the street side on the left",
+   "Go beside the roadway side on the left"
+  ],
+  "L3": [
+   "Go down the thoroughfare verge on the left",
+   "Go down the thoroughfare rim on the left",
+   "Go down the lane rim on the left",
+   "Go down the lane verge on the left"
+  ]
+ },
+ "turn left onto the green-paved road": {
+  "class": "L",
+  "purity": 0.9642857142857143,
+  "n_frames": 56,
+  "L1": [
+   "onto the green-paved road turn left"
+  ],
+  "L2": [
+   "turn left onto the grass-surfaced street",
+   "turn left onto the grass-surfaced roadway"
+  ],
+  "L3": [
+   "veer left onto the turf-flagstone lane",
+   "swing left onto the turf-cobbled lane",
+   "cut left onto the turf-flagstone thoroughfare",
+   "pivot left onto the turf-cobbled lane",
+   "pivot left onto the turf-cobbled thoroughfare"
+  ]
+ },
+ "Stay to the left and turn left at the curve in the square": {
+  "class": "L",
+  "purity": 0.89375,
+  "n_frames": 160,
+  "L1": [
+   "At the curve in the square Stay to the left and turn left",
+   "In the square at the curve Stay to the left and turn left"
+  ],
+  "L2": [
+   "Stay to the left and turn left at the curve in the unenclosed zone"
+  ],
+  "L3": [
+   "Stay to the left and veer left at the curve in the flagstone court",
+   "Stay to the left and hook left at the curve in the flagstone court",
+   "Stay to the left and cut left at the curve in the quad",
+   "Stay to the left and swing left at the curve in the flagstone court",
+   "Stay to the left and hook left at the curve in the quad"
+  ]
+ },
+ "Move toward the tree-lined path on the left": {
+  "class": "L",
+  "purity": 0.8724489795918368,
+  "n_frames": 196,
+  "L1": [
+   "Toward the tree-lined path on the left Move",
+   "On the left toward the tree-lined path Move"
+  ],
+  "L2": [
+   "travel towards the tree-bordered walkway on the left",
+   "travel towards the tree-bordered trail on the left"
+  ],
+  "L3": [
+   "proceed onward for the foliage-rimmed aisle on the left",
+   "proceed onward for the foliage-flanked aisle on the left",
+   "proceed onward for the foliage-flanked lane on the left",
+   "proceed onward for the foliage-rimmed lane on the left"
+  ]
+ },
+ "head straight toward the colonnade": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 13,
+  "L1": [
+   "toward the colonnade head straight"
+  ],
+  "L2": [
+   "go straight in front towards the columns"
+  ],
+  "L3": [
+   "press straight for the arcade",
+   "press straight for the portico",
+   "keep on straight for the portico",
+   "keep on straight for the arcade"
+  ]
+ },
+ "Curve gently to the left.": {
+  "class": "L",
+  "purity": 0.8181818181818182,
+  "n_frames": 77,
+  "L1": [],
+  "L2": [],
+  "L3": []
+ },
+ "Go to the road on the left": {
+  "class": "L",
+  "purity": 0.90625,
+  "n_frames": 64,
+  "L1": [
+   "On the left Go to the road"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "go straight into the park": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 29,
+  "L1": [
+   "into the park go straight"
+  ],
+  "L2": [
+   "go straight in front into the park grounds"
+  ],
+  "L3": []
+ },
+ "Please turn left along the far left side of the road toward the plaza": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 35,
+  "L1": [
+   "Along the far left side of the road toward the plaza Please turn left",
+   "Toward the plaza along the far left side of the road Please turn left"
+  ],
+  "L2": [
+   "Please turn left beside the distant left side of the roadway towards the square",
+   "Please turn left beside the distant left side of the street towards the unenclosed zone",
+   "Please turn left beside the distant left side of the street towards the square",
+   "Please turn left beside the distant left side of the roadway towards the unenclosed zone"
+  ],
+  "L3": [
+   "Please veer left down the outermost left side of the thoroughfare for the esplanade",
+   "Please pivot left down the outermost left side of the lane for the quad",
+   "Please swing left down the outermost left side of the lane for the esplanade",
+   "Please cut left down the outermost left side of the thoroughfare for the quad",
+   "Please pivot left down the outermost left side of the thoroughfare for the quad"
+  ]
+ },
+ "Turn left and head towards the bicycle parking area": {
+  "class": "L",
+  "purity": 0.9811320754716981,
+  "n_frames": 53,
+  "L1": [
+   "Towards the bicycle parking area Turn left and head"
+  ],
+  "L2": [
+   "Turn left and go towards the bike parking zone area"
+  ],
+  "L3": [
+   "veer left and press towards the cycle stalls precinct",
+   "pivot left and press towards the cycle stalls precinct",
+   "cut left and press towards the cycle stalls precinct",
+   "veer left and keep on towards the cycle stalls precinct",
+   "hook left and press towards the cycle stalls precinct"
+  ]
+ },
+ "turn left along the bicycle parking": {
+  "class": "L",
+  "purity": 0.8953488372093024,
+  "n_frames": 86,
+  "L1": [
+   "along the bicycle parking turn left"
+  ],
+  "L2": [
+   "turn left beside the bike parking zone"
+  ],
+  "L3": [
+   "veer left down the cycle stalls",
+   "swing left down the cycle stalls",
+   "pivot left down the cycle stalls",
+   "hook left down the cycle stalls",
+   "cut left down the cycle stalls"
+  ]
+ },
+ "bear left toward the bicycle parking": {
+  "class": "L",
+  "purity": 0.8666666666666667,
+  "n_frames": 30,
+  "L1": [
+   "toward the bicycle parking bear left"
+  ],
+  "L2": [
+   "keep left towards the bike parking zone"
+  ],
+  "L3": [
+   "cut left for the cycle stalls",
+   "swing left for the cycle stalls",
+   "veer left for the cycle stalls",
+   "hook left for the cycle stalls",
+   "pivot left for the cycle stalls"
+  ]
+ },
+ "turn left through the covered walkway": {
+  "class": "L",
+  "purity": 0.8846153846153846,
+  "n_frames": 78,
+  "L1": [
+   "through the covered walkway turn left"
+  ],
+  "L2": [
+   "turn left over the roofed trail",
+   "turn left over the roofed footway",
+   "turn left over the roofed walkway"
+  ],
+  "L3": [
+   "cut left athwart the canopied aisle",
+   "pivot left athwart the canopied arcade",
+   "hook left athwart the canopied aisle",
+   "cut left athwart the canopied arcade",
+   "swing left athwart the canopied arcade"
+  ]
+ },
+ "turn left across the parking lot": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 46,
+  "L1": [
+   "across the parking lot turn left"
+  ],
+  "L2": [
+   "turn left over the parking zone yard"
+  ],
+  "L3": [
+   "cut left over the stalls yard",
+   "pivot left over the stalls yard",
+   "veer left over the stalls yard",
+   "swing left over the stalls yard",
+   "hook left over the stalls yard"
+  ]
+ },
+ "turn left towards the trees": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 44,
+  "L1": [
+   "towards the trees turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "cut left towards the foliage",
+   "pivot left towards the greenery",
+   "veer left towards the greenery",
+   "hook left towards the foliage",
+   "swing left towards the foliage"
+  ]
+ },
+ "turn left toward the glass building": {
+  "class": "L",
+  "purity": 0.9333333333333333,
+  "n_frames": 75,
+  "L1": [
+   "toward the glass building turn left"
+  ],
+  "L2": [
+   "turn left towards the glass-walled structure"
+  ],
+  "L3": [
+   "veer left for the glazed block",
+   "swing left for the glazed edifice",
+   "pivot left for the glazed edifice",
+   "cut left for the glazed block",
+   "pivot left for the glazed block"
+  ]
+ },
+ "turn left towards the building": {
+  "class": "L",
+  "purity": 0.9744897959183674,
+  "n_frames": 196,
+  "L1": [
+   "towards the building turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "pivot left towards the edifice",
+   "veer left towards the block",
+   "cut left towards the edifice",
+   "veer left towards the edifice",
+   "cut left towards the block"
+  ]
+ },
+ "turn left the open lot": {
+  "class": "L",
+  "purity": 0.9736842105263158,
+  "n_frames": 114,
+  "L1": [],
+  "L2": [
+   "turn left the unenclosed yard"
+  ],
+  "L3": [
+   "cut left the unwalled yard",
+   "swing left the unwalled yard",
+   "pivot left the unwalled yard",
+   "hook left the unwalled yard",
+   "veer left the unwalled yard"
+  ]
+ },
+ "turn left into the park": {
+  "class": "L",
+  "purity": 0.9210526315789473,
+  "n_frames": 38,
+  "L1": [
+   "into the park turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "veer left into the commons",
+   "swing left into the commons",
+   "cut left into the commons",
+   "hook left into the commons",
+   "pivot left into the commons"
+  ]
+ },
+ "follow the edge of the plaza as it curves left along the trees": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 61,
+  "L1": [
+   "along the trees follow the edge of the plaza as it curves left"
+  ],
+  "L2": [
+   "trace the side of the square as it bends left beside the trees",
+   "trace the side of the unenclosed zone as it bends left beside the trees"
+  ],
+  "L3": [
+   "trace the rim of the quad as it bends left down the greenery",
+   "hug the verge of the esplanade as it bends left down the greenery",
+   "trace the verge of the quad as it bends left down the greenery",
+   "trace the rim of the esplanade as it bends left down the greenery",
+   "hug the rim of the esplanade as it bends left down the foliage"
+  ]
+ },
+ "turn left at the corner onto the next street between the buildings": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 50,
+  "L1": [
+   "at the corner onto the next street between the buildings turn left",
+   "onto the next street at the corner between the buildings turn left",
+   "between the buildings at the corner onto the next street turn left",
+   "between the buildings onto the next street at the corner turn left"
+  ],
+  "L2": [
+   "turn left at the bend onto the next avenue amid the structures",
+   "turn left at the bend onto the next roadway amid the structures",
+   "turn left at the bend onto the next street amid the structures"
+  ],
+  "L3": [
+   "veer left at the bend onto the next boulevard dividing the blocks",
+   "swing left at the bend onto the next boulevard dividing the blocks",
+   "pivot left at the bend onto the next boulevard dividing the edifices",
+   "hook left at the bend onto the next boulevard dividing the edifices",
+   "veer left at the bend onto the next boulevard dividing the edifices"
+  ]
+ },
+ "Move toward the brick road on the left": {
+  "class": "L",
+  "purity": 0.8709677419354839,
+  "n_frames": 31,
+  "L1": [
+   "Toward the brick road on the left Move",
+   "On the left toward the brick road Move"
+  ],
+  "L2": [
+   "travel towards the brickwork roadway on the left",
+   "travel towards the brickwork street on the left"
+  ],
+  "L3": [
+   "proceed onward for the cobbled lane on the left",
+   "proceed onward for the cobbled thoroughfare on the left"
+  ]
+ },
+ "Turn left at the square.": {
+  "class": "L",
+  "purity": 0.95,
+  "n_frames": 140,
+  "L1": [
+   "At the square Turn left"
+  ],
+  "L2": [
+   "Turn left at the unenclosed zone."
+  ],
+  "L3": [
+   "cut left at the quad.",
+   "veer left at the flagstone court.",
+   "hook left at the flagstone court.",
+   "swing left at the quad.",
+   "veer left at the quad."
+  ]
+ },
+ "turn left towards the columned building": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 66,
+  "L1": [
+   "towards the columned building turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "hook left towards the columned block",
+   "pivot left towards the columned block",
+   "veer left towards the columned block",
+   "pivot left towards the columned edifice",
+   "swing left towards the columned block"
+  ]
+ },
+ "head straight along the path through the park": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 11,
+  "L1": [
+   "along the path through the park head straight",
+   "through the park along the path head straight"
+  ],
+  "L2": [
+   "go straight in front beside the walkway over the park grounds",
+   "go straight in front beside the trail over the park grounds"
+  ],
+  "L3": [
+   "keep on straight down the lane athwart the commons",
+   "press straight down the lane athwart the commons",
+   "press straight down the aisle athwart the commons",
+   "keep on straight down the aisle athwart the commons"
+  ]
+ },
+ "turn left around the building corner": {
+  "class": "L",
+  "purity": 0.9125,
+  "n_frames": 80,
+  "L1": [
+   "around the building corner turn left"
+  ],
+  "L2": [
+   "turn left about the structure bend"
+  ],
+  "L3": [
+   "pivot left round the edifice bend",
+   "veer left round the block bend",
+   "veer left round the edifice bend",
+   "pivot left round the block bend",
+   "cut left round the edifice bend"
+  ]
+ },
+ "Move toward the building on the left": {
+  "class": "L",
+  "purity": 0.8591549295774648,
+  "n_frames": 710,
+  "L1": [
+   "Toward the building on the left Move",
+   "On the left toward the building Move"
+  ],
+  "L2": [
+   "travel towards the structure on the left"
+  ],
+  "L3": [
+   "proceed onward for the edifice on the left",
+   "proceed onward for the block on the left"
+  ]
+ },
+ "continue curving left along the glass building on your right, with trees on your left": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 97,
+  "L1": [
+   "with trees on your left, continue curving left along the glass building on your right",
+   "along the glass building on your right, with trees on your left continue curving left",
+   "on your right, along the glass building with trees on your left continue curving left",
+   "with trees along the glass building on your right, on your left continue curving left",
+   "on your left along the glass building on your right, with trees continue curving left"
+  ],
+  "L2": [
+   "keep going bending left beside the glass-walled structure on your right, with trees on your left"
+  ],
+  "L3": [
+   "carry on bending left down the glazed edifice on your right, with greenery on your left",
+   "press on bending left down the glazed edifice on your right, with greenery on your left",
+   "press on bending left down the glazed block on your right, with greenery on your left",
+   "carry on bending left down the glazed block on your right, with greenery on your left",
+   "carry on bending left down the glazed edifice on your right, with foliage on your left"
+  ]
+ },
+ "turn left toward the building": {
+  "class": "L",
+  "purity": 0.9045226130653267,
+  "n_frames": 199,
+  "L1": [
+   "toward the building turn left"
+  ],
+  "L2": [
+   "turn left towards the structure"
+  ],
+  "L3": [
+   "hook left for the edifice",
+   "hook left for the block",
+   "swing left for the edifice",
+   "veer left for the edifice",
+   "swing left for the block"
+  ]
+ },
+ "Turn left at the hedge": {
+  "class": "L",
+  "purity": 0.8466666666666667,
+  "n_frames": 150,
+  "L1": [
+   "At the hedge Turn left"
+  ],
+  "L2": [],
+  "L3": [
+   "veer left at the shrubs",
+   "hook left at the thicket",
+   "swing left at the thicket",
+   "hook left at the shrubs",
+   "cut left at the shrubs"
+  ]
+ },
+ "turn left toward the covered walkway": {
+  "class": "L",
+  "purity": 0.96,
+  "n_frames": 25,
+  "L1": [
+   "toward the covered walkway turn left"
+  ],
+  "L2": [
+   "turn left towards the roofed walkway",
+   "turn left towards the roofed trail",
+   "turn left towards the roofed footway"
+  ],
+  "L3": [
+   "cut left for the canopied aisle",
+   "pivot left for the canopied aisle",
+   "veer left for the canopied aisle",
+   "hook left for the canopied arcade",
+   "cut left for the canopied arcade"
+  ]
+ },
+ "turn left across the park": {
+  "class": "L",
+  "purity": 0.9438202247191011,
+  "n_frames": 89,
+  "L1": [
+   "across the park turn left"
+  ],
+  "L2": [
+   "turn left over the park grounds"
+  ],
+  "L3": [
+   "swing left over the commons",
+   "cut left over the commons",
+   "hook left over the commons",
+   "pivot left over the commons",
+   "veer left over the commons"
+  ]
+ },
+ "turn left to follow the building": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 81,
+  "L1": [],
+  "L2": [
+   "turn left to trace the structure"
+  ],
+  "L3": [
+   "cut left to trace the edifice",
+   "hook left to hug the edifice",
+   "hook left to trace the edifice",
+   "cut left to hug the block",
+   "veer left to trace the block"
+  ]
+ },
+ "Go to the tree on the left": {
+  "class": "L",
+  "purity": 0.8157894736842105,
+  "n_frames": 38,
+  "L1": [
+   "On the left Go to the tree"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "turn left into  the bicycle parking": {
+  "class": "L",
+  "purity": 1.0,
+  "n_frames": 16,
+  "L1": [
+   "into the bicycle parking turn left"
+  ],
+  "L2": [
+   "turn left into the bike parking zone"
+  ],
+  "L3": [
+   "hook left into the cycle stalls",
+   "swing left into the cycle stalls",
+   "pivot left into the cycle stalls",
+   "veer left into the cycle stalls",
+   "cut left into the cycle stalls"
+  ]
+ },
+ "turn right past the hedge": {
+  "class": "R",
+  "purity": 0.8609022556390977,
+  "n_frames": 266,
+  "L1": [
+   "past the hedge turn right"
+  ],
+  "L2": [
+   "turn right beyond the hedgerow",
+   "turn right beyond the bushes"
+  ],
+  "L3": [
+   "pivot right beyond the thicket",
+   "hook right beyond the shrubs",
+   "pivot right beyond the shrubs",
+   "cut right beyond the thicket",
+   "swing right beyond the thicket"
+  ]
+ },
+ "turn right toward the glass building entrance": {
+  "class": "R",
+  "purity": 0.875,
+  "n_frames": 32,
+  "L1": [
+   "toward the glass building entrance turn right"
+  ],
+  "L2": [
+   "turn right towards the glass-walled structure doorway"
+  ],
+  "L3": [
+   "veer right for the glazed block portal",
+   "veer right for the glazed edifice portal",
+   "cut right for the glazed edifice portal",
+   "veer right for the glazed block doorway",
+   "hook right for the glazed edifice portal"
+  ]
+ },
+ "turn right toward the lawn and the glass towers": {
+  "class": "R",
+  "purity": 0.8888888888888888,
+  "n_frames": 36,
+  "L1": [
+   "toward the lawn and the glass towers turn right"
+  ],
+  "L2": [
+   "turn right towards the grass and the glass-walled blocks"
+  ],
+  "L3": [
+   "hook right for the turf and the glazed spires",
+   "cut right for the meadow and the glazed spires",
+   "cut right for the turf and the glazed spires",
+   "veer right for the meadow and the glazed spires",
+   "pivot right for the meadow and the glazed spires"
+  ]
+ },
+ "turn right toward the trees": {
+  "class": "R",
+  "purity": 0.967741935483871,
+  "n_frames": 62,
+  "L1": [
+   "toward the trees turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "veer right for the foliage",
+   "swing right for the foliage",
+   "pivot right for the foliage",
+   "hook right for the foliage",
+   "cut right for the foliage"
+  ]
+ },
+ "turn right towards the trees": {
+  "class": "R",
+  "purity": 0.9423076923076923,
+  "n_frames": 52,
+  "L1": [
+   "towards the trees turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "swing right towards the foliage",
+   "pivot right towards the greenery",
+   "cut right towards the greenery",
+   "veer right towards the foliage",
+   "veer right towards the greenery"
+  ]
+ },
+ "turn right alongside the building": {
+  "class": "R",
+  "purity": 0.8627450980392157,
+  "n_frames": 306,
+  "L1": [],
+  "L2": [],
+  "L3": [
+   "veer right alongside the edifice",
+   "veer right alongside the block",
+   "swing right alongside the block",
+   "cut right alongside the block",
+   "hook right alongside the edifice"
+  ]
+ },
+ "Move carefully between the round flowerpots, making sure not to bump into them": {
+  "class": "R",
+  "purity": 0.9324324324324325,
+  "n_frames": 74,
+  "L1": [
+   "Making sure not to bump into them, Move carefully between the round flowerpots",
+   "Between the round flowerpots, making sure not to bump into them Move carefully",
+   "Into them between the round flowerpots, making sure not to bump Move carefully"
+  ],
+  "L2": [
+   "travel carefully amid the round flowerpots, making sure not to bump into them"
+  ],
+  "L3": [
+   "proceed onward carefully dividing the round flowerpots, making sure not to bump into them"
+  ]
+ },
+ "Move the brick path on the right": {
+  "class": "R",
+  "purity": 0.8727272727272727,
+  "n_frames": 55,
+  "L1": [
+   "On the right Move the brick path"
+  ],
+  "L2": [
+   "travel the brickwork walkway on the right",
+   "travel the brickwork trail on the right"
+  ],
+  "L3": [
+   "proceed onward the cobbled aisle on the right",
+   "proceed onward the cobbled lane on the right"
+  ]
+ },
+ "turn right towards the glass building entrance": {
+  "class": "R",
+  "purity": 0.883495145631068,
+  "n_frames": 103,
+  "L1": [
+   "towards the glass building entrance turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "swing right towards the glazed edifice doorway",
+   "hook right towards the glazed block portal",
+   "swing right towards the glazed block doorway",
+   "hook right towards the glazed block doorway",
+   "pivot right towards the glazed block doorway"
+  ]
+ },
+ "Turn right at the hedge": {
+  "class": "R",
+  "purity": 0.8833333333333333,
+  "n_frames": 60,
+  "L1": [
+   "At the hedge Turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "veer right at the shrubs",
+   "hook right at the thicket",
+   "hook right at the shrubs",
+   "cut right at the shrubs",
+   "veer right at the thicket"
+  ]
+ },
+ "turn right around the hedge toward the building": {
+  "class": "R",
+  "purity": 0.8734177215189873,
+  "n_frames": 79,
+  "L1": [
+   "around the hedge toward the building turn right",
+   "toward the building around the hedge turn right"
+  ],
+  "L2": [
+   "turn right about the bushes towards the structure",
+   "turn right about the hedgerow towards the structure"
+  ],
+  "L3": [
+   "pivot right round the thicket for the edifice",
+   "hook right round the thicket for the edifice",
+   "swing right round the thicket for the edifice",
+   "veer right round the shrubs for the edifice",
+   "cut right round the thicket for the edifice"
+  ]
+ },
+ "turn right, following the path": {
+  "class": "R",
+  "purity": 0.918918918918919,
+  "n_frames": 37,
+  "L1": [
+   "following the path, turn right"
+  ],
+  "L2": [
+   "turn right, tracing the walkway",
+   "turn right, tracing the trail"
+  ],
+  "L3": [
+   "cut right, hugging the lane",
+   "veer right, tracing the aisle",
+   "veer right, hugging the lane",
+   "cut right, hugging the aisle",
+   "cut right, tracing the lane"
+  ]
+ },
+ "turn right at the hedge straight ahead": {
+  "class": "R",
+  "purity": 0.8157894736842105,
+  "n_frames": 38,
+  "L1": [
+   "at the hedge straight ahead turn right"
+  ],
+  "L2": [
+   "turn right at the hedgerow straight in front ahead",
+   "turn right at the bushes straight in front ahead"
+  ],
+  "L3": [
+   "veer right at the shrubs straight beyond",
+   "veer right at the thicket straight up ahead",
+   "cut right at the shrubs straight beyond",
+   "swing right at the shrubs straight beyond",
+   "pivot right at the thicket straight beyond"
+  ]
+ },
+ "head straight across the plaza, the building on your right and trees on your left": {
+  "class": "R",
+  "purity": 0.8888888888888888,
+  "n_frames": 36,
+  "L1": [
+   "the building on your right and trees on your left, head straight across the plaza",
+   "across the plaza, the building on your right and trees on your left head straight",
+   "on your right and trees across the plaza, the building on your left head straight",
+   "on your left across the plaza, the building on your right and trees head straight",
+   "on your left on your right and trees across the plaza, the building head straight"
+  ],
+  "L2": [
+   "go straight in front over the square, the structure on your right and trees on your left",
+   "go straight in front over the unenclosed zone, the structure on your right and trees on your left"
+  ],
+  "L3": [
+   "press straight over the esplanade, the block on your right and greenery on your left",
+   "keep on straight over the quad, the block on your right and foliage on your left",
+   "keep on straight over the esplanade, the edifice on your right and foliage on your left",
+   "press straight over the esplanade, the edifice on your right and greenery on your left",
+   "keep on straight over the quad, the edifice on your right and greenery on your left"
+  ]
+ },
+ "turn right around the building": {
+  "class": "R",
+  "purity": 0.8740157480314961,
+  "n_frames": 127,
+  "L1": [
+   "around the building turn right"
+  ],
+  "L2": [
+   "turn right about the structure"
+  ],
+  "L3": [
+   "hook right round the block",
+   "swing right round the edifice",
+   "pivot right round the edifice",
+   "cut right round the edifice",
+   "veer right round the edifice"
+  ]
+ },
+ "turn right through the covered walkway": {
+  "class": "R",
+  "purity": 0.8571428571428571,
+  "n_frames": 49,
+  "L1": [
+   "through the covered walkway turn right"
+  ],
+  "L2": [
+   "turn right over the roofed footway",
+   "turn right over the roofed trail",
+   "turn right over the roofed walkway"
+  ],
+  "L3": [
+   "pivot right athwart the canopied aisle",
+   "swing right athwart the canopied aisle",
+   "hook right athwart the canopied aisle",
+   "swing right athwart the canopied arcade",
+   "veer right athwart the canopied aisle"
+  ]
+ },
+ "turn right towards the tree-lined lot": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 51,
+  "L1": [
+   "towards the tree-lined lot turn right"
+  ],
+  "L2": [
+   "turn right towards the tree-bordered yard"
+  ],
+  "L3": [
+   "veer right towards the foliage-rimmed yard",
+   "pivot right towards the foliage-rimmed yard",
+   "cut right towards the foliage-rimmed yard",
+   "pivot right towards the foliage-flanked yard",
+   "cut right towards the foliage-flanked yard"
+  ]
+ },
+ "turn right along the path": {
+  "class": "R",
+  "purity": 0.8333333333333334,
+  "n_frames": 36,
+  "L1": [
+   "along the path turn right"
+  ],
+  "L2": [
+   "turn right beside the walkway",
+   "turn right beside the trail"
+  ],
+  "L3": [
+   "pivot right down the aisle",
+   "hook right down the aisle",
+   "cut right down the lane",
+   "hook right down the lane",
+   "swing right down the aisle"
+  ]
+ },
+ "Turn right at the red pylon": {
+  "class": "R",
+  "purity": 0.9622641509433962,
+  "n_frames": 53,
+  "L1": [
+   "At the red pylon Turn right"
+  ],
+  "L2": [
+   "Turn right at the reddish cone"
+  ],
+  "L3": [
+   "cut right at the ochre bollard",
+   "swing right at the ochre bollard",
+   "hook right at the ochre bollard",
+   "veer right at the ochre bollard",
+   "pivot right at the ochre bollard"
+  ]
+ },
+ "turn right along the plaza": {
+  "class": "R",
+  "purity": 0.8048780487804879,
+  "n_frames": 41,
+  "L1": [
+   "along the plaza turn right"
+  ],
+  "L2": [
+   "turn right beside the unenclosed zone",
+   "turn right beside the square"
+  ],
+  "L3": [
+   "pivot right down the esplanade",
+   "hook right down the esplanade",
+   "veer right down the esplanade",
+   "veer right down the quad",
+   "swing right down the quad"
+  ]
+ },
+ "bear right, following the building": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 41,
+  "L1": [
+   "following the building, bear right"
+  ],
+  "L2": [
+   "keep right, tracing the structure"
+  ],
+  "L3": [
+   "hook right, tracing the block",
+   "cut right, hugging the edifice",
+   "hook right, hugging the edifice",
+   "veer right, hugging the block",
+   "pivot right, hugging the edifice"
+  ]
+ },
+ "Head to the corridor on the right": {
+  "class": "R",
+  "purity": 0.8157319737800437,
+  "n_frames": 1373,
+  "L1": [
+   "On the right Head to the corridor"
+  ],
+  "L2": [
+   "go to the passage on the right"
+  ],
+  "L3": [
+   "keep on to the arcade on the right",
+   "press to the aisle on the right",
+   "keep on to the aisle on the right",
+   "press to the arcade on the right"
+  ]
+ },
+ "Turn right towards the round flowerpot": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 36,
+  "L1": [
+   "Towards the round flowerpot Turn right"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "follow the street curving right between the buildings": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 53,
+  "L1": [
+   "between the buildings follow the street curving right"
+  ],
+  "L2": [
+   "trace the roadway bending right amid the structures",
+   "trace the avenue bending right amid the structures",
+   "trace the street bending right amid the structures"
+  ],
+  "L3": [
+   "hug the boulevard bending right dividing the blocks",
+   "trace the boulevard bending right dividing the blocks",
+   "hug the boulevard bending right dividing the edifices",
+   "trace the boulevard bending right dividing the edifices"
+  ]
+ },
+ "Trun right": {
+  "class": "R",
+  "purity": 0.9565217391304348,
+  "n_frames": 23,
+  "L1": [],
+  "L2": [],
+  "L3": []
+ },
+ "bear right, following the avenue": {
+  "class": "R",
+  "purity": 0.8,
+  "n_frames": 25,
+  "L1": [
+   "following the avenue, bear right"
+  ],
+  "L2": [
+   "keep right, tracing the street",
+   "keep right, tracing the avenue",
+   "keep right, tracing the roadway"
+  ],
+  "L3": [
+   "veer right, hugging the boulevard",
+   "cut right, tracing the boulevard",
+   "veer right, tracing the boulevard",
+   "swing right, tracing the esplanade",
+   "hook right, tracing the esplanade"
+  ]
+ },
+ "turn right toward the white building": {
+  "class": "R",
+  "purity": 0.8863636363636364,
+  "n_frames": 44,
+  "L1": [
+   "toward the white building turn right"
+  ],
+  "L2": [
+   "turn right towards the pale structure"
+  ],
+  "L3": [
+   "veer right for the chalky edifice",
+   "swing right for the chalky edifice",
+   "veer right for the chalky block",
+   "hook right for the chalky edifice",
+   "swing right for the chalky block"
+  ]
+ },
+ "turn right to follow the path": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 16,
+  "L1": [],
+  "L2": [
+   "turn right to trace the walkway",
+   "turn right to trace the trail"
+  ],
+  "L3": [
+   "swing right to trace the aisle",
+   "pivot right to hug the aisle",
+   "swing right to trace the lane",
+   "veer right to hug the aisle",
+   "hook right to trace the lane"
+  ]
+ },
+ "turn right onto the tree-lined avenue": {
+  "class": "R",
+  "purity": 0.9166666666666666,
+  "n_frames": 96,
+  "L1": [
+   "onto the tree-lined avenue turn right"
+  ],
+  "L2": [
+   "turn right onto the tree-bordered roadway",
+   "turn right onto the tree-bordered street",
+   "turn right onto the tree-bordered avenue"
+  ],
+  "L3": [
+   "pivot right onto the foliage-flanked boulevard",
+   "pivot right onto the foliage-rimmed esplanade",
+   "swing right onto the foliage-flanked esplanade",
+   "cut right onto the foliage-rimmed boulevard",
+   "cut right onto the foliage-flanked boulevard"
+  ]
+ },
+ "turn right around the fountain": {
+  "class": "R",
+  "purity": 0.8571428571428571,
+  "n_frames": 35,
+  "L1": [
+   "around the fountain turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "pivot right round the fountain",
+   "swing right round the fountain",
+   "cut right round the fountain",
+   "hook right round the fountain",
+   "veer right round the fountain"
+  ]
+ },
+ "Move toward the dustbox on the right": {
+  "class": "R",
+  "purity": 0.9047619047619048,
+  "n_frames": 63,
+  "L1": [
+   "Toward the dustbox on the right Move",
+   "On the right toward the dustbox Move"
+  ],
+  "L2": [
+   "travel towards the dustbox on the right"
+  ],
+  "L3": [
+   "proceed onward for the dustbox on the right"
+  ]
+ },
+ "Move toward the right the open brick plaza": {
+  "class": "R",
+  "purity": 0.8925233644859814,
+  "n_frames": 214,
+  "L1": [
+   "Toward the right the open brick plaza Move"
+  ],
+  "L2": [
+   "travel towards the right the unenclosed brickwork open zone",
+   "travel towards the right the unenclosed brickwork square"
+  ],
+  "L3": [
+   "proceed onward for the right the unwalled cobbled esplanade",
+   "proceed onward for the right the unwalled cobbled quad"
+  ]
+ },
+ "Turn right alone the tree-lined brick path": {
+  "class": "R",
+  "purity": 0.9787234042553191,
+  "n_frames": 94,
+  "L1": [],
+  "L2": [
+   "Turn right alone the tree-bordered brickwork walkway",
+   "Turn right alone the tree-bordered brickwork trail"
+  ],
+  "L3": [
+   "swing right alone the foliage-flanked cobbled aisle",
+   "hook right alone the foliage-flanked cobbled aisle",
+   "hook right alone the foliage-flanked cobbled lane",
+   "swing right alone the foliage-flanked cobbled lane",
+   "swing right alone the foliage-rimmed cobbled lane"
+  ]
+ },
+ "turn right across the green-painted court along the brick building": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 34,
+  "L1": [
+   "across the green-painted court along the brick building turn right",
+   "along the brick building across the green-painted court turn right"
+  ],
+  "L2": [
+   "turn right over the grass-painted court beside the brickwork structure"
+  ],
+  "L3": [
+   "pivot right over the turf-painted court down the cobbled edifice",
+   "swing right over the turf-painted court down the cobbled edifice",
+   "pivot right over the turf-painted court down the cobbled block",
+   "swing right over the turf-painted court down the cobbled block",
+   "hook right over the turf-painted court down the cobbled block"
+  ]
+ },
+ "turn right around the building corner": {
+  "class": "R",
+  "purity": 0.8482758620689655,
+  "n_frames": 145,
+  "L1": [
+   "around the building corner turn right"
+  ],
+  "L2": [
+   "turn right about the structure bend"
+  ],
+  "L3": [
+   "swing right round the edifice bend",
+   "hook right round the block bend",
+   "cut right round the edifice bend",
+   "cut right round the block bend",
+   "hook right round the edifice bend"
+  ]
+ },
+ "turn right alongside the bicycle parking": {
+  "class": "R",
+  "purity": 0.8947368421052632,
+  "n_frames": 38,
+  "L1": [],
+  "L2": [
+   "turn right alongside the bike parking zone"
+  ],
+  "L3": [
+   "pivot right alongside the cycle stalls",
+   "cut right alongside the cycle stalls",
+   "swing right alongside the cycle stalls",
+   "hook right alongside the cycle stalls",
+   "veer right alongside the cycle stalls"
+  ]
+ },
+ "turn right out of the bicycle parking": {
+  "class": "R",
+  "purity": 0.9253731343283582,
+  "n_frames": 67,
+  "L1": [],
+  "L2": [
+   "turn right out of the bike parking zone"
+  ],
+  "L3": [
+   "swing right out of the cycle stalls",
+   "pivot right out of the cycle stalls",
+   "veer right out of the cycle stalls",
+   "cut right out of the cycle stalls",
+   "hook right out of the cycle stalls"
+  ]
+ },
+ "follow the path curving right along the building": {
+  "class": "R",
+  "purity": 0.9824561403508771,
+  "n_frames": 57,
+  "L1": [
+   "along the building follow the path curving right"
+  ],
+  "L2": [
+   "trace the walkway bending right beside the structure",
+   "trace the trail bending right beside the structure"
+  ],
+  "L3": [
+   "trace the aisle bending right down the block",
+   "trace the lane bending right down the edifice",
+   "trace the aisle bending right down the edifice",
+   "hug the lane bending right down the edifice",
+   "hug the lane bending right down the block"
+  ]
+ },
+ "bear right along the building": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 31,
+  "L1": [
+   "along the building bear right"
+  ],
+  "L2": [
+   "keep right beside the structure"
+  ],
+  "L3": [
+   "pivot right down the block",
+   "cut right down the block",
+   "hook right down the edifice",
+   "swing right down the edifice"
+  ]
+ },
+ "turn right, following the road": {
+  "class": "R",
+  "purity": 0.8780487804878049,
+  "n_frames": 41,
+  "L1": [
+   "following the road, turn right"
+  ],
+  "L2": [
+   "turn right, tracing the roadway",
+   "turn right, tracing the street"
+  ],
+  "L3": [
+   "swing right, hugging the lane",
+   "hook right, tracing the thoroughfare",
+   "cut right, hugging the thoroughfare",
+   "veer right, tracing the lane"
+  ]
+ },
+ "bear right toward the bicycle parking": {
+  "class": "R",
+  "purity": 0.8846153846153846,
+  "n_frames": 26,
+  "L1": [
+   "toward the bicycle parking bear right"
+  ],
+  "L2": [
+   "keep right towards the bike parking zone"
+  ],
+  "L3": [
+   "pivot right for the cycle stalls",
+   "swing right for the cycle stalls",
+   "veer right for the cycle stalls",
+   "hook right for the cycle stalls",
+   "cut right for the cycle stalls"
+  ]
+ },
+ "Move toward the building on the right": {
+  "class": "R",
+  "purity": 0.8555133079847909,
+  "n_frames": 526,
+  "L1": [
+   "Toward the building on the right Move",
+   "On the right toward the building Move"
+  ],
+  "L2": [
+   "travel towards the structure on the right"
+  ],
+  "L3": [
+   "proceed onward for the block on the right",
+   "proceed onward for the edifice on the right"
+  ]
+ },
+ "turn right toward the glass building": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 35,
+  "L1": [
+   "toward the glass building turn right"
+  ],
+  "L2": [
+   "turn right towards the glass-walled structure"
+  ],
+  "L3": [
+   "pivot right for the glazed edifice",
+   "veer right for the glazed block",
+   "cut right for the glazed edifice",
+   "cut right for the glazed block",
+   "veer right for the glazed edifice"
+  ]
+ },
+ "Turn toward the wide, tree-lined avenue.": {
+  "class": "R",
+  "purity": 0.803347280334728,
+  "n_frames": 239,
+  "L1": [
+   "Tree-lined avenue, Turn toward the wide",
+   "Toward the wide, tree-lined avenue Turn"
+  ],
+  "L2": [
+   "Turn towards the wide, tree-bordered roadway.",
+   "Turn towards the wide, tree-bordered street.",
+   "Turn towards the wide, tree-bordered avenue."
+  ],
+  "L3": [
+   "Turn for the wide, foliage-rimmed esplanade.",
+   "Turn for the wide, foliage-flanked boulevard.",
+   "Turn for the wide, foliage-rimmed boulevard.",
+   "Turn for the wide, foliage-flanked esplanade."
+  ]
+ },
+ "Turn right into the parking lot in front of you": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 57,
+  "L1": [
+   "Into the parking lot in front of you Turn right",
+   "In front of you into the parking lot Turn right"
+  ],
+  "L2": [
+   "Turn right into the parking zone yard in in front of you"
+  ],
+  "L3": [
+   "veer right into the stalls yard in fore of you",
+   "pivot right into the stalls yard in fore of you",
+   "swing right into the stalls yard in fore of you",
+   "cut right into the stalls yard in fore of you",
+   "hook right into the stalls yard in fore of you"
+  ]
+ },
+ "follow the path as it curves right around the planter": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 27,
+  "L1": [
+   "around the planter follow the path as it curves right"
+  ],
+  "L2": [
+   "trace the trail as it bends right about the planter",
+   "trace the walkway as it bends right about the planter"
+  ],
+  "L3": [
+   "trace the lane as it bends right round the planter",
+   "hug the lane as it bends right round the planter",
+   "trace the aisle as it bends right round the planter",
+   "hug the aisle as it bends right round the planter"
+  ]
+ },
+ "turn right between the bicycle racks": {
+  "class": "R",
+  "purity": 0.9032258064516129,
+  "n_frames": 31,
+  "L1": [
+   "between the bicycle racks turn right"
+  ],
+  "L2": [
+   "turn right amid the bike stands"
+  ],
+  "L3": [
+   "hook right dividing the cycle stalls",
+   "hook right dividing the cycle rails",
+   "veer right dividing the cycle rails",
+   "swing right dividing the cycle stalls",
+   "veer right dividing the cycle stalls"
+  ]
+ },
+ "turn right towards the glass buildings": {
+  "class": "R",
+  "purity": 0.8974358974358975,
+  "n_frames": 39,
+  "L1": [
+   "towards the glass buildings turn right"
+  ],
+  "L2": [
+   "turn right towards the glass-walled structures"
+  ],
+  "L3": [
+   "swing right towards the glazed edifices",
+   "cut right towards the glazed blocks",
+   "cut right towards the glazed edifices",
+   "veer right towards the glazed edifices",
+   "veer right towards the glazed blocks"
+  ]
+ },
+ "turn right around the corner": {
+  "class": "R",
+  "purity": 0.9285714285714286,
+  "n_frames": 42,
+  "L1": [
+   "around the corner turn right"
+  ],
+  "L2": [
+   "turn right about the bend"
+  ],
+  "L3": [
+   "pivot right round the bend",
+   "hook right round the bend",
+   "swing right round the bend",
+   "cut right round the bend",
+   "veer right round the bend"
+  ]
+ },
+ "turn right toward the covered walkway": {
+  "class": "R",
+  "purity": 0.9333333333333333,
+  "n_frames": 45,
+  "L1": [
+   "toward the covered walkway turn right"
+  ],
+  "L2": [
+   "turn right towards the roofed walkway",
+   "turn right towards the roofed trail",
+   "turn right towards the roofed footway"
+  ],
+  "L3": [
+   "hook right for the canopied aisle",
+   "cut right for the canopied aisle",
+   "pivot right for the canopied aisle",
+   "swing right for the canopied arcade",
+   "hook right for the canopied arcade"
+  ]
+ },
+ "Turn right along the hedge in front of you": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 32,
+  "L1": [
+   "Along the hedge in front of you Turn right",
+   "In front of you along the hedge Turn right"
+  ],
+  "L2": [
+   "Turn right beside the bushes in in front of you",
+   "Turn right beside the hedgerow in in front of you"
+  ],
+  "L3": [
+   "cut right down the thicket in fore of you",
+   "cut right down the shrubs in fore of you",
+   "hook right down the shrubs in fore of you",
+   "pivot right down the shrubs in fore of you",
+   "swing right down the thicket in fore of you"
+  ]
+ },
+ "Go to the brick path on the right": {
+  "class": "R",
+  "purity": 0.9728260869565217,
+  "n_frames": 184,
+  "L1": [
+   "On the right Go to the brick path"
+  ],
+  "L2": [
+   "Go to the brickwork walkway on the right",
+   "Go to the brickwork trail on the right"
+  ],
+  "L3": [
+   "Go to the cobbled lane on the right",
+   "Go to the cobbled aisle on the right"
+  ]
+ },
+ "turn right onto the brick walkway": {
+  "class": "R",
+  "purity": 0.9558823529411765,
+  "n_frames": 68,
+  "L1": [
+   "onto the brick walkway turn right"
+  ],
+  "L2": [
+   "turn right onto the brickwork footway",
+   "turn right onto the brickwork walkway",
+   "turn right onto the brickwork trail"
+  ],
+  "L3": [
+   "pivot right onto the cobbled arcade",
+   "cut right onto the cobbled aisle",
+   "cut right onto the cobbled arcade",
+   "veer right onto the cobbled aisle",
+   "veer right onto the cobbled arcade"
+  ]
+ },
+ "Move toward the tree-lined path on the right": {
+  "class": "R",
+  "purity": 0.8744939271255061,
+  "n_frames": 247,
+  "L1": [
+   "Toward the tree-lined path on the right Move",
+   "On the right toward the tree-lined path Move"
+  ],
+  "L2": [
+   "travel towards the tree-bordered walkway on the right",
+   "travel towards the tree-bordered trail on the right"
+  ],
+  "L3": [
+   "proceed onward for the foliage-rimmed aisle on the right",
+   "proceed onward for the foliage-rimmed lane on the right",
+   "proceed onward for the foliage-flanked lane on the right",
+   "proceed onward for the foliage-flanked aisle on the right"
+  ]
+ },
+ "turn right across the plaza": {
+  "class": "R",
+  "purity": 0.9012738853503185,
+  "n_frames": 314,
+  "L1": [
+   "across the plaza turn right"
+  ],
+  "L2": [
+   "turn right over the unenclosed zone"
+  ],
+  "L3": [
+   "cut right over the quad",
+   "cut right over the esplanade",
+   "veer right over the quad"
+  ]
+ },
+ "go straight back down the tree-lined avenue": {
+  "class": "R",
+  "purity": 0.8888888888888888,
+  "n_frames": 45,
+  "L1": [
+   "down the tree-lined avenue go straight back"
+  ],
+  "L2": [
+   "go straight in front back along the tree-bordered avenue",
+   "go straight in front back along the tree-bordered roadway",
+   "go straight in front back along the tree-bordered street"
+  ],
+  "L3": [
+   "go straight back down the foliage-rimmed esplanade",
+   "go straight back down the foliage-flanked boulevard",
+   "go straight back down the foliage-rimmed boulevard",
+   "go straight back down the foliage-flanked esplanade"
+  ]
+ },
+ "head straight along the path, with the hedge and trees on your right": {
+  "class": "R",
+  "purity": 0.8604651162790697,
+  "n_frames": 43,
+  "L1": [
+   "with the hedge and trees on your right, head straight along the path",
+   "along the path, with the hedge and trees on your right head straight",
+   "with the hedge and trees along the path, on your right head straight",
+   "on your right along the path, with the hedge and trees head straight",
+   "on your right with the hedge and trees along the path, head straight"
+  ],
+  "L2": [
+   "go straight in front beside the walkway, with the bushes and trees on your right",
+   "go straight in front beside the trail, with the bushes and trees on your right",
+   "go straight in front beside the trail, with the hedgerow and trees on your right",
+   "go straight in front beside the walkway, with the hedgerow and trees on your right"
+  ],
+  "L3": [
+   "press straight down the aisle, with the shrubs and foliage on your right",
+   "press straight down the aisle, with the shrubs and greenery on your right",
+   "keep on straight down the aisle, with the thicket and greenery on your right",
+   "keep on straight down the aisle, with the shrubs and greenery on your right",
+   "press straight down the lane, with the thicket and greenery on your right"
+  ]
+ },
+ "turn right onto the green-paved road": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 51,
+  "L1": [
+   "onto the green-paved road turn right"
+  ],
+  "L2": [
+   "turn right onto the grass-surfaced roadway",
+   "turn right onto the grass-surfaced street"
+  ],
+  "L3": [
+   "pivot right onto the turf-flagstone thoroughfare",
+   "veer right onto the turf-flagstone lane",
+   "pivot right onto the turf-flagstone lane",
+   "cut right onto the turf-flagstone lane",
+   "swing right onto the turf-cobbled thoroughfare"
+  ]
+ },
+ "Move toward the building entrance on the right": {
+  "class": "R",
+  "purity": 0.8635437881873728,
+  "n_frames": 491,
+  "L1": [
+   "Toward the building entrance on the right Move",
+   "On the right toward the building entrance Move"
+  ],
+  "L2": [
+   "travel towards the structure doorway on the right"
+  ],
+  "L3": [
+   "proceed onward for the block doorway on the right",
+   "proceed onward for the edifice portal on the right",
+   "proceed onward for the block portal on the right",
+   "proceed onward for the edifice doorway on the right"
+  ]
+ },
+ "Turn right along the curb on the far left, which is a different color": {
+  "class": "R",
+  "purity": 0.9479166666666666,
+  "n_frames": 96,
+  "L1": [
+   "Which is a different color, Turn right along the curb on the far left",
+   "Along the curb on the far left, which is a different color Turn right",
+   "On the far left, which is a different color along the curb Turn right"
+  ],
+  "L2": [
+   "Turn right beside the curb on the distant left, which is a different color"
+  ],
+  "L3": [
+   "cut right down the curb on the outermost left, which is a different color",
+   "hook right down the curb on the outermost left, which is a different color",
+   "pivot right down the curb on the outermost left, which is a different color",
+   "swing right down the curb on the outermost left, which is a different color",
+   "veer right down the curb on the outermost left, which is a different color"
+  ]
+ },
+ "Follow the curve of the curb and hedge on the far left": {
+  "class": "R",
+  "purity": 0.8823529411764706,
+  "n_frames": 51,
+  "L1": [
+   "On the far left Follow the curve of the curb and hedge"
+  ],
+  "L2": [
+   "trace the curve of the curb and hedgerow on the distant left",
+   "trace the curve of the curb and bushes on the distant left"
+  ],
+  "L3": [
+   "hug the curve of the curb and shrubs on the outermost left",
+   "hug the curve of the curb and thicket on the outermost left",
+   "trace the curve of the curb and thicket on the outermost left",
+   "trace the curve of the curb and shrubs on the outermost left"
+  ]
+ },
+ "Move toward the red pylon on the right": {
+  "class": "R",
+  "purity": 0.9444444444444444,
+  "n_frames": 54,
+  "L1": [
+   "Toward the red pylon on the right Move",
+   "On the right toward the red pylon Move"
+  ],
+  "L2": [
+   "travel towards the reddish cone on the right"
+  ],
+  "L3": [
+   "proceed onward for the ochre bollard on the right"
+  ]
+ },
+ "turn right across the park": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 38,
+  "L1": [
+   "across the park turn right"
+  ],
+  "L2": [
+   "turn right over the park grounds"
+  ],
+  "L3": [
+   "pivot right over the commons",
+   "hook right over the commons",
+   "veer right over the commons",
+   "cut right over the commons",
+   "swing right over the commons"
+  ]
+ },
+ "Turn right across the plaza": {
+  "class": "R",
+  "purity": 0.8108108108108109,
+  "n_frames": 37,
+  "L1": [],
+  "L2": [
+   "Turn right over the square"
+  ],
+  "L3": [
+   "swing right over the esplanade",
+   "pivot right over the quad"
+  ]
+ },
+ "turn right onto the tree-lined path": {
+  "class": "R",
+  "purity": 0.9895833333333334,
+  "n_frames": 96,
+  "L1": [
+   "onto the tree-lined path turn right"
+  ],
+  "L2": [
+   "turn right onto the tree-bordered walkway",
+   "turn right onto the tree-bordered trail"
+  ],
+  "L3": [
+   "swing right onto the foliage-flanked lane",
+   "cut right onto the foliage-flanked aisle",
+   "veer right onto the foliage-flanked lane",
+   "swing right onto the foliage-rimmed lane",
+   "swing right onto the foliage-rimmed aisle"
+  ]
+ },
+ "bear right across the plaza": {
+  "class": "R",
+  "purity": 0.8636363636363636,
+  "n_frames": 22,
+  "L1": [
+   "across the plaza bear right"
+  ],
+  "L2": [
+   "keep right over the unenclosed zone",
+   "keep right over the square"
+  ],
+  "L3": [
+   "veer right over the esplanade",
+   "swing right over the quad"
+  ]
+ },
+ "turn right into the park": {
+  "class": "R",
+  "purity": 0.9305555555555556,
+  "n_frames": 72,
+  "L1": [
+   "into the park turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "hook right into the commons",
+   "pivot right into the commons",
+   "veer right into the commons",
+   "cut right into the commons",
+   "swing right into the commons"
+  ]
+ },
+ "turn right onto the path": {
+  "class": "R",
+  "purity": 0.9130434782608695,
+  "n_frames": 69,
+  "L1": [
+   "onto the path turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "hook right onto the aisle",
+   "veer right onto the aisle",
+   "pivot right onto the aisle",
+   "cut right onto the lane",
+   "cut right onto the aisle"
+  ]
+ },
+ "turn right onto the next street": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 67,
+  "L1": [
+   "onto the next street turn right"
+  ],
+  "L2": [
+   "turn right onto the next roadway"
+  ],
+  "L3": [
+   "cut right onto the next boulevard",
+   "veer right onto the next boulevard",
+   "swing right onto the next boulevard",
+   "pivot right onto the next boulevard",
+   "hook right onto the next boulevard"
+  ]
+ },
+ "With a white building on your left and a tree-lined street on your right, turn right": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 37,
+  "L1": [
+   "Turn right, With a white building on your left and a tree-lined street on your right",
+   "On your left and a tree-lined street on your right, turn right With a white building",
+   "On your right, turn right on your left and a tree-lined street With a white building"
+  ],
+  "L2": [
+   "With a pale structure on your left and a tree-bordered avenue on your right, turn right",
+   "With a pale structure on your left and a tree-bordered street on your right, turn right",
+   "With a pale structure on your left and a tree-bordered roadway on your right, turn right"
+  ],
+  "L3": [
+   "With a chalky block on your left and a foliage-flanked boulevard on your right, pivot right",
+   "With a chalky edifice on your left and a foliage-flanked boulevard on your right, veer right",
+   "With a chalky edifice on your left and a foliage-rimmed boulevard on your right, pivot right",
+   "With a chalky edifice on your left and a foliage-rimmed boulevard on your right, veer right",
+   "With a chalky block on your left and a foliage-flanked boulevard on your right, veer right"
+  ]
+ },
+ "turn around onto the tree-lined avenue": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 53,
+  "L1": [
+   "around onto the tree-lined avenue turn",
+   "onto the tree-lined avenue around turn"
+  ],
+  "L2": [
+   "turn about onto the tree-bordered roadway",
+   "turn about onto the tree-bordered avenue",
+   "turn about onto the tree-bordered street"
+  ],
+  "L3": [
+   "turn round onto the foliage-rimmed esplanade",
+   "turn round onto the foliage-rimmed boulevard",
+   "turn round onto the foliage-flanked esplanade",
+   "turn round onto the foliage-flanked boulevard"
+  ]
+ },
+ "Go into the right corridor": {
+  "class": "R",
+  "purity": 0.8771929824561403,
+  "n_frames": 57,
+  "L1": [
+   "Into the right corridor Go"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "turn right onto the hedge-lined path": {
+  "class": "R",
+  "purity": 0.9491525423728814,
+  "n_frames": 59,
+  "L1": [
+   "onto the hedge-lined path turn right"
+  ],
+  "L2": [
+   "turn right onto the hedgerow-bordered walkway",
+   "turn right onto the hedgerow-bordered trail",
+   "turn right onto the bushes-bordered trail",
+   "turn right onto the bushes-bordered walkway"
+  ],
+  "L3": [
+   "hook right onto the thicket-flanked lane",
+   "veer right onto the thicket-flanked aisle",
+   "cut right onto the thicket-flanked lane",
+   "cut right onto the thicket-rimmed aisle",
+   "pivot right onto the shrubs-rimmed aisle"
+  ]
+ },
+ "Go into the right hallway": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 57,
+  "L1": [
+   "Into the right hallway Go"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "Move toward the paved walkway on the right": {
+  "class": "R",
+  "purity": 0.9,
+  "n_frames": 430,
+  "L1": [
+   "Toward the paved walkway on the right Move",
+   "On the right toward the paved walkway Move"
+  ],
+  "L2": [
+   "travel towards the surfaced footway on the right",
+   "travel towards the surfaced walkway on the right",
+   "travel towards the surfaced trail on the right"
+  ],
+  "L3": [
+   "proceed onward for the cobbled aisle on the right",
+   "proceed onward for the cobbled arcade on the right",
+   "proceed onward for the flagstone aisle on the right",
+   "proceed onward for the flagstone arcade on the right"
+  ]
+ },
+ "turn right along the bicycle racks": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 24,
+  "L1": [
+   "along the bicycle racks turn right"
+  ],
+  "L2": [
+   "turn right beside the bike stands"
+  ],
+  "L3": [
+   "veer right down the cycle rails",
+   "cut right down the cycle rails",
+   "cut right down the cycle stalls",
+   "hook right down the cycle rails",
+   "pivot right down the cycle rails"
+  ]
+ },
+ "Move toward the green hedge on the right": {
+  "class": "R",
+  "purity": 0.8636363636363636,
+  "n_frames": 22,
+  "L1": [
+   "Toward the green hedge on the right Move",
+   "On the right toward the green hedge Move"
+  ],
+  "L2": [
+   "travel towards the grass bushes on the right",
+   "travel towards the grass hedgerow on the right"
+  ],
+  "L3": [
+   "proceed onward for the turf thicket on the right",
+   "proceed onward for the turf shrubs on the right"
+  ]
+ },
+ "turn right toward the tree-lined avenue": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 44,
+  "L1": [
+   "toward the tree-lined avenue turn right"
+  ],
+  "L2": [
+   "turn right towards the tree-bordered avenue",
+   "turn right towards the tree-bordered roadway",
+   "turn right towards the tree-bordered street"
+  ],
+  "L3": [
+   "veer right for the foliage-rimmed boulevard",
+   "swing right for the foliage-rimmed esplanade",
+   "pivot right for the foliage-flanked esplanade",
+   "hook right for the foliage-flanked boulevard",
+   "hook right for the foliage-flanked esplanade"
+  ]
+ },
+ "turn right across the tree-lined plaza": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 135,
+  "L1": [
+   "across the tree-lined plaza turn right"
+  ],
+  "L2": [
+   "turn right over the tree-bordered unenclosed zone",
+   "turn right over the tree-bordered square"
+  ],
+  "L3": [
+   "swing right over the foliage-rimmed quad",
+   "swing right over the foliage-flanked quad",
+   "veer right over the foliage-rimmed quad",
+   "veer right over the foliage-flanked quad",
+   "cut right over the foliage-flanked quad"
+  ]
+ },
+ "follow the path curving right between the hedges": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 75,
+  "L1": [
+   "between the hedges follow the path curving right"
+  ],
+  "L2": [
+   "trace the walkway bending right amid the bushes",
+   "trace the trail bending right amid the bushes"
+  ],
+  "L3": [
+   "hug the lane bending right dividing the shrubs",
+   "hug the aisle bending right dividing the shrubs",
+   "trace the lane bending right dividing the thickets",
+   "hug the lane bending right dividing the thickets",
+   "hug the aisle bending right dividing the thickets"
+  ]
+ },
+ "turn right along the glass building": {
+  "class": "R",
+  "purity": 0.9285714285714286,
+  "n_frames": 42,
+  "L1": [
+   "along the glass building turn right"
+  ],
+  "L2": [
+   "turn right beside the glass-walled structure"
+  ],
+  "L3": [
+   "veer right down the glazed edifice",
+   "swing right down the glazed edifice",
+   "cut right down the glazed block",
+   "pivot right down the glazed edifice",
+   "swing right down the glazed block"
+  ]
+ },
+ "turn right along the colonnade": {
+  "class": "R",
+  "purity": 0.8333333333333334,
+  "n_frames": 24,
+  "L1": [
+   "along the colonnade turn right"
+  ],
+  "L2": [
+   "turn right beside the columns"
+  ],
+  "L3": [
+   "veer right down the portico",
+   "pivot right down the arcade",
+   "swing right down the arcade",
+   "hook right down the portico",
+   "pivot right down the portico"
+  ]
+ },
+ "Move toward the tree-lined avenue on the right": {
+  "class": "R",
+  "purity": 1.0,
+  "n_frames": 51,
+  "L1": [
+   "Toward the tree-lined avenue on the right Move",
+   "On the right toward the tree-lined avenue Move"
+  ],
+  "L2": [
+   "travel towards the tree-bordered street on the right",
+   "travel towards the tree-bordered avenue on the right",
+   "travel towards the tree-bordered roadway on the right"
+  ],
+  "L3": [
+   "proceed onward for the foliage-flanked esplanade on the right",
+   "proceed onward for the foliage-rimmed boulevard on the right",
+   "proceed onward for the foliage-flanked boulevard on the right",
+   "proceed onward for the foliage-rimmed esplanade on the right"
+  ]
+ },
+ "Move toward the bicycle parking area on the right": {
+  "class": "R",
+  "purity": 0.8360655737704918,
+  "n_frames": 61,
+  "L1": [
+   "Toward the bicycle parking area on the right Move",
+   "On the right toward the bicycle parking area Move"
+  ],
+  "L2": [
+   "travel towards the bike parking zone area on the right"
+  ],
+  "L3": [
+   "proceed onward for the cycle stalls precinct on the right"
+  ]
+ },
+ "Turn right at the center path": {
+  "class": "R",
+  "purity": 0.9454545454545454,
+  "n_frames": 55,
+  "L1": [
+   "At the center path Turn right"
+  ],
+  "L2": [],
+  "L3": [
+   "veer right at the center lane",
+   "cut right at the center aisle",
+   "veer right at the center aisle",
+   "hook right at the center aisle",
+   "swing right at the center lane"
+  ]
+ },
+ "follow the tiled path as it curves right along the edge of the lawn": {
+  "class": "R",
+  "purity": 0.9607843137254902,
+  "n_frames": 51,
+  "L1": [
+   "along the edge of the lawn follow the tiled path as it curves right"
+  ],
+  "L2": [
+   "trace the tile-surfaced trail as it bends right beside the side of the grass",
+   "trace the tile-surfaced walkway as it bends right beside the side of the grass"
+  ],
+  "L3": [
+   "hug the flagstone lane as it bends right down the verge of the meadow",
+   "hug the flagstone aisle as it bends right down the verge of the meadow",
+   "trace the flagstone aisle as it bends right down the verge of the meadow",
+   "trace the flagstone aisle as it bends right down the verge of the turf",
+   "hug the flagstone aisle as it bends right down the verge of the turf"
+  ]
+ },
+ "Turn right along the brick path": {
+  "class": "R",
+  "purity": 0.9523809523809523,
+  "n_frames": 147,
+  "L1": [
+   "Along the brick path Turn right"
+  ],
+  "L2": [
+   "Turn right beside the brickwork trail",
+   "Turn right beside the brickwork walkway"
+  ],
+  "L3": [
+   "hook right down the cobbled lane",
+   "veer right down the cobbled lane",
+   "pivot right down the cobbled aisle",
+   "pivot right down the cobbled lane",
+   "swing right down the cobbled aisle"
+  ]
+ },
+ "follow the path curving right through the park": {
+  "class": "R",
+  "purity": 0.8398058252427184,
+  "n_frames": 206,
+  "L1": [
+   "through the park follow the path curving right"
+  ],
+  "L2": [
+   "trace the walkway bending right over the park grounds",
+   "trace the trail bending right over the park grounds"
+  ],
+  "L3": [
+   "hug the lane bending right athwart the commons",
+   "trace the lane bending right athwart the commons",
+   "trace the aisle bending right athwart the commons",
+   "hug the aisle bending right athwart the commons"
+  ]
+ },
+ "turn right along the building": {
+  "class": "R",
+  "purity": 0.9876543209876543,
+  "n_frames": 81,
+  "L1": [
+   "along the building turn right"
+  ],
+  "L2": [
+   "turn right beside the structure"
+  ],
+  "L3": [
+   "veer right down the block",
+   "hook right down the block",
+   "veer right down the edifice",
+   "cut right down the edifice"
+  ]
+ },
+ "continue straight across the paved area lined with trees": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 8,
+  "L1": [
+   "across the paved area lined with trees continue straight",
+   "with trees across the paved area lined continue straight"
+  ],
+  "L2": [
+   "keep going straight in front over the surfaced zone bordered with trees"
+  ],
+  "L3": [
+   "carry on straight over the flagstone precinct flanked with foliage",
+   "carry on straight over the flagstone precinct rimmed with foliage",
+   "press on straight over the flagstone precinct rimmed with greenery",
+   "press on straight over the cobbled precinct rimmed with greenery",
+   "carry on straight over the cobbled precinct flanked with foliage"
+  ]
+ },
+ "continue straight across the paved square, with trees and hedges on both sides": {
+  "class": "S",
+  "purity": 0.9217391304347826,
+  "n_frames": 115,
+  "L1": [
+   "with trees and hedges on both sides, continue straight across the paved square",
+   "across the paved square, with trees and hedges on both sides continue straight",
+   "with trees and hedges across the paved square, on both sides continue straight",
+   "on both sides across the paved square, with trees and hedges continue straight",
+   "on both sides with trees and hedges across the paved square, continue straight"
+  ],
+  "L2": [
+   "keep going straight in front over the surfaced unenclosed zone, with trees and bushes on either side",
+   "keep going straight in front over the surfaced square, with trees and bushes on either side"
+  ],
+  "L3": [
+   "press on straight over the flagstone quad, with foliage and thickets on either hand",
+   "press on straight over the flagstone flagstone court, with foliage and shrubs on each flank",
+   "press on straight over the flagstone quad, with greenery and shrubs on either hand",
+   "carry on straight over the flagstone flagstone court, with greenery and shrubs on each flank",
+   "press on straight over the cobbled quad, with foliage and thickets on each flank"
+  ]
+ },
+ "continue straight down the tree-lined avenue, trees on both sides": {
+  "class": "S",
+  "purity": 0.9004854368932039,
+  "n_frames": 412,
+  "L1": [
+   "trees on both sides, continue straight down the tree-lined avenue",
+   "down the tree-lined avenue, trees on both sides continue straight",
+   "on both sides down the tree-lined avenue, trees continue straight"
+  ],
+  "L2": [
+   "keep going straight in front along the tree-bordered avenue, trees on either side",
+   "keep going straight in front along the tree-bordered roadway, trees on either side",
+   "keep going straight in front along the tree-bordered street, trees on either side"
+  ],
+  "L3": [
+   "carry on straight down the foliage-flanked esplanade, greenery on each flank",
+   "press on straight down the foliage-rimmed esplanade, greenery on either hand",
+   "press on straight down the foliage-flanked boulevard, foliage on either hand",
+   "press on straight down the foliage-flanked esplanade, foliage on each flank",
+   "press on straight down the foliage-flanked boulevard, greenery on either hand"
+  ]
+ },
+ "continue straight down the tree-lined path, lawn on both sides": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 26,
+  "L1": [
+   "lawn on both sides, continue straight down the tree-lined path",
+   "down the tree-lined path, lawn on both sides continue straight",
+   "on both sides down the tree-lined path, lawn continue straight"
+  ],
+  "L2": [
+   "keep going straight in front along the tree-bordered trail, grass on either side",
+   "keep going straight in front along the tree-bordered walkway, grass on either side"
+  ],
+  "L3": [
+   "carry on straight down the foliage-flanked lane, meadow on either hand",
+   "carry on straight down the foliage-flanked aisle, meadow on either hand",
+   "press on straight down the foliage-flanked aisle, meadow on either hand",
+   "press on straight down the foliage-flanked lane, turf on either hand",
+   "carry on straight down the foliage-rimmed aisle, meadow on either hand"
+  ]
+ },
+ "head straight back down the tree-lined avenue, trees on both sides": {
+  "class": "S",
+  "purity": 0.8566308243727598,
+  "n_frames": 279,
+  "L1": [
+   "trees on both sides, head straight back down the tree-lined avenue",
+   "down the tree-lined avenue, trees on both sides head straight back",
+   "on both sides down the tree-lined avenue, trees head straight back"
+  ],
+  "L2": [
+   "go straight in front back along the tree-bordered street, trees on either side",
+   "go straight in front back along the tree-bordered roadway, trees on either side",
+   "go straight in front back along the tree-bordered avenue, trees on either side"
+  ],
+  "L3": [
+   "keep on straight back down the foliage-flanked boulevard, greenery on each flank",
+   "keep on straight back down the foliage-rimmed esplanade, foliage on each flank",
+   "press straight back down the foliage-flanked esplanade, greenery on each flank",
+   "keep on straight back down the foliage-flanked esplanade, foliage on either hand",
+   "keep on straight back down the foliage-flanked boulevard, foliage on each flank"
+  ]
+ },
+ "Move toward the open brick plaza on the right": {
+  "class": "S",
+  "purity": 0.9411764705882353,
+  "n_frames": 17,
+  "L1": [
+   "Toward the open brick plaza on the right Move",
+   "On the right toward the open brick plaza Move"
+  ],
+  "L2": [
+   "travel towards the unenclosed brickwork open zone on the right",
+   "travel towards the unenclosed brickwork square on the right"
+  ],
+  "L3": [
+   "proceed onward for the unwalled cobbled esplanade on the right",
+   "proceed onward for the unwalled cobbled quad on the right"
+  ]
+ },
+ "head straight down the street between the glass buildings": {
+  "class": "S",
+  "purity": 0.8342245989304813,
+  "n_frames": 187,
+  "L1": [
+   "down the street between the glass buildings head straight",
+   "between the glass buildings down the street head straight"
+  ],
+  "L2": [
+   "go straight in front along the avenue amid the glass-walled structures",
+   "go straight in front along the street amid the glass-walled structures"
+  ],
+  "L3": [
+   "keep on straight down the boulevard dividing the glazed edifices",
+   "press straight down the boulevard dividing the glazed blocks",
+   "press straight down the boulevard dividing the glazed edifices",
+   "keep on straight down the boulevard dividing the glazed blocks"
+  ]
+ },
+ "continue straight with the bicycle parking on both sides": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 20,
+  "L1": [
+   "with the bicycle parking on both sides continue straight",
+   "on both sides with the bicycle parking continue straight"
+  ],
+  "L2": [
+   "keep going straight in front with the bike parking zone on either side"
+  ],
+  "L3": [
+   "carry on straight with the cycle stalls on each flank",
+   "press on straight with the cycle stalls on either hand",
+   "press on straight with the cycle stalls on each flank",
+   "carry on straight with the cycle stalls on either hand"
+  ]
+ },
+ "Stop at the white line": {
+  "class": "S",
+  "purity": 0.9397905759162304,
+  "n_frames": 4202,
+  "L1": [
+   "At the white line Stop"
+  ],
+  "L2": [],
+  "L3": []
+ },
+ "go straight across the open plaza": {
+  "class": "S",
+  "purity": 0.8072289156626506,
+  "n_frames": 664,
+  "L1": [
+   "across the open plaza go straight"
+  ],
+  "L2": [
+   "go straight in front over the unenclosed square",
+   "go straight in front over the unenclosed open zone"
+  ],
+  "L3": [
+   "go straight over the unwalled esplanade",
+   "go straight over the unwalled quad"
+  ]
+ },
+ "Go along the hedge on the right": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 121,
+  "L1": [
+   "Along the hedge on the right Go",
+   "On the right along the hedge Go"
+  ],
+  "L2": [
+   "Go beside the bushes on the right",
+   "Go beside the hedgerow on the right"
+  ],
+  "L3": [
+   "Go down the thicket on the right",
+   "Go down the shrubs on the right"
+  ]
+ },
+ "Go straight between the building and the trees.": {
+  "class": "S",
+  "purity": 0.9516129032258065,
+  "n_frames": 62,
+  "L1": [
+   "Between the building and the trees Go straight"
+  ],
+  "L2": [
+   "Go straight in front amid the structure and the trees."
+  ],
+  "L3": [
+   "Go straight dividing the edifice and the foliage.",
+   "Go straight dividing the block and the greenery."
+  ]
+ },
+ "head straight down the path between the white fences on both sides": {
+  "class": "S",
+  "purity": 0.9120879120879121,
+  "n_frames": 91,
+  "L1": [
+   "down the path between the white fences on both sides head straight",
+   "between the white fences down the path on both sides head straight",
+   "on both sides down the path between the white fences head straight",
+   "on both sides between the white fences down the path head straight"
+  ],
+  "L2": [
+   "go straight in front along the trail amid the pale fences on either side",
+   "go straight in front along the walkway amid the pale fences on either side"
+  ],
+  "L3": [
+   "press straight down the aisle dividing the chalky fences on each flank",
+   "press straight down the lane dividing the chalky fences on either hand",
+   "press straight down the aisle dividing the chalky fences on either hand",
+   "press straight down the lane dividing the chalky fences on each flank",
+   "keep on straight down the aisle dividing the chalky fences on each flank"
+  ]
+ },
+ "Drive along the hedge and row of trees on the far left": {
+  "class": "S",
+  "purity": 0.8850806451612904,
+  "n_frames": 496,
+  "L1": [
+   "Along the hedge and row of trees on the far left Drive",
+   "On the far left along the hedge and row of trees Drive"
+  ],
+  "L2": [
+   "Drive beside the bushes and row of trees on the distant left",
+   "Drive beside the hedgerow and row of trees on the distant left"
+  ],
+  "L3": [
+   "Drive down the thicket and row of foliage on the outermost left",
+   "Drive down the thicket and row of greenery on the outermost left",
+   "Drive down the shrubs and row of foliage on the outermost left",
+   "Drive down the shrubs and row of greenery on the outermost left"
+  ]
+ },
+ "go straight down the path with the hedge on your left": {
+  "class": "S",
+  "purity": 0.8481675392670157,
+  "n_frames": 191,
+  "L1": [
+   "down the path with the hedge on your left go straight",
+   "with the hedge down the path on your left go straight",
+   "on your left down the path with the hedge go straight",
+   "on your left with the hedge down the path go straight"
+  ],
+  "L2": [
+   "go straight in front along the walkway with the hedgerow on your left",
+   "go straight in front along the walkway with the bushes on your left",
+   "go straight in front along the trail with the bushes on your left",
+   "go straight in front along the trail with the hedgerow on your left"
+  ],
+  "L3": [
+   "go straight down the lane with the thicket on your left",
+   "go straight down the lane with the shrubs on your left",
+   "go straight down the aisle with the thicket on your left",
+   "go straight down the aisle with the shrubs on your left"
+  ]
+ },
+ "Go straight between the glass-fronted building and the colonnade": {
+  "class": "S",
+  "purity": 0.9186991869918699,
+  "n_frames": 246,
+  "L1": [
+   "Between the glass-fronted building and the colonnade Go straight"
+  ],
+  "L2": [
+   "Go straight in front amid the glass-walled-fronted structure and the columns"
+  ],
+  "L3": [
+   "Go straight dividing the glazed-fronted block and the portico",
+   "Go straight dividing the glazed-fronted block and the arcade",
+   "Go straight dividing the glazed-fronted edifice and the portico",
+   "Go straight dividing the glazed-fronted edifice and the arcade"
+  ]
+ },
+ "Follow the road along the left-hand side": {
+  "class": "S",
+  "purity": 0.9112627986348123,
+  "n_frames": 293,
+  "L1": [
+   "Along the left-hand side Follow the road"
+  ],
+  "L2": [
+   "trace the street beside the left-hand side",
+   "trace the roadway beside the left-hand side"
+  ],
+  "L3": [
+   "hug the lane down the left-hand side",
+   "trace the lane down the left-hand side",
+   "hug the thoroughfare down the left-hand side",
+   "trace the thoroughfare down the left-hand side"
+  ]
+ },
+ "Move along the walkway beside the building": {
+  "class": "S",
+  "purity": 0.8305356882206977,
+  "n_frames": 6851,
+  "L1": [
+   "Along the walkway beside the building Move",
+   "Beside the building along the walkway Move"
+  ],
+  "L2": [
+   "travel beside the walkway alongside the structure",
+   "travel beside the trail alongside the structure",
+   "travel beside the footway alongside the structure"
+  ],
+  "L3": [
+   "proceed onward down the aisle abutting the block",
+   "proceed onward down the arcade abutting the block",
+   "proceed onward down the aisle abutting the edifice",
+   "proceed onward down the arcade abutting the edifice"
+  ]
+ },
+ "Go straight past the parked cars": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 59,
+  "L1": [
+   "Past the parked cars Go straight"
+  ],
+  "L2": [
+   "Go straight in front beyond the parked cars"
+  ],
+  "L3": []
+ },
+ "Head to the tree at the end of the corridor": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 65,
+  "L1": [
+   "At the end of the corridor Head to the tree"
+  ],
+  "L2": [
+   "go to the tree at the end of the passage"
+  ],
+  "L3": [
+   "press to the sapling at the end of the aisle",
+   "keep on to the sapling at the end of the aisle",
+   "keep on to the sapling at the end of the arcade",
+   "press to the sapling at the end of the arcade"
+  ]
+ },
+ "head straight down the tree-lined promenade, trees and hedges on both sides": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 151,
+  "L1": [
+   "trees and hedges on both sides, head straight down the tree-lined promenade",
+   "down the tree-lined promenade, trees and hedges on both sides head straight",
+   "on both sides down the tree-lined promenade, trees and hedges head straight"
+  ],
+  "L2": [
+   "go straight in front along the tree-bordered footway, trees and bushes on either side",
+   "go straight in front along the tree-bordered walkway, trees and bushes on either side",
+   "go straight in front along the tree-bordered trail, trees and bushes on either side"
+  ],
+  "L3": [
+   "press straight down the foliage-rimmed esplanade, foliage and shrubs on either hand",
+   "press straight down the foliage-flanked esplanade, greenery and shrubs on either hand",
+   "keep on straight down the foliage-rimmed esplanade, greenery and shrubs on each flank",
+   "keep on straight down the foliage-rimmed esplanade, greenery and shrubs on either hand",
+   "keep on straight down the foliage-flanked esplanade, foliage and shrubs on either hand"
+  ]
+ },
+ "Go straight between the building and the trees": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 102,
+  "L1": [],
+  "L2": [],
+  "L3": [
+   "Go straight dividing the block and the foliage",
+   "Go straight dividing the edifice and the greenery"
+  ]
+ },
+ "go straight along the walkway beside the building": {
+  "class": "S",
+  "purity": 0.9242424242424242,
+  "n_frames": 66,
+  "L1": [
+   "along the walkway beside the building go straight",
+   "beside the building along the walkway go straight"
+  ],
+  "L2": [
+   "go straight in front beside the trail alongside the structure",
+   "go straight in front beside the footway alongside the structure",
+   "go straight in front beside the walkway alongside the structure"
+  ],
+  "L3": [
+   "go straight down the aisle abutting the edifice",
+   "go straight down the arcade abutting the edifice",
+   "go straight down the arcade abutting the block",
+   "go straight down the aisle abutting the block"
+  ]
+ },
+ "go straight down the tree-lined path": {
+  "class": "S",
+  "purity": 0.8305613305613305,
+  "n_frames": 962,
+  "L1": [
+   "down the tree-lined path go straight"
+  ],
+  "L2": [
+   "go straight in front along the tree-bordered trail",
+   "go straight in front along the tree-bordered walkway"
+  ],
+  "L3": [
+   "go straight down the foliage-flanked aisle",
+   "go straight down the foliage-rimmed aisle",
+   "go straight down the foliage-rimmed lane",
+   "go straight down the foliage-flanked lane"
+  ]
+ },
+ "Move along between the hedge": {
+  "class": "S",
+  "purity": 0.8783783783783784,
+  "n_frames": 148,
+  "L1": [
+   "Along between the hedge Move",
+   "Between the hedge along Move"
+  ],
+  "L2": [
+   "travel beside amid the bushes",
+   "travel beside amid the hedgerow"
+  ],
+  "L3": [
+   "proceed onward down dividing the shrubs",
+   "proceed onward down dividing the thicket"
+  ]
+ },
+ "Move along the sideway edge on the right": {
+  "class": "S",
+  "purity": 0.9714285714285714,
+  "n_frames": 35,
+  "L1": [
+   "Along the sideway edge on the right Move",
+   "On the right along the sideway edge Move"
+  ],
+  "L2": [
+   "travel beside the sideway side on the right"
+  ],
+  "L3": [
+   "proceed onward down the sideway verge on the right",
+   "proceed onward down the sideway rim on the right"
+  ]
+ },
+ "continue straight between the bicycle racks": {
+  "class": "S",
+  "purity": 0.8695652173913043,
+  "n_frames": 23,
+  "L1": [
+   "between the bicycle racks continue straight"
+  ],
+  "L2": [
+   "keep going straight in front amid the bike stands"
+  ],
+  "L3": [
+   "carry on straight dividing the cycle stalls",
+   "press on straight dividing the cycle rails",
+   "press on straight dividing the cycle stalls",
+   "carry on straight dividing the cycle rails"
+  ]
+ },
+ "go straight along the hedges": {
+  "class": "S",
+  "purity": 0.9838709677419355,
+  "n_frames": 62,
+  "L1": [
+   "along the hedges go straight"
+  ],
+  "L2": [
+   "go straight in front beside the bushes"
+  ],
+  "L3": [
+   "go straight down the shrubs",
+   "go straight down the thickets"
+  ]
+ },
+ "head straight down the tree-lined avenue": {
+  "class": "S",
+  "purity": 0.9166666666666666,
+  "n_frames": 36,
+  "L1": [
+   "down the tree-lined avenue head straight"
+  ],
+  "L2": [
+   "go straight in front along the tree-bordered street",
+   "go straight in front along the tree-bordered avenue",
+   "go straight in front along the tree-bordered roadway"
+  ],
+  "L3": [
+   "press straight down the foliage-rimmed boulevard",
+   "keep on straight down the foliage-flanked esplanade",
+   "keep on straight down the foliage-rimmed esplanade",
+   "press straight down the foliage-rimmed esplanade",
+   "press straight down the foliage-flanked esplanade"
+  ]
+ },
+ "Go straight down the path in the bike parking lot": {
+  "class": "S",
+  "purity": 0.8235294117647058,
+  "n_frames": 17,
+  "L1": [
+   "Down the path in the bike parking lot Go straight",
+   "In the bike parking lot down the path Go straight"
+  ],
+  "L2": [
+   "Go straight in front along the trail in the bike parking zone yard",
+   "Go straight in front along the walkway in the bike parking zone yard"
+  ],
+  "L3": [
+   "Go straight down the aisle in the bike stalls yard",
+   "Go straight down the lane in the bike stalls yard"
+  ]
+ },
+ "Go straight along the road": {
+  "class": "S",
+  "purity": 0.8327444051825678,
+  "n_frames": 849,
+  "L1": [
+   "Along the road Go straight"
+  ],
+  "L2": [
+   "Go straight in front beside the street",
+   "Go straight in front beside the roadway"
+  ],
+  "L3": [
+   "Go straight down the lane",
+   "Go straight down the thoroughfare"
+  ]
+ },
+ "continue straight across the paved square, trees lining both sides": {
+  "class": "S",
+  "purity": 0.8287671232876712,
+  "n_frames": 146,
+  "L1": [
+   "trees lining both sides, continue straight across the paved square",
+   "across the paved square, trees lining both sides continue straight"
+  ],
+  "L2": [
+   "keep going straight in front over the surfaced square, trees lining either side",
+   "keep going straight in front over the surfaced unenclosed zone, trees lining either side"
+  ],
+  "L3": [
+   "press on straight over the flagstone flagstone court, greenery lining either hand",
+   "press on straight over the cobbled quad, foliage lining either hand",
+   "carry on straight over the cobbled quad, greenery lining either hand",
+   "press on straight over the flagstone flagstone court, greenery lining each flank",
+   "press on straight over the cobbled flagstone court, greenery lining either hand"
+  ]
+ },
+ "go straight down the wide tree-lined promenade": {
+  "class": "S",
+  "purity": 0.8970099667774086,
+  "n_frames": 301,
+  "L1": [
+   "down the wide tree-lined promenade go straight"
+  ],
+  "L2": [
+   "go straight in front along the wide tree-bordered walkway",
+   "go straight in front along the wide tree-bordered footway",
+   "go straight in front along the wide tree-bordered trail"
+  ],
+  "L3": [
+   "go straight down the wide foliage-flanked esplanade",
+   "go straight down the wide foliage-rimmed esplanade"
+  ]
+ },
+ "go straight down the narrow path beside the fence on your right": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 79,
+  "L1": [
+   "down the narrow path beside the fence on your right go straight",
+   "beside the fence down the narrow path on your right go straight",
+   "on your right down the narrow path beside the fence go straight",
+   "on your right beside the fence down the narrow path go straight"
+  ],
+  "L2": [
+   "go straight in front along the narrow trail alongside the fence on your right",
+   "go straight in front along the narrow walkway alongside the fence on your right"
+  ],
+  "L3": [
+   "go straight down the narrow lane abutting the fence on your right",
+   "go straight down the narrow aisle abutting the fence on your right"
+  ]
+ },
+ "Go straight through the tree-lined avenue": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 252,
+  "L1": [
+   "Through the tree-lined avenue Go straight"
+  ],
+  "L2": [
+   "Go straight in front over the tree-bordered avenue",
+   "Go straight in front over the tree-bordered roadway",
+   "Go straight in front over the tree-bordered street"
+  ],
+  "L3": [
+   "Go straight athwart the foliage-flanked esplanade",
+   "Go straight athwart the foliage-rimmed boulevard",
+   "Go straight athwart the foliage-flanked boulevard",
+   "Go straight athwart the foliage-rimmed esplanade"
+  ]
+ },
+ "go straight down the path between the bicycle racks": {
+  "class": "S",
+  "purity": 0.8895705521472392,
+  "n_frames": 326,
+  "L1": [
+   "down the path between the bicycle racks go straight",
+   "between the bicycle racks down the path go straight"
+  ],
+  "L2": [
+   "go straight in front along the walkway amid the bike stands",
+   "go straight in front along the trail amid the bike stands"
+  ],
+  "L3": [
+   "go straight down the aisle dividing the cycle stalls",
+   "go straight down the lane dividing the cycle rails",
+   "go straight down the aisle dividing the cycle rails",
+   "go straight down the lane dividing the cycle stalls"
+  ]
+ },
+ "follow the path as it curves left along the building": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 200,
+  "L1": [
+   "along the building follow the path as it curves left"
+  ],
+  "L2": [
+   "trace the trail as it bends left beside the structure",
+   "trace the walkway as it bends left beside the structure"
+  ],
+  "L3": [
+   "hug the aisle as it bends left down the block",
+   "trace the lane as it bends left down the edifice",
+   "trace the aisle as it bends left down the block",
+   "trace the lane as it bends left down the block",
+   "hug the aisle as it bends left down the edifice"
+  ]
+ },
+ "go straight down the path": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 24,
+  "L1": [
+   "down the path go straight"
+  ],
+  "L2": [
+   "go straight in front along the walkway",
+   "go straight in front along the trail"
+  ],
+  "L3": []
+ },
+ "head straight across the green-painted court, the brick building on your right and a fence on your left": {
+  "class": "S",
+  "purity": 0.896551724137931,
+  "n_frames": 232,
+  "L1": [
+   "the brick building on your right and a fence on your left, head straight across the green-painted court",
+   "across the green-painted court, the brick building on your right and a fence on your left head straight",
+   "on your right and a fence across the green-painted court, the brick building on your left head straight",
+   "on your left across the green-painted court, the brick building on your right and a fence head straight",
+   "on your left on your right and a fence across the green-painted court, the brick building head straight"
+  ],
+  "L2": [
+   "go straight in front over the grass-painted court, the brickwork structure on your right and a fence on your left"
+  ],
+  "L3": [
+   "press straight over the turf-painted court, the cobbled edifice on your right and a fence on your left",
+   "press straight over the turf-painted court, the cobbled block on your right and a fence on your left",
+   "keep on straight over the turf-painted court, the cobbled block on your right and a fence on your left",
+   "keep on straight over the turf-painted court, the cobbled edifice on your right and a fence on your left"
+  ]
+ },
+ "Move on the center of the paved walkway": {
+  "class": "S",
+  "purity": 0.9512195121951219,
+  "n_frames": 41,
+  "L1": [
+   "On the center of the paved walkway Move"
+  ],
+  "L2": [
+   "travel on the center of the surfaced footway",
+   "travel on the center of the surfaced walkway",
+   "travel on the center of the surfaced trail"
+  ],
+  "L3": [
+   "proceed onward on the center of the cobbled aisle",
+   "proceed onward on the center of the cobbled arcade",
+   "proceed onward on the center of the flagstone arcade",
+   "proceed onward on the center of the flagstone aisle"
+  ]
+ },
+ "Follow the building and hedge on your left": {
+  "class": "S",
+  "purity": 0.9567901234567902,
+  "n_frames": 162,
+  "L1": [
+   "On your left Follow the building and hedge"
+  ],
+  "L2": [
+   "trace the structure and bushes on your left",
+   "trace the structure and hedgerow on your left"
+  ],
+  "L3": [
+   "hug the block and thicket on your left",
+   "trace the edifice and thicket on your left",
+   "hug the edifice and thicket on your left",
+   "hug the edifice and shrubs on your left",
+   "trace the block and shrubs on your left"
+  ]
+ },
+ "go straight across the plaza alongside the building on your right": {
+  "class": "S",
+  "purity": 0.9874213836477987,
+  "n_frames": 159,
+  "L1": [
+   "across the plaza alongside the building on your right go straight",
+   "on your right across the plaza alongside the building go straight"
+  ],
+  "L2": [
+   "go straight in front over the unenclosed zone alongside the structure on your right",
+   "go straight in front over the square alongside the structure on your right"
+  ],
+  "L3": [
+   "go straight over the esplanade alongside the block on your right",
+   "go straight over the quad alongside the edifice on your right",
+   "go straight over the quad alongside the block on your right",
+   "go straight over the esplanade alongside the edifice on your right"
+  ]
+ },
+ "go straight toward the white building": {
+  "class": "S",
+  "purity": 0.825,
+  "n_frames": 40,
+  "L1": [
+   "toward the white building go straight"
+  ],
+  "L2": [
+   "go straight in front towards the pale structure"
+  ],
+  "L3": [
+   "go straight for the chalky edifice",
+   "go straight for the chalky block"
+  ]
+ },
+ "Go toward the tree in front": {
+  "class": "S",
+  "purity": 0.9801118707271598,
+  "n_frames": 1609,
+  "L1": [
+   "Toward the tree in front Go",
+   "In front toward the tree Go"
+  ],
+  "L2": [
+   "Go towards the tree in in front"
+  ],
+  "L3": [
+   "Go for the sapling in fore"
+  ]
+ },
+ "Go along the tree-lined brick path": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 168,
+  "L1": [
+   "Along the tree-lined brick path Go"
+  ],
+  "L2": [
+   "Go beside the tree-bordered brickwork trail",
+   "Go beside the tree-bordered brickwork walkway"
+  ],
+  "L3": [
+   "Go down the foliage-rimmed cobbled aisle",
+   "Go down the foliage-rimmed cobbled lane",
+   "Go down the foliage-flanked cobbled aisle",
+   "Go down the foliage-flanked cobbled lane"
+  ]
+ },
+ "go straight through the covered walkway": {
+  "class": "S",
+  "purity": 0.8109756097560976,
+  "n_frames": 164,
+  "L1": [
+   "through the covered walkway go straight"
+  ],
+  "L2": [
+   "go straight in front over the roofed walkway",
+   "go straight in front over the roofed footway",
+   "go straight in front over the roofed trail"
+  ],
+  "L3": [
+   "go straight athwart the canopied arcade",
+   "go straight athwart the canopied aisle"
+  ]
+ },
+ "Proceed along the tree-lined path, staying close to the left.": {
+  "class": "S",
+  "purity": 0.9808612440191388,
+  "n_frames": 209,
+  "L1": [
+   "Staying close to the left, Proceed along the tree-lined path",
+   "Along the tree-lined path, staying close to the left Proceed"
+  ],
+  "L2": [
+   "continue on beside the tree-bordered walkway, staying close to the left.",
+   "continue on beside the tree-bordered trail, staying close to the left."
+  ],
+  "L3": [
+   "carry on down the foliage-rimmed lane, staying close to the left.",
+   "carry on down the foliage-flanked lane, staying close to the left.",
+   "carry on down the foliage-flanked aisle, staying close to the left.",
+   "carry on down the foliage-rimmed aisle, staying close to the left."
+  ]
+ },
+ "Go to the building at the end of the corridor": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 17,
+  "L1": [
+   "At the end of the corridor Go to the building"
+  ],
+  "L2": [
+   "Go to the structure at the end of the passage"
+  ],
+  "L3": [
+   "Go to the block at the end of the aisle",
+   "Go to the block at the end of the arcade",
+   "Go to the edifice at the end of the aisle",
+   "Go to the edifice at the end of the arcade"
+  ]
+ },
+ "Go straight down the path between the buildings and trees": {
+  "class": "S",
+  "purity": 0.9112149532710281,
+  "n_frames": 214,
+  "L1": [
+   "Down the path between the buildings and trees Go straight",
+   "Between the buildings and trees down the path Go straight"
+  ],
+  "L2": [
+   "Go straight in front along the trail amid the structures and trees",
+   "Go straight in front along the walkway amid the structures and trees"
+  ],
+  "L3": [
+   "Go straight down the lane dividing the blocks and greenery",
+   "Go straight down the lane dividing the edifices and greenery",
+   "Go straight down the aisle dividing the blocks and foliage",
+   "Go straight down the aisle dividing the edifices and foliage",
+   "Go straight down the lane dividing the edifices and foliage"
+  ]
+ },
+ "Please proceed straight down the tree-lined street.": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 215,
+  "L1": [
+   "Down the tree-lined street Please proceed straight"
+  ],
+  "L2": [
+   "Please continue on straight in front along the tree-bordered roadway.",
+   "Please continue on straight in front along the tree-bordered avenue.",
+   "Please continue on straight in front along the tree-bordered street."
+  ],
+  "L3": [
+   "Please carry on straight down the foliage-flanked boulevard.",
+   "Please carry on straight down the foliage-rimmed boulevard."
+  ]
+ },
+ "Move along the hedge on the right": {
+  "class": "S",
+  "purity": 0.9142857142857143,
+  "n_frames": 70,
+  "L1": [
+   "Along the hedge on the right Move",
+   "On the right along the hedge Move"
+  ],
+  "L2": [
+   "travel beside the bushes on the right",
+   "travel beside the hedgerow on the right"
+  ],
+  "L3": [
+   "proceed onward down the thicket on the right",
+   "proceed onward down the shrubs on the right"
+  ]
+ },
+ "head straight along the hedge toward the bicycle parking": {
+  "class": "S",
+  "purity": 0.9264705882352942,
+  "n_frames": 68,
+  "L1": [
+   "along the hedge toward the bicycle parking head straight",
+   "toward the bicycle parking along the hedge head straight"
+  ],
+  "L2": [
+   "go straight in front beside the bushes towards the bike parking zone",
+   "go straight in front beside the hedgerow towards the bike parking zone"
+  ],
+  "L3": [
+   "keep on straight down the thicket for the cycle stalls",
+   "press straight down the shrubs for the cycle stalls",
+   "keep on straight down the shrubs for the cycle stalls",
+   "press straight down the thicket for the cycle stalls"
+  ]
+ },
+ "go straight along the walkway beside the glass building": {
+  "class": "S",
+  "purity": 0.9958333333333333,
+  "n_frames": 240,
+  "L1": [
+   "along the walkway beside the glass building go straight",
+   "beside the glass building along the walkway go straight"
+  ],
+  "L2": [
+   "go straight in front beside the walkway alongside the glass-walled structure",
+   "go straight in front beside the footway alongside the glass-walled structure",
+   "go straight in front beside the trail alongside the glass-walled structure"
+  ],
+  "L3": [
+   "go straight down the aisle abutting the glazed edifice",
+   "go straight down the arcade abutting the glazed edifice",
+   "go straight down the aisle abutting the glazed block",
+   "go straight down the arcade abutting the glazed block"
+  ]
+ },
+ "continue straight along the green-paved road, the building on your right": {
+  "class": "S",
+  "purity": 0.927536231884058,
+  "n_frames": 69,
+  "L1": [
+   "the building on your right, continue straight along the green-paved road",
+   "along the green-paved road, the building on your right continue straight",
+   "on your right along the green-paved road, the building continue straight"
+  ],
+  "L2": [
+   "keep going straight in front beside the grass-surfaced street, the structure on your right",
+   "keep going straight in front beside the grass-surfaced roadway, the structure on your right"
+  ],
+  "L3": [
+   "carry on straight down the turf-cobbled thoroughfare, the block on your right",
+   "press on straight down the turf-cobbled lane, the block on your right",
+   "press on straight down the turf-cobbled lane, the edifice on your right",
+   "press on straight down the turf-cobbled thoroughfare, the edifice on your right",
+   "carry on straight down the turf-cobbled thoroughfare, the edifice on your right"
+  ]
+ },
+ "head straight across the paved square, with trees on your left and a building on your right": {
+  "class": "S",
+  "purity": 0.9523809523809523,
+  "n_frames": 105,
+  "L1": [
+   "with trees on your left and a building on your right, head straight across the paved square",
+   "across the paved square, with trees on your left and a building on your right head straight",
+   "with trees across the paved square, on your left and a building on your right head straight",
+   "on your left and a building across the paved square, with trees on your right head straight",
+   "on your right across the paved square, with trees on your left and a building head straight"
+  ],
+  "L2": [
+   "go straight in front over the surfaced unenclosed zone, with trees on your left and a structure on your right",
+   "go straight in front over the surfaced square, with trees on your left and a structure on your right"
+  ],
+  "L3": [
+   "keep on straight over the cobbled flagstone court, with foliage on your left and a block on your right",
+   "press straight over the flagstone flagstone court, with greenery on your left and a edifice on your right",
+   "press straight over the cobbled flagstone court, with greenery on your left and a block on your right",
+   "press straight over the cobbled flagstone court, with foliage on your left and a edifice on your right",
+   "press straight over the cobbled quad, with foliage on your left and a block on your right"
+  ]
+ },
+ "go straight along the building with the trees on your right": {
+  "class": "S",
+  "purity": 0.9781021897810219,
+  "n_frames": 137,
+  "L1": [
+   "along the building with the trees on your right go straight",
+   "with the trees along the building on your right go straight",
+   "on your right along the building with the trees go straight",
+   "on your right with the trees along the building go straight"
+  ],
+  "L2": [
+   "go straight in front beside the structure with the trees on your right"
+  ],
+  "L3": [
+   "go straight down the edifice with the foliage on your right",
+   "go straight down the block with the greenery on your right",
+   "go straight down the edifice with the greenery on your right",
+   "go straight down the block with the foliage on your right"
+  ]
+ },
+ "go straight down the green-paved road": {
+  "class": "S",
+  "purity": 0.835820895522388,
+  "n_frames": 67,
+  "L1": [
+   "down the green-paved road go straight"
+  ],
+  "L2": [
+   "go straight in front along the grass-surfaced roadway",
+   "go straight in front along the grass-surfaced street"
+  ],
+  "L3": [
+   "go straight down the turf-flagstone thoroughfare",
+   "go straight down the turf-cobbled thoroughfare",
+   "go straight down the turf-flagstone lane",
+   "go straight down the turf-cobbled lane"
+  ]
+ },
+ "Go straight at the red pylon": {
+  "class": "S",
+  "purity": 0.918918918918919,
+  "n_frames": 148,
+  "L1": [
+   "At the red pylon Go straight"
+  ],
+  "L2": [
+   "Go straight in front at the reddish cone"
+  ],
+  "L3": [
+   "Go straight at the ochre bollard"
+  ]
+ },
+ "Move along the paved walkway": {
+  "class": "S",
+  "purity": 0.8306737588652482,
+  "n_frames": 1128,
+  "L1": [
+   "Along the paved walkway Move"
+  ],
+  "L2": [
+   "travel beside the surfaced walkway",
+   "travel beside the surfaced footway",
+   "travel beside the surfaced trail"
+  ],
+  "L3": [
+   "proceed onward down the flagstone arcade",
+   "proceed onward down the cobbled arcade",
+   "proceed onward down the cobbled aisle",
+   "proceed onward down the flagstone aisle"
+  ]
+ },
+ "go straight down the path between the buildings": {
+  "class": "S",
+  "purity": 0.8883495145631068,
+  "n_frames": 206,
+  "L1": [
+   "down the path between the buildings go straight",
+   "between the buildings down the path go straight"
+  ],
+  "L2": [
+   "go straight in front along the walkway amid the structures",
+   "go straight in front along the trail amid the structures"
+  ],
+  "L3": [
+   "go straight down the aisle dividing the blocks",
+   "go straight down the aisle dividing the edifices",
+   "go straight down the lane dividing the edifices",
+   "go straight down the lane dividing the blocks"
+  ]
+ },
+ "head straight across the plaza,with the white building on your right and trees on both sides": {
+  "class": "S",
+  "purity": 0.8504672897196262,
+  "n_frames": 107,
+  "L1": [
+   "with the white building on your right and trees on both sides, head straight across the plaza",
+   "across the plaza, with the white building on your right and trees on both sides head straight",
+   "with the white building across the plaza, on your right and trees on both sides head straight",
+   "on your right and trees across the plaza, with the white building on both sides head straight",
+   "on both sides across the plaza, with the white building on your right and trees head straight"
+  ],
+  "L2": [
+   "go straight in front over the square,with the pale structure on your right and trees on either side",
+   "go straight in front over the unenclosed zone,with the pale structure on your right and trees on either side"
+  ],
+  "L3": [
+   "keep on straight over the quad,with the chalky edifice on your right and foliage on either hand",
+   "keep on straight over the quad,with the chalky block on your right and foliage on either hand",
+   "press straight over the quad,with the chalky edifice on your right and greenery on each flank",
+   "press straight over the quad,with the chalky block on your right and foliage on each flank",
+   "press straight over the quad,with the chalky edifice on your right and foliage on either hand"
+  ]
+ },
+ "Go to the brick plaza after passing between red pylon": {
+  "class": "S",
+  "purity": 0.9310344827586207,
+  "n_frames": 58,
+  "L1": [
+   "Between red pylon Go to the brick plaza after passing"
+  ],
+  "L2": [
+   "Go to the brickwork square after passing amid reddish cone",
+   "Go to the brickwork unenclosed zone after passing amid reddish cone"
+  ],
+  "L3": [
+   "Go to the cobbled quad after passing dividing ochre bollard",
+   "Go to the cobbled esplanade after passing dividing ochre bollard"
+  ]
+ },
+ "go straight down the street between the glass buildings and the hedges": {
+  "class": "S",
+  "purity": 0.9885057471264368,
+  "n_frames": 261,
+  "L1": [
+   "down the street between the glass buildings and the hedges go straight",
+   "between the glass buildings and the hedges down the street go straight"
+  ],
+  "L2": [
+   "go straight in front along the roadway amid the glass-walled structures and the bushes",
+   "go straight in front along the street amid the glass-walled structures and the bushes",
+   "go straight in front along the avenue amid the glass-walled structures and the bushes"
+  ],
+  "L3": [
+   "go straight down the boulevard dividing the glazed edifices and the thickets",
+   "go straight down the boulevard dividing the glazed edifices and the shrubs",
+   "go straight down the boulevard dividing the glazed blocks and the thickets",
+   "go straight down the boulevard dividing the glazed blocks and the shrubs"
+  ]
+ },
+ "go straight along the building with the trees on your left": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 165,
+  "L1": [
+   "along the building with the trees on your left go straight",
+   "with the trees along the building on your left go straight",
+   "on your left along the building with the trees go straight",
+   "on your left with the trees along the building go straight"
+  ],
+  "L2": [
+   "go straight in front beside the structure with the trees on your left"
+  ],
+  "L3": [
+   "go straight down the block with the foliage on your left",
+   "go straight down the edifice with the foliage on your left",
+   "go straight down the edifice with the greenery on your left",
+   "go straight down the block with the greenery on your left"
+  ]
+ },
+ "continue straight down the tree-lined promenade between the trees on both sides": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 159,
+  "L1": [
+   "down the tree-lined promenade between the trees on both sides continue straight",
+   "between the trees down the tree-lined promenade on both sides continue straight",
+   "on both sides down the tree-lined promenade between the trees continue straight",
+   "on both sides between the trees down the tree-lined promenade continue straight"
+  ],
+  "L2": [
+   "keep going straight in front along the tree-bordered walkway amid the trees on either side",
+   "keep going straight in front along the tree-bordered footway amid the trees on either side",
+   "keep going straight in front along the tree-bordered trail amid the trees on either side"
+  ],
+  "L3": [
+   "carry on straight down the foliage-rimmed esplanade dividing the foliage on each flank",
+   "carry on straight down the foliage-flanked esplanade dividing the greenery on either hand",
+   "press on straight down the foliage-flanked esplanade dividing the foliage on either hand",
+   "press on straight down the foliage-flanked esplanade dividing the greenery on each flank",
+   "carry on straight down the foliage-rimmed esplanade dividing the greenery on each flank"
+  ]
+ },
+ "go straight under the covered walkway": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 11,
+  "L1": [
+   "under the covered walkway go straight"
+  ],
+  "L2": [
+   "go straight in front under the roofed footway",
+   "go straight in front under the roofed trail",
+   "go straight in front under the roofed walkway"
+  ],
+  "L3": [
+   "go straight under the canopied aisle",
+   "go straight under the canopied arcade"
+  ]
+ },
+ "go straight through the colonnade": {
+  "class": "S",
+  "purity": 0.8666666666666667,
+  "n_frames": 390,
+  "L1": [
+   "through the colonnade go straight"
+  ],
+  "L2": [
+   "go straight in front over the columns"
+  ],
+  "L3": [
+   "go straight athwart the portico",
+   "go straight athwart the arcade"
+  ]
+ },
+ "go straight across the plaza between the buildings": {
+  "class": "S",
+  "purity": 0.9054054054054054,
+  "n_frames": 222,
+  "L1": [
+   "across the plaza between the buildings go straight",
+   "between the buildings across the plaza go straight"
+  ],
+  "L2": [
+   "go straight in front over the square amid the structures",
+   "go straight in front over the unenclosed zone amid the structures"
+  ],
+  "L3": [
+   "go straight over the esplanade dividing the edifices",
+   "go straight over the esplanade dividing the blocks",
+   "go straight over the quad dividing the edifices",
+   "go straight over the quad dividing the blocks"
+  ]
+ },
+ "go straight down the hedge-lined path": {
+  "class": "S",
+  "purity": 0.9565217391304348,
+  "n_frames": 23,
+  "L1": [
+   "down the hedge-lined path go straight"
+  ],
+  "L2": [
+   "go straight in front along the hedgerow-bordered walkway",
+   "go straight in front along the bushes-bordered trail",
+   "go straight in front along the hedgerow-bordered trail",
+   "go straight in front along the bushes-bordered walkway"
+  ],
+  "L3": [
+   "go straight down the thicket-flanked aisle",
+   "go straight down the thicket-rimmed lane",
+   "go straight down the shrubs-rimmed lane",
+   "go straight down the shrubs-flanked aisle",
+   "go straight down the thicket-rimmed aisle"
+  ]
+ },
+ "go straight across the plaza with the building on your left": {
+  "class": "S",
+  "purity": 0.9378531073446328,
+  "n_frames": 177,
+  "L1": [
+   "across the plaza with the building on your left go straight",
+   "with the building across the plaza on your left go straight",
+   "on your left across the plaza with the building go straight",
+   "on your left with the building across the plaza go straight"
+  ],
+  "L2": [
+   "go straight in front over the square with the structure on your left",
+   "go straight in front over the unenclosed zone with the structure on your left"
+  ],
+  "L3": [
+   "go straight over the quad with the block on your left",
+   "go straight over the quad with the edifice on your left",
+   "go straight over the esplanade with the edifice on your left",
+   "go straight over the esplanade with the block on your left"
+  ]
+ },
+ "go straight down the wide tree-lined avenue": {
+  "class": "S",
+  "purity": 0.8434782608695652,
+  "n_frames": 1150,
+  "L1": [
+   "down the wide tree-lined avenue go straight"
+  ],
+  "L2": [
+   "go straight in front along the wide tree-bordered roadway",
+   "go straight in front along the wide tree-bordered avenue",
+   "go straight in front along the wide tree-bordered street"
+  ],
+  "L3": [
+   "go straight down the wide foliage-rimmed boulevard",
+   "go straight down the wide foliage-flanked boulevard"
+  ]
+ },
+ "go straight across the open tree-lined plaza": {
+  "class": "S",
+  "purity": 0.9894736842105263,
+  "n_frames": 95,
+  "L1": [
+   "across the open tree-lined plaza go straight"
+  ],
+  "L2": [
+   "go straight in front over the unenclosed tree-bordered square",
+   "go straight in front over the unenclosed tree-bordered open zone"
+  ],
+  "L3": [
+   "go straight over the unwalled foliage-flanked quad",
+   "go straight over the unwalled foliage-rimmed quad",
+   "go straight over the unwalled foliage-rimmed esplanade",
+   "go straight over the unwalled foliage-flanked esplanade"
+  ]
+ },
+ "follow the tree-lined path curving left": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 14,
+  "L1": [],
+  "L2": [
+   "trace the tree-bordered trail bending left",
+   "trace the tree-bordered walkway bending left"
+  ],
+  "L3": [
+   "trace the foliage-flanked lane bending left",
+   "trace the foliage-rimmed aisle bending left",
+   "trace the foliage-flanked aisle bending left",
+   "hug the foliage-rimmed aisle bending left",
+   "hug the foliage-flanked lane bending left"
+  ]
+ },
+ "Move along the tree-lined brick path": {
+  "class": "S",
+  "purity": 0.8210130877363063,
+  "n_frames": 8252,
+  "L1": [
+   "Along the tree-lined brick path Move"
+  ],
+  "L2": [
+   "travel beside the tree-bordered brickwork walkway",
+   "travel beside the tree-bordered brickwork trail"
+  ],
+  "L3": [
+   "proceed onward down the foliage-flanked cobbled aisle",
+   "proceed onward down the foliage-rimmed cobbled lane",
+   "proceed onward down the foliage-flanked cobbled lane",
+   "proceed onward down the foliage-rimmed cobbled aisle"
+  ]
+ },
+ "go straight along the building": {
+  "class": "S",
+  "purity": 0.8036006546644845,
+  "n_frames": 611,
+  "L1": [
+   "along the building go straight"
+  ],
+  "L2": [
+   "go straight in front beside the structure"
+  ],
+  "L3": [
+   "go straight down the edifice",
+   "go straight down the block"
+  ]
+ },
+ "continue straight down the path, with a white fence on both sides": {
+  "class": "S",
+  "purity": 0.983739837398374,
+  "n_frames": 123,
+  "L1": [
+   "with a white fence on both sides, continue straight down the path",
+   "down the path, with a white fence on both sides continue straight",
+   "with a white fence down the path, on both sides continue straight",
+   "on both sides down the path, with a white fence continue straight",
+   "on both sides with a white fence down the path, continue straight"
+  ],
+  "L2": [
+   "keep going straight in front along the trail, with a pale fence on either side",
+   "keep going straight in front along the walkway, with a pale fence on either side"
+  ],
+  "L3": [
+   "carry on straight down the aisle, with a chalky fence on either hand",
+   "carry on straight down the lane, with a chalky fence on each flank",
+   "press on straight down the lane, with a chalky fence on each flank",
+   "carry on straight down the aisle, with a chalky fence on each flank",
+   "carry on straight down the lane, with a chalky fence on either hand"
+  ]
+ },
+ "head straight down the promenade, with trees and hedges on both sides": {
+  "class": "S",
+  "purity": 0.9691358024691358,
+  "n_frames": 162,
+  "L1": [
+   "with trees and hedges on both sides, head straight down the promenade",
+   "down the promenade, with trees and hedges on both sides head straight",
+   "with trees and hedges down the promenade, on both sides head straight",
+   "on both sides down the promenade, with trees and hedges head straight",
+   "on both sides with trees and hedges down the promenade, head straight"
+  ],
+  "L2": [
+   "go straight in front along the trail, with trees and bushes on either side",
+   "go straight in front along the footway, with trees and bushes on either side",
+   "go straight in front along the walkway, with trees and bushes on either side"
+  ],
+  "L3": [
+   "keep on straight down the esplanade, with greenery and shrubs on either hand",
+   "keep on straight down the esplanade, with foliage and thickets on each flank",
+   "keep on straight down the esplanade, with greenery and thickets on each flank",
+   "press straight down the esplanade, with foliage and shrubs on each flank",
+   "press straight down the esplanade, with greenery and thickets on each flank"
+  ]
+ },
+ "Walk straight down the street between the tree-lined avenue and the glass-walled building": {
+  "class": "S",
+  "purity": 0.8333333333333334,
+  "n_frames": 54,
+  "L1": [
+   "Down the street between the tree-lined avenue and the glass-walled building Walk straight",
+   "Between the tree-lined avenue and the glass-walled building down the street Walk straight"
+  ],
+  "L2": [
+   "Walk straight in front along the avenue amid the tree-bordered street and the glass-walled-walled structure",
+   "Walk straight in front along the roadway amid the tree-bordered road and the glass-walled-walled structure",
+   "Walk straight in front along the street amid the tree-bordered road and the glass-walled-walled structure",
+   "Walk straight in front along the avenue amid the tree-bordered roadway and the glass-walled-walled structure",
+   "Walk straight in front along the roadway amid the tree-bordered street and the glass-walled-walled structure"
+  ],
+  "L3": [
+   "Walk straight down the boulevard dividing the foliage-rimmed esplanade and the glazed-walled block",
+   "Walk straight down the boulevard dividing the foliage-flanked esplanade and the glazed-walled block",
+   "Walk straight down the boulevard dividing the foliage-flanked esplanade and the glazed-walled edifice",
+   "Walk straight down the boulevard dividing the foliage-flanked boulevard and the glazed-walled edifice",
+   "Walk straight down the boulevard dividing the foliage-rimmed boulevard and the glazed-walled edifice"
+  ]
+ },
+ "go straight toward the glass towers ahead": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 86,
+  "L1": [
+   "toward the glass towers ahead go straight"
+  ],
+  "L2": [
+   "go straight in front towards the glass-walled blocks ahead"
+  ],
+  "L3": [
+   "go straight for the glazed spires beyond",
+   "go straight for the glazed spires up ahead"
+  ]
+ },
+ "Proceed along the road between the bicycle parking areas": {
+  "class": "S",
+  "purity": 0.8253968253968254,
+  "n_frames": 189,
+  "L1": [
+   "Along the road between the bicycle parking areas Proceed",
+   "Between the bicycle parking areas along the road Proceed"
+  ],
+  "L2": [
+   "continue on beside the street amid the bike parking zone areas",
+   "continue on beside the roadway amid the bike parking zone areas"
+  ],
+  "L3": [
+   "carry on down the lane dividing the cycle stalls areas",
+   "carry on down the thoroughfare dividing the cycle stalls areas"
+  ]
+ },
+ "Navigate along the path near the hedge": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 14,
+  "L1": [
+   "Along the path near the hedge Navigate",
+   "Near the hedge along the path Navigate"
+  ],
+  "L2": [
+   "Navigate beside the walkway near the hedgerow",
+   "Navigate beside the walkway near the bushes",
+   "Navigate beside the trail near the hedgerow",
+   "Navigate beside the trail near the bushes"
+  ],
+  "L3": [
+   "Navigate down the lane near the shrubs",
+   "Navigate down the aisle near the thicket",
+   "Navigate down the lane near the thicket",
+   "Navigate down the aisle near the shrubs"
+  ]
+ },
+ "go straight towards the building": {
+  "class": "S",
+  "purity": 0.8181818181818182,
+  "n_frames": 22,
+  "L1": [
+   "towards the building go straight"
+  ],
+  "L2": [
+   "go straight in front towards the structure"
+  ],
+  "L3": []
+ },
+ "go straight down the avenue between the glass buildings": {
+  "class": "S",
+  "purity": 0.9035087719298246,
+  "n_frames": 342,
+  "L1": [
+   "down the avenue between the glass buildings go straight",
+   "between the glass buildings down the avenue go straight"
+  ],
+  "L2": [
+   "go straight in front along the roadway amid the glass-walled structures"
+  ],
+  "L3": [
+   "go straight down the boulevard dividing the glazed edifices",
+   "go straight down the esplanade dividing the glazed edifices",
+   "go straight down the boulevard dividing the glazed blocks",
+   "go straight down the esplanade dividing the glazed blocks"
+  ]
+ },
+ "Go straight down the tiled path between the buildings": {
+  "class": "S",
+  "purity": 0.9029850746268657,
+  "n_frames": 134,
+  "L1": [
+   "Down the tiled path between the buildings Go straight",
+   "Between the buildings down the tiled path Go straight"
+  ],
+  "L2": [
+   "Go straight in front along the tile-surfaced trail amid the structures",
+   "Go straight in front along the tile-surfaced walkway amid the structures"
+  ],
+  "L3": [
+   "Go straight down the flagstone aisle dividing the edifices",
+   "Go straight down the flagstone lane dividing the blocks",
+   "Go straight down the flagstone lane dividing the edifices",
+   "Go straight down the flagstone aisle dividing the blocks"
+  ]
+ },
+ "go straight through the courtyard between the buildings": {
+  "class": "S",
+  "purity": 0.928,
+  "n_frames": 125,
+  "L1": [
+   "through the courtyard between the buildings go straight",
+   "between the buildings through the courtyard go straight"
+  ],
+  "L2": [
+   "go straight in front over the courtyard amid the structures"
+  ],
+  "L3": [
+   "go straight athwart the courtyard dividing the edifices",
+   "go straight athwart the courtyard dividing the blocks"
+  ]
+ },
+ "Go along the path beside the building": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 17,
+  "L1": [
+   "Along the path beside the building Go",
+   "Beside the building along the path Go"
+  ],
+  "L2": [
+   "Go beside the walkway alongside the structure",
+   "Go beside the trail alongside the structure"
+  ],
+  "L3": [
+   "Go down the lane abutting the block",
+   "Go down the aisle abutting the edifice",
+   "Go down the aisle abutting the block",
+   "Go down the lane abutting the edifice"
+  ]
+ },
+ "head straight down the park promenade, trees on both sides": {
+  "class": "S",
+  "purity": 0.8433734939759037,
+  "n_frames": 83,
+  "L1": [
+   "trees on both sides, head straight down the park promenade",
+   "down the park promenade, trees on both sides head straight",
+   "on both sides down the park promenade, trees head straight"
+  ],
+  "L2": [
+   "go straight in front along the park grounds trail, trees on either side",
+   "go straight in front along the park grounds walkway, trees on either side",
+   "go straight in front along the park grounds footway, trees on either side"
+  ],
+  "L3": [
+   "keep on straight down the commons esplanade, greenery on either hand",
+   "keep on straight down the commons esplanade, greenery on each flank",
+   "press straight down the commons esplanade, foliage on either hand",
+   "keep on straight down the commons esplanade, foliage on either hand",
+   "press straight down the commons esplanade, greenery on either hand"
+  ]
+ },
+ "continue straight along the building's colonnade on your right, trees and hedges on your left": {
+  "class": "S",
+  "purity": 0.9261363636363636,
+  "n_frames": 176,
+  "L1": [
+   "trees and hedges on your left, continue straight along the building's colonnade on your right",
+   "along the building's colonnade on your right, trees and hedges on your left continue straight",
+   "on your right, trees and hedges along the building's colonnade on your left continue straight",
+   "on your left along the building's colonnade on your right, trees and hedges continue straight",
+   "on your left on your right, trees and hedges along the building's colonnade continue straight"
+  ],
+  "L2": [
+   "keep going straight in front beside the structure's columns on your right, trees and bushes on your left"
+  ],
+  "L3": [
+   "press on straight down the block's arcade on your right, foliage and thickets on your left",
+   "press on straight down the block's arcade on your right, greenery and shrubs on your left",
+   "press on straight down the edifice's portico on your right, foliage and shrubs on your left",
+   "carry on straight down the edifice's portico on your right, foliage and shrubs on your left",
+   "carry on straight down the block's portico on your right, greenery and thickets on your left"
+  ]
+ },
+ "go straight under the colonnade": {
+  "class": "S",
+  "purity": 1.0,
+  "n_frames": 17,
+  "L1": [
+   "under the colonnade go straight"
+  ],
+  "L2": [
+   "go straight in front under the columns"
+  ],
+  "L3": []
+ }
+}
