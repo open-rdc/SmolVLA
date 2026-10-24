@@ -6,16 +6,18 @@ placenet_weight_path: weights/placenet.pt
 # 自己位置推定ループの周期
 interval_ms: 200
 
-toponav_crop_size: 288
+# 魚眼は切り出さない(トポマップ作成時の --crop-size 0 と揃える)。旧カメラは 288
+toponav_crop_size: 0
 
-# Bayesianフィルタのパラメータ（NavVLAのnav.yaml準拠のデフォルト）
+# Bayesianフィルタのパラメータ（魚眼の本番 NavVLA exp/tsukuba-1017 の nav.yaml と揃える。旧カメラは delta 4, [-1,3), 0.45）
 # delta: 観測尤度の鋭さ。小さいほど尤度がなだらかになり、通過済みノードに似た
 #        見た目のフレームが1枚来ただけで信念が遠くへ飛ぶ現象（パーセプチュアル
 #        エイリアシングによるホップバック）を抑えられる（=遷移がゆるくなる）。
-toponav_delta: 4
-toponav_window_lower: -1
-toponav_window_upper: 3
+toponav_delta: 5
+# 遷移窓 [lower, upper): 1周期(0.2秒)で「その場 or 1ノード前進」
+toponav_window_lower: 0
+toponav_window_upper: 2
 # windowed_mass（ピーク±window_radius ノードに集まった確率の割合 0〜1）算出用の半径
 toponav_window_radius: 2
 # windowed_mass のしきい値。これ未満のときは instruction を更新しない。
-toponav_min_score: 0.45
+toponav_min_score: 0.4
