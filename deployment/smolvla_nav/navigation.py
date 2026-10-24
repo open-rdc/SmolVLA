@@ -47,6 +47,8 @@ from std_msgs.msg import Bool, String
 # 学習時と揃える定数（training/data/lerobot_dataset.py と一致させること）
 FPS = 5
 DT = 1.0 / FPS
+# camera2/camera3 に入れる過去の画像の時刻[秒前]。学習データ(lerobot_dataset.py)の 5 フレーム前・10 フレーム前と同じ
+CONTEXT_SEC = (5 * DT, 10 * DT)
 IMG_H, IMG_W = 224, 224
 
 # --- 経路追従モードの既定値（既定は OFF = 従来どおり生の dyaw をそのまま流す）---
@@ -263,7 +265,12 @@ class SmolVLANavigationNode(Node):
         # なりキャッシュが確実にヒットする代わりに、実際の時間間隔は推論レイテンシに
         # 依存して変動する(厳密に1秒/2秒ではない)。レイテンシ計測用途では許容できる
         # 近似だが、実走行の精度に使う場合は実データで要検証。
-        self._context_frames: collections.deque[tuple[int, np.ndarray]] = collections.deque(maxlen=2)
+        # 2026-10-24: 推論が約0.27秒まで速くなり、「前回/前々回」だと実際は約0.27/0.55秒前になって
+        # 学習(1秒前/2秒前)とずれていた。推論のたびに"今"のフレームを撮影時刻つきで残し、
+        # その中から「今-1秒」「今-2秒」に最も近いものを選ぶ。新規エンコードは今の1枚のままで、
+        # 選ばれるフレームの時刻のずれは推論周期の半分(約±0.14秒)以内になる。
+        # (オフラインでは学習どおり(5,10フレーム前)と(4,9)/(6,11)フレーム前の差はほぼ無かった)
+        self._context_frames: collections.deque[tuple[int, np.ndarray, float]] = collections.deque()
         self._frame_counter = 0
 
         # --- パラメータ（速度上限・制御周期）---
@@ -446,24 +453,33 @@ class SmolVLANavigationNode(Node):
         with self._queue_lock:
             base_step = self._step   # この観測が予測する行動列の起点となる絶対時刻
 
-        # 「今」は常に最新フレームを新規エンコードする。「1秒前」「2秒前」は実時間ではなく
-        # 前回・前々回の推論で"今"として使ったフレームを流用する（キャッシュ確実ヒット）。
-        # まだ2回に満たない起動直後は、無い分を現在フレームで埋める。
+        # 「今」は常に最新フレームを新規エンコードする。「1秒前」「2秒前」は、過去の推論で"今"として
+        # 使ったフレーム(埋め込みはキャッシュ済み)のうち、撮影時刻が今-1秒/今-2秒に最も近いものを使う。
+        # 起動直後で2秒分たまっていないときは、ある中で最も近いもの(無ければ現在フレーム)で埋める。
         current_image = self.latest_image     # 参照代入は GIL 下で原子的
+        now_sec = self.get_clock().now().nanoseconds / 1e9
         self._frame_counter += 1
         current_id = self._frame_counter
 
-        context = list(self._context_frames)   # [1回前, 2回前]（無ければ短い）
-        cam2_id, cam2_img = context[-1] if len(context) >= 1 else (current_id, current_image)
-        cam3_id, cam3_img = context[-2] if len(context) >= 2 else (cam2_id, cam2_img)
+        def nearest(target_sec: float) -> tuple[int, np.ndarray]:
+            if not self._context_frames:
+                return current_id, current_image
+            fid, img, _ = min(self._context_frames, key=lambda f: abs(f[2] - target_sec))
+            return fid, img
+
+        cam2_id, cam2_img = nearest(now_sec - CONTEXT_SEC[0])
+        cam3_id, cam3_img = nearest(now_sec - CONTEXT_SEC[1])
 
         image_ids = [current_id, cam2_id, cam3_id]
         images = [current_image, cam2_img, cam3_img]
 
-        self._context_frames.append((current_id, current_image))
+        self._context_frames.append((current_id, current_image, now_sec))
+        # 次の推論で今-2秒に最も近いものを選べるよう、2秒より少し古いものまで残す
+        while self._context_frames and self._context_frames[0][2] < now_sec - CONTEXT_SEC[1] - 1.0:
+            self._context_frames.popleft()
 
         # もうcamera2/camera3として参照されえないフレームの画像埋め込みキャッシュを捨てる。
-        valid_ids = {current_id, cam2_id, cam3_id} | {fid for fid, _ in self._context_frames}
+        valid_ids = {current_id, cam2_id, cam3_id} | {fid for fid, _, _ in self._context_frames}
         self.model.prune_image_embed_cache(valid_ids)
 
         # 参照代入は GIL 下で原子的なので、最新値をスナップショットして使う。
