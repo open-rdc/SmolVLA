@@ -12,11 +12,12 @@ NavVLA/tools/lang_anotation_tool.py(Tk)の置き換え。1 周を 1 本の長い
   - 区間の実際の旋回(4.8 秒先までの向き変化 Ψ から求めた左折/右折/直進)と，指示の方向語が
     食い違うときは警告を出す
 
-キー: ←/→ 1 フレーム，Shift+←/→ 10 フレーム，↑/↓ 前/次の区間，Space 再生/停止，
-      [ / ] 範囲の始点/終点を今のフレームに，Enter 指示を範囲に適用して確認済みにし次の未確認区間へ，
-      Ctrl+S 保存
+キー: ←/→ 1 フレーム，Ctrl+←/→ 10 フレーム，Shift+←/→ 範囲を伸ばす(押し始めが始点)，↑/↓ 前/次の区間，
+      Space 再生/停止，[ / ] 範囲の始点/終点を今のフレームに，Enter 指示を範囲に適用して確認済みにし次の未確認区間へ，
+      N / Shift+N 次/前の停止へ，Delete 範囲に DELETE(学習から除く)を付ける，
+      H 今のフレームで HOLD_S 秒止まる印(書き出しでそのフレームを複製する。白線の前で待つ場面などを作る)，Ctrl+S 保存
 保存: <lap>/episode01/traj_prompt.txt(初回保存時に traj_prompt.auto.txt として元を残す)と
-      <lap>/episode01/review_state.json(フレームごとの確認済みフラグ)
+      <lap>/episode01/review_state.json(フレームごとの確認済みフラグ)，holds.json(止まる印のフレーム番号)
 
     python training/data/lap_annotation_web.py ~/tsudanuma_data/laps \\
         --instructions ~/tsudanuma_data/old_topomap_instructions.txt --port 8010
@@ -66,6 +67,11 @@ def read_reviewed(d: Path, n: int) -> list[int]:
         if len(r) == n:
             return r
     return [0] * n
+
+
+def read_holds(d: Path, n: int) -> list[int]:
+    f = d / "holds.json"
+    return sorted(h for h in json.loads(f.read_text())["holds"] if 0 <= h < n) if f.exists() else []
 
 
 def write_atomic(path: Path, text: str) -> None:
@@ -124,7 +130,7 @@ def lap_detail(name: str) -> dict:
             "pos": np.round(pos, 3).tolist(), "yaw": np.round(yaw, 4).tolist(),
             "cls": "".join(cls.tolist()), "psi": np.round(psi, 3).tolist(),
             # 画像 URL に付ける版。フレームを削って番号を詰め直したら変わり、ブラウザの古いキャッシュを使わない
-            "ver": (d / "timestamps.npy").stat().st_mtime_ns}
+            "ver": (d / "timestamps.npy").stat().st_mtime_ns, "holds": read_holds(d, n)}
 
 
 def save(name: str, body: dict) -> dict:
@@ -140,6 +146,8 @@ def save(name: str, body: dict) -> dict:
         auto.write_text("\n".join(old), encoding="utf-8")
     write_atomic(d / "traj_prompt.txt", "\n".join(s.strip() or DUMMY for s in pr))
     write_atomic(d / "review_state.json", json.dumps({"reviewed": [int(bool(x)) for x in rv]}))
+    if "holds" in body:
+        write_atomic(d / "holds.json", json.dumps({"holds": sorted({int(h) for h in body["holds"] if 0 <= int(h) < len(old)})}))
     return lap_summary(ARGS.laps_root / name)
 
 
@@ -247,7 +255,7 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#04121f
       <button id="unrev" title="確認済みを外す">未確認に戻す</button>
     </div>
     <div id="promptja" class="ja"></div>
-    <div class="help">←/→ 1フレーム　Shift+←/→ 10フレーム　↑/↓ 前/次の区間　Space 再生　[ / ] 範囲の始点/終点　Enter 適用して次へ　Ctrl+S 保存　タイムライン: クリックで移動、ドラッグで範囲選択</div>
+    <div class="help">←/→ 1フレーム　Ctrl+←/→ 10フレーム　Shift+←/→ 範囲を伸ばす（押し始めが始点，Ctrl+Shift で 10 フレームずつ）　↑/↓ 前/次の区間　Space 再生　[ / ] 範囲の始点/終点　N / Shift+N 次/前の停止　Delete 範囲を学習から除く　H ここで 5 秒止まる（複製）　Enter 適用して次へ　Ctrl+S 保存　タイムライン: クリックで移動、ドラッグで範囲選択</div>
   </section>
   <aside>
     <div class="box"><canvas id="map"></canvas></div>
@@ -270,14 +278,18 @@ button.primary{background:var(--accent);border-color:var(--accent);color:#04121f
 </main>
 <script>
 const DUMMY="No language instruction";
+// 学習から除くフレームの印(書き出しで除く。センサ確認などで理由なく止まった所)
+const DEL="DELETE";
+// H で付ける「ここで止まる」印の長さ(書き出しの export_tsukuba_train.py の HOLD_S と同じ)
+const HOLD_S=5;
 let JA={},ICLS={},SUGG=[],tab="S",tabLocked=false,lastSeg="";const ja=s=>JA[(s||"").trim()]||"";
 const TABS=[["L","左折"],["R","右折"],["S","直進"],["U","転回"]];
 const icls=s=>ICLS[s]||dirWords(s)||"S";
-let laps=[],L=null,f=0,selA=0,selB=0,dirty=false,playing=null,drag=null;
+let laps=[],L=null,f=0,selA=0,selB=0,anchor=null,dirty=false,playing=null,drag=null;
 const $=id=>document.getElementById(id);
 const CLSNAME={L:"左折",R:"右折",S:"直進"};
 
-function hashColor(s){if(s===DUMMY)return"#f85149";let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return`hsl(${h%360} 55% 52%)`}
+function hashColor(s){if(s===DUMMY)return"#f85149";if(s===DEL)return"#555";let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))>>>0;return`hsl(${h%360} 55% 52%)`}
 function segAt(i){const p=L.prompts[i];let a=i,b=i;while(a>0&&L.prompts[a-1]===p)a--;while(b<L.n-1&&L.prompts[b+1]===p)b++;return[a,b]}
 function setStatus(t){$("status").textContent=t}
 
@@ -291,15 +303,34 @@ async function loadLaps(keep){
 }
 async function openLap(name){
   if(dirty&&!confirm("保存していない変更があります。破棄して開きますか？"))return;
-  setStatus("読み込み中");L=await (await fetch("/api/lap/"+encodeURIComponent(name))).json();dirty=false;
+  setStatus("読み込み中");L=await (await fetch("/api/lap/"+encodeURIComponent(name))).json();dirty=false;L.stops=findStops();
   const first=L.reviewed.indexOf(0);go(first<0?0:first,true);setStatus("保存済み");
 }
 function go(i,resetSel){
   f=Math.max(0,Math.min(L.n-1,i));
-  if(resetSel){[selA,selB]=segAt(f)}
+  if(resetSel){[selA,selB]=segAt(f);anchor=null}
   $("img").src=`/img/${L.name}/${f}.jpg?v=${L.ver}`;
   for(let k=1;k<=6;k++){if(f+k<L.n)(new Image).src=`/img/${L.name}/${f+k}.jpg?v=${L.ver}`}
   render();
+}
+// 停止の区間 [[a,b],...]: 前後 1 秒の平均で 速度<0.05 m/s かつ 角速度<0.05 rad/s(finalize_tsukuba.py と同じ)
+function findStops(){
+  const n=L.n,h=5,st=[];
+  for(let i=0;i<n;i++){const lo=Math.max(0,i-h),hi=Math.min(n-1,i+h),dt=Math.max(hi-lo,1)/5;
+    const v=Math.hypot(L.pos[hi][0]-L.pos[lo][0],L.pos[hi][1]-L.pos[lo][1])/dt,w=Math.abs(L.yaw[hi]-L.yaw[lo])/dt;st.push(v<0.05&&w<0.05)}
+  const out=[];let i=0;while(i<n){if(st[i]){let j=i;while(j<n&&st[j])j++;if(j-i>=3)out.push([i,j-1]);i=j}else i++}
+  return out;
+}
+function goStop(dir){
+  const s=dir>0?L.stops.find(([a])=>a>f):[...L.stops].reverse().find(([,b])=>b<f);
+  if(!s){setStatus(dir>0?"この後に停止はありません":"この前に停止はありません");return}
+  anchor=null;go(s[0],false);[selA,selB]=s;render();
+  setStatus(`停止 ${L.stops.indexOf(s)+1}/${L.stops.length}（${((s[1]-s[0]+1)/5).toFixed(1)} 秒）`);
+}
+function markDelete(){
+  const a=Math.min(selA,selB),b=Math.max(selA,selB);
+  for(let i=a;i<=b;i++){L.prompts[i]=DEL;L.reviewed[i]=1}
+  dirty=true;save();go(b,false);goStop(1);
 }
 function dirWords(s){
   // 「右手に建物」のような目印の表現を除いてから，旋回の向きを表す語を探す
@@ -308,13 +339,14 @@ function dirWords(s){
 }
 function render(){
   const p=L.prompts[f],[a,b]=segAt(f);
-  $("frameinfo").textContent=`${f} / ${L.n-1}`;
+  $("frameinfo").textContent=`${f} / ${L.n-1}`+(L.holds.includes(f)?`　（ここで ${HOLD_S} 秒止まる）`:"");
   $("cls").textContent=CLSNAME[L.cls[f]];$("psi").textContent=`Ψ = ${L.psi[f].toFixed(2)} rad`;
   const cnt={L:0,R:0,S:0};for(let i=a;i<=b;i++)cnt[L.cls[i]]++;
   const dom=Object.entries(cnt).sort((x,y)=>y[1]-x[1])[0][0];
   $("seginfo").textContent=`${a}–${b}（${b-a+1} フレーム, ${((b-a+1)/5).toFixed(1)} 秒）　左折 ${cnt.L} / 右折 ${cnt.R} / 直進 ${cnt.S}`;
   const d=dirWords(p);let w="";
   if(p===DUMMY)w="未割当の区間です";
+  else if(p===DEL)w="学習から除く区間です";
   else if(d&&cnt[d]===0)w=`指示は${CLSNAME[d]}ですが、区間内に${CLSNAME[d]}のフレームがありません`;
   else if(!d&&/\bturn\b/i.test(p))w="旋回の指示ですが向き（left/right）が読み取れません";
   $("warn").textContent=w;
@@ -345,6 +377,7 @@ function drawTimeline(){
   while(i<L.n){const[a,b]=segAt(i);g.fillStyle=hashColor(L.prompts[i]);g.fillRect(x(a),6,Math.max(1,x(b+1)-x(a)-0.5),30);i=b+1}
   for(i=0;i<L.n;i++)if(L.reviewed[i]){let j=i;while(j<L.n&&L.reviewed[j])j++;g.fillStyle="#3fb950";g.fillRect(x(i),40,x(j)-x(i),6);i=j}
   g.strokeStyle="#fff";g.lineWidth=2;g.strokeRect(x(selA),3,x(selB+1)-x(selA),36);
+  g.fillStyle="#e3b341";for(const h of L.holds){g.beginPath();g.moveTo(x(h),0);g.lineTo(x(h)-5,-0+8);g.lineTo(x(h)+5,8);g.closePath();g.fill();g.fillRect(x(h)-1,0,2,Hh)}
   g.fillStyle="#fff";g.fillRect(x(f)-1,0,2,Hh);
 }
 function drawMap(a,b){
@@ -369,7 +402,7 @@ function applyAndNext(){
 }
 async function save(){
   if(!L)return;setStatus("保存中");
-  const r=await (await fetch(`/api/lap/${encodeURIComponent(L.name)}/save`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompts:L.prompts,reviewed:L.reviewed})})).json();
+  const r=await (await fetch(`/api/lap/${encodeURIComponent(L.name)}/save`,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({prompts:L.prompts,reviewed:L.reviewed,holds:L.holds})})).json();
   if(r.error){setStatus("保存に失敗: "+r.error);return}
   dirty=false;setStatus("保存済み");loadLaps(L.name);
 }
@@ -383,13 +416,22 @@ document.addEventListener("keydown",e=>{
   if(e.key==="Enter"){e.preventDefault();applyAndNext();return}
   if(document.activeElement===$("prompt")||document.activeElement===$("sfilter")){if(e.key==="Escape")document.activeElement.blur();return}
   const k=e.key;
-  if(k==="ArrowRight"){go(f+(e.shiftKey?10:1),false);e.preventDefault()}
-  else if(k==="ArrowLeft"){go(f-(e.shiftKey?10:1),false);e.preventDefault()}
+  if(k==="ArrowRight"||k==="ArrowLeft"){
+    // Shift で範囲を伸ばす(押し始めのフレームが始点)。Ctrl は 10 フレームずつ
+    const step=(e.ctrlKey||e.metaKey?10:1)*(k==="ArrowRight"?1:-1);
+    if(e.shiftKey){if(anchor===null)anchor=f;go(f+step,false);selA=Math.min(anchor,f);selB=Math.max(anchor,f);render()}
+    else{anchor=null;go(f+step,false)}
+    e.preventDefault()}
   else if(k==="ArrowDown"){const[,b]=segAt(f);go(b+1,true);e.preventDefault()}
   else if(k==="ArrowUp"){const[a]=segAt(f);go(a>0?segAt(a-1)[0]:0,true);e.preventDefault()}
   else if(k===" "){togglePlay();e.preventDefault()}
-  else if(k==="["){selA=f;if(selB<selA)selB=selA;render()}
-  else if(k==="]"){selB=f;if(selA>selB)selA=selB;render()}
+  else if(k==="n"||k==="N"){goStop(e.shiftKey?-1:1);e.preventDefault()}
+  else if(k==="Delete"){markDelete();e.preventDefault()}
+  else if(k==="h"||k==="H"){
+    const i=L.holds.indexOf(f);if(i<0)L.holds.push(f);else L.holds.splice(i,1);L.holds.sort((a,b)=>a-b);
+    dirty=true;save();render();setStatus(i<0?`${f} で ${HOLD_S} 秒止まる印を付けた（書き出しで複製）`:`${f} の止まる印を外した`);e.preventDefault()}
+  else if(k==="["){selA=f;if(selB<selA)selB=selA;anchor=null;render()}
+  else if(k==="]"){selB=f;if(selA>selB)selA=selB;anchor=null;render()}
 });
 const tl=$("timeline");
 const tlIdx=e=>{const r=tl.getBoundingClientRect();return Math.max(0,Math.min(L.n-1,Math.floor((e.clientX-r.left)/r.width*L.n)))};
