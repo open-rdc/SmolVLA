@@ -173,7 +173,7 @@ class Handler(BaseHTTPRequestHandler):
                 self.send(200, PAGE.encode(), "text/html; charset=utf-8")
             elif path == "/api/laps":
                 self.send_json({"laps": [lap_summary(p) for p in lap_dirs()], "suggestions": suggestions(),
-                                "ja": translations(), "icls": instruction_classes()})
+                                "ja": translations(), "icls": instruction_classes(), "chips": ARGS.chips})
             elif m := re.fullmatch(r"/api/lap/([^/]+)", path):
                 self.send_json(lap_detail(m.group(1)))
             elif m := re.fullmatch(r"/img/([^/]+)/(\d+)\.jpg", path):
@@ -294,7 +294,7 @@ function segAt(i){const p=L.prompts[i];let a=i,b=i;while(a>0&&L.prompts[a-1]===p
 function setStatus(t){$("status").textContent=t}
 
 async function loadLaps(keep){
-  const r=await (await fetch("/api/laps")).json();laps=r.laps;JA=r.ja||{};ICLS=r.icls||{};SUGG=r.suggestions;
+  const r=await (await fetch("/api/laps")).json();laps=r.laps;JA=r.ja||{};ICLS=r.icls||{};SUGG=r.suggestions;if(r.chips&&r.chips.length){CHIPS=r.chips;renderChips()}
   const q=t=>t.replace(/&/g,"&amp;").replace(/"/g,"&quot;").replace(/</g,"&lt;");
   $("sugg").innerHTML=r.suggestions.map(s=>`<option value="${q(s)}" label="${q(ja(s))}">`).join("");
   const sel=$("lapsel"),cur=keep||sel.value;
@@ -446,7 +446,8 @@ $("prompt").oninput=stripIme;$("prompt").addEventListener("compositionend",strip
 $("tabs").onclick=e=>{const c=e.target.closest("button")?.dataset.c;if(c){tab=c;tabLocked=true;renderSugg()}};
 $("slist").onclick=e=>{const el=e.target.closest(".si");if(!el)return;$("prompt").value=el.dataset.s;$("promptja").textContent=ja(el.dataset.s);renderSugg()};
 // よく使う検索語。クリックで絞り込み欄に入れる(もう一度押すと消す)
-const CHIPS=["並木","生け垣","建物","駐輪","ラック","芝","公園","白","赤"];
+// 絞り込みの単語ボタン。--chips で渡されたらそれを使う(つくば用など)
+let CHIPS=["並木","生け垣","建物","駐輪","ラック","芝","公園","白","赤"];
 function renderChips(){const q=$("sfilter").value.trim();$("chips").innerHTML=CHIPS.map(w=>`<button data-w="${w}" class="${w===q?"on":""}">${w}</button>`).join("")}
 $("chips").onclick=e=>{const b=e.target.closest("button");if(!b)return;$("sfilter").value=$("sfilter").value.trim()===b.dataset.w?"":b.dataset.w;renderChips();renderSugg()};
 renderChips();
@@ -467,6 +468,8 @@ def main() -> None:
     ap.add_argument("--instructions", type=Path, default=None, help="候補に出す指示の一覧(1 行 1 指示，タブ区切りなら最後の列)")
     ap.add_argument("--translations", type=Path, default=None, help="指示の日本語訳 JSON {英語: 日本語}(画面に併記する)")
     ap.add_argument("--classes", type=Path, default=None, help="指示の動作分類 JSON {英語: L/R/S/U}(候補をタブで分ける)")
+    ap.add_argument("--chips", type=lambda v: [w.strip() for w in v.split(",") if w.strip()], default=None,
+                    help="絞り込みの単語ボタン(カンマ区切り)。無ければ津田沼の単語")
     ap.add_argument("--port", type=int, default=8010)
     ap.add_argument("--host", default="127.0.0.1")
     ARGS = ap.parse_args()
