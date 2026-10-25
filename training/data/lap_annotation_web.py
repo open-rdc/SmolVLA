@@ -205,9 +205,10 @@ body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,"No
 header{display:flex;gap:12px;align-items:center;padding:8px 14px;background:var(--panel);border-bottom:1px solid var(--line)}
 header select{background:var(--bg);color:var(--text);border:1px solid var(--line);padding:4px 6px;font-size:14px}
 #status{margin-left:auto;color:var(--muted)}
-main{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:12px;padding:12px 14px}
+/* 画像の欄は画像の幅(高さ × 4/3)だけにして左へ寄せ，残りを右の候補の欄に回す */
+main{display:grid;grid-template-columns:minmax(0,calc(max(100vh - 215px,360px) * 4 / 3)) minmax(360px,1fr);gap:12px;padding:12px 14px}
 #imgwrap{position:relative;background:#000;border-radius:6px;overflow:hidden}
-#img{display:block;width:100%;height:calc(100vh - 215px);min-height:360px;object-fit:contain;margin:0 auto}
+#img{display:block;width:100%;height:calc(100vh - 215px);min-height:360px;object-fit:contain;margin:0}
 #frameinfo{position:absolute;left:8px;top:6px;background:#000a;padding:2px 8px;border-radius:4px;font-variant-numeric:tabular-nums}
 aside{display:flex;flex-direction:column;gap:10px}
 .box{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:10px}
