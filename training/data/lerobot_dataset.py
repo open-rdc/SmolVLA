@@ -109,6 +109,9 @@ def main() -> None:
                 if bgr is None:
                     raise FileNotFoundError(f"cannot read {ep_dir / f'{i}.jpg'}")
                 img = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)       # HWC, RGB, uint8
+                if img.shape[:2] != (IMG_H, IMG_W):
+                    # 魚眼(640x480)は切り出さずに縮める(OmniVLA-edge 側・実機の前処理と同じ)
+                    img = cv2.resize(img, (IMG_W, IMG_H), interpolation=cv2.INTER_AREA)
                 cache[i] = img
             return img
 
