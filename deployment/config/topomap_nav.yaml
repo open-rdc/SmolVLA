@@ -1,10 +1,18 @@
 # place_prompt_node.py の設定。パスは SmolVLA/deployment ディレクトリ基準。
-topomap_path: config/topomap/topomap.yaml
-topomap_image_dir: config/topomap/images
+# 津田沼(魚眼)。NavVLA の data/tsudanuma_toponav(tsudanuma_20261013_123146 から作成)を SmolVLA 形式に変換したもの
+# (feature を .npy に、prompt を instruction に)。旧カメラのマップは config/topomap
+# ※学習に使った周回なので卒論 6.2 節と合わない。本番前に作り直すか記述を直す
+topomap_path: config/topomap_tsudanuma/topomap.yaml
+topomap_image_dir: config/topomap_tsudanuma/images
 placenet_weight_path: weights/placenet.pt
 
 # 自己位置推定ループの周期
 interval_ms: 200
+
+# PlaceNet を回すデバイス。cpu / cuda。
+# 実測(85x85入力)では forward が cuda 30.7ms/回 に対し cpu 14.4ms/回 で cpu の方が速く、
+# かつ GPU を navigation_node の SmolVLA 推論に明け渡せるので既定は cpu。
+placenet_device: cpu
 
 # 魚眼は切り出さない(トポマップ作成時の --crop-size 0 と揃える)。旧カメラは 288
 toponav_crop_size: 0
