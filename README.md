@@ -64,15 +64,30 @@ source install/setup.bash
 
 ```bash
 ~/.venvs/smolvla/bin/lerobot-train \
-  --policy.path=lerobot/smolvla_base --policy.push_to_hub=false \
-  --dataset.repo_id=open-rdc/tsudanuma_nav6 --dataset.root=<abs path> \
-  --rename_map='{"observation.images.front":"observation.images.camera1"}' \
+  --policy.type=smolvla \
+  --policy.load_vlm_weights=true \
+  --policy.push_to_hub=false \
+  --policy.device=cuda \
+  --policy.normalization_mapping='{"VISUAL":"IDENTITY","STATE":"MEAN_STD","ACTION":"MEAN_STD"}' \
+  --policy.scheduler_warmup_steps=1000 \
+  --policy.scheduler_decay_steps=1150000 \
+  --dataset.repo_id=open-rdc/orne_box_all_tc --dataset.root=<abs path> \
+  --dataset.video_backend=pyav \
+  --batch_size=8 --steps=1150000 --num_workers=4 \
   --wandb.enable=false
 ```
 
-**確定した学習レシピ**: VLM(SmolVLM2)は事前学習を維持したまま凍結し、action expertのみランダム初期化して学習する
-(`--policy.type=smolvla --policy.load_vlm_weights=true`、`--policy.path` は指定しない)。
+実際に使った完全な形は [`training/gpgpu_train_orne_tc_ms.sbatch`](https://github.com/open-rdc/SmolVLA/blob/main/training/gpgpu_train_orne_tc_ms.sbatch)
+(ベース、1,150,000step)と [`training/gpgpu_train_orne_tc_ms_rec5.sbatch`](https://github.com/open-rdc/SmolVLA/blob/main/training/gpgpu_train_orne_tc_ms_rec5.sbatch)
+(復帰データを混ぜたファインチューン、180,000step)にあります。
+
+**確定した学習レシピ**: VLM(SmolVLM2)は事前学習を維持したまま、action expertのみランダム初期化して学習する
+(`--policy.type=smolvla --policy.load_vlm_weights=true`、**`--policy.path` は指定しない**)。
 理由は [Findings](#findings) を参照してください。
+
+⚠ **`--policy.normalization_mapping` の明示指定は必須です。** `ACTION` を `MEAN_STD` にしないと、
+`dyaw`(mean≈0 / std≈0.028 で情報がばらつき側にしかない)が正規化されず旋回量が学習されにくく、
+実機で「カーブが膨らむ」形で現れます。
 
 既存チェックポイントからの継続ファインチューンを行う場合は `--policy.path=<ckptのpretrained_modelディレクトリ>` を指定し、
 元のcosineスケジュールへ完全restart(peak lrへ戻す)するのではなく、**peakを元の1/5程度に抑えた短いwarmup+cosine decay**
@@ -107,23 +122,70 @@ resumeで学習が複数の `.out` に分かれた場合は `--segment FILE:OFFS
 
 | 項目 | 内容 |
 |---|---|
-| `observation.images.front` | 224×224 RGB(学習時は `camera1` にrename) |
-| `observation.state` | `[v, ω]`(前フレームの増分÷dt、学習時ノイズ付加でcopycat対策) |
+| `observation.images.camera1` | 224×224 RGB。**現在** (t) |
+| `observation.images.camera2` | 224×224 RGB。**1秒前** (t − 5フレーム) |
+| `observation.images.camera3` | 224×224 RGB。**2秒前** (t − 10フレーム) |
+| `observation.state` | `[v, ω]` の形は持つが、**値は全フレーム 0 固定(stateless)** |
 | `action` | `[Δx_body, Δyaw]`(差動2輪のため `Δy_body` は非ホロノミックで冗長、使わない) |
 | `task` | per-frameの言語指示文字列 |
 | fps | 5 (`dt = 0.2s`) |
 
-SmolVLA既定は3カメラ・state/action 6次元を期待しますが、1カメラ・2次元のまま32次元パディングで吸収して使っています。
+**SmolVLA の3カメラスロットを時間軸に転用**しています(同一カメラの時系列3枚)。
+学習側のラグは `training/data/lerobot_dataset.py` の `HISTORY_STRIDE_FRAMES = 5` で決まります
+(5fps なので厳密に1秒前・2秒前)。`front` キーは使わないので `--rename_map` も不要です。
+
+> ⚠ **推論時のラグは「1秒前・2秒前」ではありません。**
+>
+> 実機では camera2/camera3 に **前回・前々回の推論で「今」として使ったフレーム**を渡します
+> (`navigation.py` の `_context_frames`、`deque(maxlen=2)`)。tickベースで厳密に
+> t−5 / t−10 を取り出す方式は `d8bd412` で廃止しました。
+>
+> 理由は**画像埋め込みキャッシュを効かせるため**です。推論レイテンシが1秒を切ると、
+> tickベースで取り出した「1秒前」のフレームは毎回別物になり、キャッシュがまったく
+> ヒットしません(0/3)。前回・前々回の入力を指すようにすれば camera2/camera3 は必ず
+> 計算済みになり、vision encoder の新規エンコードが3枚→1枚に減ります
+> (575ms → 192ms の削減はこれによるもの)。
+>
+> **代償として、実際の時間間隔は推論レイテンシに一致して変動します。** 学習時は厳密に
+> 1.0秒/2.0秒なので、ここに分布のずれがあります。レイテンシ約1000msのときは偶然ほぼ
+> 一致しますが、**推論を速くするほどずれは広がります**(例: Heun N=4 で842msなら
+> 約0.84秒/1.68秒間隔)。
+>
+> **この近似が実走行の精度に与える影響は未検証です。** レイテンシ計測用途では
+> 問題ありませんが、精度を論じる際はこの前提を確認してください。
+
+`observation.state` は**使っていません**。過去の速度を入れると、モデルが画像や言語ではなく
+「直前の指令の続き」を出力するだけの近道(copycat)を学習してしまうため、
+**学習・推論ともに全フレーム 0 に固定**して vision + language だけで予測させています
+(学習済みチェックポイントの正規化統計も `mean=[0,0] std=[0,0]`)。
+形だけ残しているのは SmolVLA 側のインタフェースに合わせるためです。
+
+state/action は SmolVLA 既定の6次元ではなく2次元ですが、32次元パディングで吸収しています。
 
 ## Navigation
 
 ### 概要
 
-ROS 2 ノード `navigation_node` は、画像と言語指示を購読し、`SmolVLAPolicy` で推定した行動チャンクの先頭数stepを
-`geometry_msgs/Twist` として出力します(receding horizon、次tickで撮り直し)。`place_prompt_node` は走行データから
-作ったトポロジカルマップ上で自己位置推定を行い、現在位置に対応する言語指示を `/prompt` に自動配信します。
+3つのノードで構成されます。**推論と操舵は別ノードに分かれています**(予測経路が `/cmd_vel` に
+正しく反映されていなかった不具合の修正で分離しました)。
+
+| ノード | 役割 |
+|---|---|
+| `navigation_node` | 画像と言語指示を購読し、`SmolVLAPolicy` で行動チャンクを推論。予測経路 `/smolvla_pred_path` とフォールバック用の生の速度指令 `/smolvla_cmd_vel_raw` を publish する。**`/cmd_vel` は出さない** |
+| `path_follower_node` | `/smolvla_pred_path` を Pure Pursuit で追従し、最終的な `/cmd_vel` を publish する |
+| `place_prompt_node` | 走行データから作ったトポロジカルマップ上で自己位置推定を行い、現在位置に対応する言語指示を `/prompt` に自動配信する |
+
+推論は receding horizon で、行動チャンクの先頭数stepだけを実行して次tickで撮り直します。
+
+時系列コンテキストの camera2/camera3 には、**前回・前々回の推論で「今」として使ったフレーム**を
+渡します(画像埋め込みキャッシュを効かせるため)。**学習時の「厳密に1秒前・2秒前」とは異なり、
+実際の間隔は推論レイテンシに一致します。** 詳細と注意点は [Dataset](#dataset) を参照してください。
 
 ROS 2(Humble, Python 3.10)と `lerobot`(Python 3.12)はプロセスを分けず、同一プロセス内で直接importする構成です。
+
+行動生成はフローマッチングで、ODE `dx/dt = v(x, t, obs)` を **Heun法(2段2次)** で t=1→0 へ積分します。
+1ステップにつき速度場を2回評価するため、**推論時間は `2 × num_steps` に比例**します
+(既定 `num_steps=4` で評価8回)。詳しくは [Findings](#findings) を参照。
 
 起動ファイル:
 
@@ -136,6 +198,17 @@ ros2 launch smolvla_nav smolvla_nav.launch.py                    # トポロジ�
 ros2 launch smolvla_nav smolvla_nav.launch.py use_toponav:=false # 固定プロンプトのみ(place_prompt_nodeを止める)
 ```
 
+主な launch 引数:
+
+| 引数 | 既定 | 説明 |
+|---|---|---|
+| `use_toponav` | `true` | `false` で `place_prompt_node` を止め、固定プロンプトのみで動かす |
+| `num_steps` | `0` | デノイズのステップ数。`0` はポリシー側の既定(`4`)。**推論時間は `2 × num_steps` に比例**。`2` 以下に下げるとステップ幅が大きすぎて精度が落ちる |
+| `use_pure_pursuit` | `true` | `false` で `navigation_node` の生 dyaw をそのまま操舵に使う |
+| `lookahead_distance` | `2.5` | Pure Pursuit の前方注視距離[m]。計画の不感帯(約1〜2m)より長く取ること |
+| `path_timeout_sec` | `5.0` | `/smolvla_pred_path` がこれより古ければ生 dyaw にフォールバックする[s]。推論レイテンシより大きくすること |
+| `step_lookahead` | `0` | chunk の何ステップ先の行動をフォールバック操舵に使うか(不感帯の実測用) |
+
 トポロジカルマップの作成:
 
 ```bash
@@ -147,13 +220,40 @@ ros2 run smolvla_nav create_topomap --ros-args -p data_dir:=<走行データ> -p
 | Topic | 型 | 方向 | Node | 内容 |
 |---|---|---|---|---|
 | `/image_raw` | `sensor_msgs/msg/Image` | Subscribe | navigation_node, place_prompt_node | 現在観測画像 |
-| `/autonomous` | `std_msgs/msg/Bool` | Subscribe | navigation_node | 自律動作の有効/無効 |
+| `/autonomous` | `std_msgs/msg/Bool` | Subscribe | navigation_node, path_follower_node | 自律動作の有効/無効 |
 | `/prompt` | `std_msgs/msg/String` | Subscribe / Publish | navigation_node(sub) / place_prompt_node(pub) | 言語指示 |
-| `/cmd_vel` | `geometry_msgs/msg/Twist` | Publish | navigation_node | 速度指令 |
+| `/smolvla_pred_path` | `nav_msgs/msg/Path` | Publish / Subscribe | navigation_node(pub) / path_follower_node(sub) | 予測した行動チャンクを base_link 基準の経路に積分したもの |
+| `/smolvla_cmd_vel_raw` | `geometry_msgs/msg/Twist` | Publish / Subscribe | navigation_node(pub) / path_follower_node(sub) | モデルの生の速度指令。Pure Pursuit 無効時・経路が古いときのフォールバック |
+| `/cmd_vel` | `geometry_msgs/msg/Twist` | Publish | **path_follower_node** | 最終的な速度指令 |
+| `/smolvla_lookahead` | `geometry_msgs/msg/PointStamped` | Publish | path_follower_node | Pure Pursuit の注視点(調整用。`/smolvla_pred_path` と重ねて見る) |
 | `/toponav/current_node` | `std_msgs/msg/Int32` | Publish | place_prompt_node | 自己位置推定した現在ノードID |
 
 ## Findings
 
+- **フローマッチングの積分を Heun法(2次)にすると、速度と精度が同時に改善する(2026-08-11)**:
+  推論は ODE `dx/dt = v(x, t, obs)` を t=1→0 へ積分する処理で、上流実装は陽的オイラー法
+  (1段1次、`num_steps=10` で速度場の評価10回)だった。**推論時間はステップ数ではなく
+  「速度場の評価回数」に比例する**ので、比較は評価回数を揃えて行う必要がある。
+  実データ32フレーム×3ノイズでノイズを固定し、参照解 Heun N=100 との dyaw 誤差を測ると:
+
+  | 評価回数 | Euler | Heun | 誤差比 |
+  |---:|---|---|---|
+  | 6 | N=6 0.1144 | N=3 0.0809 | Heun が 1.4分の1 |
+  | 8 | N=8 0.0876 | **N=4 0.0469** | Heun が 1.9分の1 |
+  | 10 | N=10 0.0733 | N=5 0.0331 | Heun が 2.2分の1 |
+
+  収束次数の実測は Euler 0.86〜0.93 / Heun 1.73〜1.83 で、理論値(1 / 2)の85〜93%。
+  **旧構成の Euler N=10(評価10回)に対し Heun N=4 は評価8回で誤差が約0.6倍**になり、
+  速度と精度の両方で勝つため既定にした。ただし**評価回数を減らせば誤差自体は増える**点に注意
+  (Heun N=3 は評価6回まで減るが誤差は旧構成の1.1倍)。評価4回以下ではステップ幅が大きすぎて
+  修正子が割に合わず、1次のオイラー法のほうが正確になる。
+  なお ω のバイアスの向きも逆で、Euler は ω を小さく外す(縮み 0.92/0.89)のに対し Heun は
+  大きく外す(1.27/1.07)。Euler の向きは実機で対処済みの「カーブで膨らむ」問題と同じ向き。
+  fp16 の丸め誤差は離散化誤差の1〜6%で無視できる。
+  **⚠ 副作用**: 推論時の時系列コンテキストは「前回・前々回の推論フレーム」なので、
+  実際の時間間隔は推論レイテンシに一致する。**推論を速くするほど学習時の1秒/2秒から離れる**
+  (972ms → 842ms なら約0.84秒/1.68秒間隔)。この分布のずれが精度に与える影響は未検証なので、
+  レイテンシを削ったときは行動そのものの変化も併せて確認すること。詳細は [Dataset](#dataset)。
 - **Action Expertはランダム初期化の方が良い(実機検証済み, 2026-07-09)**: SmolVLA公式重みの
   action expertはマニピュレータの物体把持タスクで事前学習されており、車輪ロボットのナビゲーションに
   finetuneすると負の転移が起きる。train lossだけでは差が出ないが、実機で比較するとランダム初期化した方が

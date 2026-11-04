@@ -115,6 +115,8 @@ class TopologicalNavigator:
         return nodes, feature_matrix
 
     def _center_crop(self, image_bgr: np.ndarray) -> np.ndarray:
+        if self.crop_size <= 0:  # 0 以下は切り出さない(魚眼は画像全体を使う。NavVLA の toponav.py と同じ)
+            return image_bgr
         height, width = image_bgr.shape[:2]
         side = min(height, width, self.crop_size)
         top = (height - side) // 2

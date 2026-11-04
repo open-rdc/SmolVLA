@@ -15,9 +15,25 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-import numpy as np
-import torch
-import yaml
+# PlaceNet の推論も (926, 512) の内積も1回あたり数ミリ秒しかない小さな処理で、
+# スレッド並列の同期コストが実処理を上回る。実測で estimate_current_node() は
+# 12スレッド 212ms/回 -> 1スレッド 36ms/回 と5.9倍速くなる。
+# しかも interval_ms=200 に対し1回212msかかっていたのでタイマーが飽和し、5Hz設定でも
+# 実質ノンストップで6コアを占有していた。CPUを食い潰すとCPU/GPUで冷却と電力バジェットを
+# 共有するノートPCではGPUクロックまで巻き添えで落ちるため、navigation_node側の
+# SmolVLA推論レイテンシにも効く。
+# OpenBLAS/OpenMP のスレッド数は numpy/torch の import 時に確定するので、その前に設定する。
+for _thread_var in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
+    os.environ.setdefault(_thread_var, "1")
+
+import cv2  # noqa: E402
+import numpy as np  # noqa: E402
+import torch  # noqa: E402
+import yaml  # noqa: E402
+
+# 環境変数が効くのは import 時のみなので、import 後の API でも明示的に1スレッドにする。
+torch.set_num_threads(1)
+cv2.setNumThreads(0)
 
 import rclpy
 from rclpy.node import Node
@@ -47,7 +63,14 @@ class PlacePromptNode(Node):
         super().__init__("place_prompt_node")
 
         self.cfg = load_yaml(config_path)
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        # PlaceNet は 85x85 入力の小さなモデルで、実測では forward が GPU 30.7ms/回 に対し
+        # CPU 14.4ms/回 と CPU の方が速い（転送と同期のコストが計算量を上回るため）。
+        # GPU を空けておけば navigation_node の SmolVLA 推論とも競合しない。
+        # GPU で回したい場合は config で placenet_device: cuda を指定する。
+        device_name = str(self.cfg.get("placenet_device", "cpu"))
+        if device_name.startswith("cuda") and not torch.cuda.is_available():
+            device_name = "cpu"
+        self.device = torch.device(device_name)
 
         topomap_path = self._resolve(str(self.cfg.get("topomap_path", "config/topomap/topomap.yaml")))
         image_dir = self._resolve(str(self.cfg.get("topomap_image_dir", "config/topomap/images")))
