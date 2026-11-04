@@ -80,7 +80,8 @@ _env_repo_root = os.environ.get("SMOLVLA_REPO_ROOT")
 _REPO_ROOT = Path(_env_repo_root) if _env_repo_root else Path(__file__).resolve().parents[2]
 
 # チェックポイントの場所（tar.gz を展開した先）
-DEFAULT_CKPT = _REPO_ROOT / "training" / "data" / "weight" / "smolvla_orne_tc_ms_rec5_ckpt" / "pretrained_model"
+# 旧: smolvla_orne_tc_ms_rec5_ckpt (残置してあるので戻す場合はここを書き換えるだけでよい)
+DEFAULT_CKPT = _REPO_ROOT / "training" / "data" / "weight" / "smolvla_rec5_v2_ckpt" / "pretrained_model"
 
 
 # ══════════════════════════════════════════════════════════════════
